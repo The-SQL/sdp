@@ -1,16 +1,24 @@
-const nextJest = require('next/jest')
+const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
-  dir: './', // Path to your Next.js app
-})
+  dir: './',
+});
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleNameMapper: {
-    '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-    '^.+\\.(png|jpg|jpeg|gif|webp|avif|svg)$': '<rootDir>/__mocks__/fileMock.js',
-  },
   testEnvironment: 'jest-environment-jsdom',
-}
 
-module.exports = createJestConfig(customJestConfig)
+  // Tell Jest where to collect coverage from
+  collectCoverage: true,
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',           // all TypeScript files in src/
+    '!src/**/*.d.ts',              // ignore type declaration files
+    '!src/**/__tests__/**',        // ignore test files
+    '!src/**/types/**',            // ignore any type folders
+  ],
+
+  coverageDirectory: 'coverage',   // where reports are stored
+  coverageReporters: ['text', 'lcov', 'clover'], // formats for GitHub & Codecov
+};
+
+module.exports = createJestConfig(customJestConfig);
