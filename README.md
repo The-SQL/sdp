@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/github/The-SQL/sdp/graph/badge.svg?token=HHIUGN04GD)](https://codecov.io/github/The-SQL/sdp)
+
 # 📚 OSLearn (OSL) – Open-Source Language Learning Platform
 
 **OSLearn** is a community-driven platform where anyone can create, upload, and share language courses.  
