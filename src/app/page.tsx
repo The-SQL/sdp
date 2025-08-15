@@ -1,18 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
 } from "@clerk/nextjs";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 
@@ -185,9 +185,9 @@ export default function LandingPage() {
               Ready to Start Your Language Journey?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Join our community today and discover the joy of learning
-              languages together. It's free, it's open, and it's waiting for
-              you.
+              {
+                "Join our community today and discover the joy of learning languages together. It's free, it's open, and it's waiting for you."
+              }
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <SignUpButton>
