@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import {
     Card,
     CardContent,
@@ -15,6 +16,7 @@ import {
     UserButton,
 } from "@clerk/nextjs";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -50,7 +52,7 @@ export default function LandingPage() {
               </SignUpButton>
             </SignedOut>
             <SignedIn>
-              <UserButton />
+                <UserButton />
             </SignedIn>
           </div>
         </div>
@@ -72,12 +74,23 @@ export default function LandingPage() {
               Accessible, community-driven, and designed for learners worldwide
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <SignUpButton>
-                <Button size="lg" className="text-lg px-8 py-6">
-                  <Play className="h-5 w-5 mr-2" />
-                  Start Learning Free
-                </Button>
-              </SignUpButton>
+              <SignedOut>
+                <SignUpButton fallbackRedirectUrl="/explore" mode="modal">
+                  <Button size="lg" className="text-lg px-8 py-6">
+                    <Play className="h-5 w-5 mr-2" />
+                    Start Learning Free
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
+
+              <SignedIn>
+                <Link href="/explore">
+                  <Button size="lg" className="text-lg px-8 py-6">
+                    <Play className="h-5 w-5 mr-2" />
+                    Go to Explore Page
+                  </Button>
+                </Link>
+              </SignedIn>
             </div>
           </div>
         </div>
