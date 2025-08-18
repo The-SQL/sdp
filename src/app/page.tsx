@@ -2,23 +2,42 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
+import { checkUserExists, insertUser } from "@/utils/db/server";
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
 } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await currentUser();
+
+
+  if (user) {
+    const userExists = await checkUserExists(user.id);
+
+    if (!userExists) {
+      await insertUser(
+        user.id,
+        user.firstName || "",
+        user.emailAddresses[0].emailAddress
+      );
+    }
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -57,7 +76,6 @@ export default function LandingPage() {
           </div>
         </div>
       </header>
-
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0" />
@@ -95,7 +113,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section id="features" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -172,7 +189,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Courses */}
       <section id="courses" className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,7 +205,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Call to Action */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -217,7 +232,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="mt-8 py-8 border-t border-border text-center text-sm text-muted-foreground">
         <p>Open source and built with ❤️ by the community</p>
