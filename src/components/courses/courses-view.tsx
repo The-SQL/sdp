@@ -19,7 +19,7 @@ const courses = [
     students: 1234,
     rating: 4.8,
     language: "Spanish",
-    image: "/mock/spanish.jfif",
+    image: "/mock/spanish.png",
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const courses = [
     students: 856,
     rating: 4.9,
     language: "French",
-    image: "/mock/french-conversation.jfif",
+    image: "/mock/french-conversation.png",
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const courses = [
     students: 2103,
     rating: 4.7,
     language: "Japanese",
-    image: "/mock/japanese.jfif",
+    image: "/mock/japanese.png",
   },
   {
     id: 4,
@@ -52,7 +52,7 @@ const courses = [
     students: 567,
     rating: 4.6,
     language: "German",
-    image: "/mock/german.jfif",
+    image: "/mock/german.png",
   },
   {
     id: 5,
@@ -63,7 +63,7 @@ const courses = [
     students: 923,
     rating: 4.8,
     language: "Italian",
-    image: "/mock/italian-language.jfif",
+    image: "/mock/italian-language.png",
   },
   {
     id: 6,
@@ -74,7 +74,7 @@ const courses = [
     students: 1456,
     rating: 4.5,
     language: "Mandarin",
-    image: "/mock/chinese.jfif",
+    image: "/mock/chinese.png",
   },
 ]
 
@@ -127,7 +127,7 @@ export function CoursesView() {
         {filteredCourses.map((course) => (
           <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="h-55 bg-gray-100 relative">
-              <Image src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
+              <Image src={course.image || "/placeholder.svg"} alt={course.title} width={640} height={360} className="w-full h-full object-cover" />
             </div>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2">
