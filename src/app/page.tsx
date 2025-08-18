@@ -21,23 +21,7 @@ import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-export default async async function LandingPage() {
-  const user = await currentUser();
-
-
-  if (user) {
-    const userExists = await checkUserExists(user.id);
-
-    if (!userExists) {
-      await insertUser(
-        user.id,
-        user.firstName || "",
-        user.emailAddresses[0].emailAddress
-      );
-    }
-    redirect("/explore"); //TODO: Redirect to dashboard
-  }
-
+export default async function LandingPage() {
   const user = await currentUser();
 
 
