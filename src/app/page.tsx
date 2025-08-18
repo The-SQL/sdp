@@ -35,7 +35,7 @@ export default async function LandingPage() {
         user.emailAddresses[0].emailAddress
       );
     }
-    redirect("/dashboard");
+    redirect("/explore"); //TODO: Redirect to dashboard
   }
 
   return (
