@@ -5,13 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { BookOpen, Home, User, Plus, Globe } from "lucide-react"
-import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
-} from "@clerk/nextjs";
+import { SignedIn, UserButton} from "@clerk/nextjs";
 
 interface ExploreLayoutProps {
   children: React.ReactNode

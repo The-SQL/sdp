@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Search, Clock, Users, Star } from "lucide-react"
+import Image from "next/image";
 
 // Dummy course data
 const courses = [
@@ -126,7 +127,7 @@ export function CoursesView() {
         {filteredCourses.map((course) => (
           <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="h-55 bg-gray-100 relative">
-              <img src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
+              <Image src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
             </div>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2">
