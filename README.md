@@ -2,9 +2,8 @@
 
 # 📚 OSLearn (OSL) – Open-Source Language Learning Platform
 
-**OSLearn** is a community-driven platform where anyone can create, upload, and share language courses.  
-From popular languages to rare or constructed ones, OSLearn supports vocabulary drills, grammar lessons, and pronunciation guides — all in an open, collaborative environment.
-
+**OSLearn**
+A community-driven language learning platform where anyone can create, upload, and share language courses. It supports vocabulary drills, grammar lessons, and pronunciation guides, allowing learners to study any language — even rare or constructed ones — in a collaborative, open-source environment.
 ---
 
 ## ✨ Features
