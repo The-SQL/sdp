@@ -76,8 +76,8 @@ From popular languages to rare or constructed ones, OSLearn supports vocabulary 
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/oslearn.git
-cd oslearn
+git clone https://github.com/The-SQL/sdp.git
+cd sdp
 ```
 
 ### 2️⃣ Install Dependencies
