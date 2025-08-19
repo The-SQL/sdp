@@ -2,34 +2,40 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ '**' ]   # run on all branches
   pull_request:
-    branches: [ main ]
+    branches: [ '**' ]   # run on PRs from any branch
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
+      # Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      # Run tests and collect coverage
       - name: Run tests with coverage
         run: npm test -- --coverage
 
+      # Upload coverage to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Needed for private repos
+          token: ${{ secrets.CODECOV_TOKEN }} # Required for private repos
           files: ./coverage/lcov.info
           fail_ci_if_error: true
           verbose: true
+          flags: untracked-branch
