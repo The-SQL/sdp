@@ -7,7 +7,7 @@ jest.mock("@/utils/supabase/server", () => ({
 }));
 
 // Define query type to keep mock tidy
-type queryResult = { data: any; error: any };
+type queryResult = { data: unknown; error: unknown };
 
 // Factory that returns a configurable supabase-like client
 function makeSupabaseMock(options: {
@@ -26,7 +26,7 @@ function makeSupabaseMock(options: {
 
   const from = jest.fn().mockReturnValue({ insert, select });
 
-  const client = { from } as any;
+  const client = { from } as unknown;
 
   return { client, from, insert, select, selectAfterInsert, eqAfterSelect };
 
