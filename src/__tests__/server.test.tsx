@@ -1,36 +1,11 @@
 import { insertUser, checkUserExists } from "@/utils/db/server";
 import { createClient } from "@/utils/supabase/server";
+import { makeSupabaseMock } from "../__mocks__/supabase";
 
 // Mock supabase server module
 jest.mock("@/utils/supabase/server", () => ({
   createClient: jest.fn(),
 }));
-
-// Define query type to keep mock tidy
-type queryResult = { data: unknown; error: unknown };
-
-// Factory that returns a configurable supabase-like client
-function makeSupabaseMock(options: {
-  insertSelect?: queryResult;
-  selectEq?: queryResult;
-}) {
-  const selectAfterInsert = jest
-    .fn()
-    .mockResolvedValue(options.insertSelect ?? { data: null, error: null });
-  const insert = jest.fn().mockReturnValue({ select: selectAfterInsert });
-
-  const eqAfterSelect = jest
-    .fn()
-    .mockResolvedValue(options.selectEq ?? { data: null, error: null });
-  const select = jest.fn().mockReturnValue({ eq: eqAfterSelect });
-
-  const from = jest.fn().mockReturnValue({ insert, select });
-
-  const client = { from } as unknown;
-
-  return { client, from, insert, select, selectAfterInsert, eqAfterSelect };
-
-}
 
 describe("db helpers", () => {
   beforeEach(() => {
