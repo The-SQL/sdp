@@ -21,6 +21,7 @@ import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+
 export default async function LandingPage() {
   const user = await currentUser();
 
@@ -28,7 +29,9 @@ export default async function LandingPage() {
     const userExists = await checkUserExists(user.id);
 
     if (userExists) {
-      redirect("/explore"); //TODO: Redirect to dashboard
+      redirect("/dashboard"); //TODO: Redirect to dashboard
+    }else{
+      console.log("What the heck??")
     }
   }
 
@@ -36,10 +39,6 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 flex items-center p-4 h-16">
-        <div className="flex items-center gap-2">
-          <Globe className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold">OSLearn</span>
-        </div>
         <div className="hidden md:flex ml-auto gap-4">
           <nav className="flex items-center gap-6">
             <a
@@ -87,20 +86,26 @@ export default async function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <SignedOut>
-                <SignUpButton fallbackRedirectUrl="/explore" mode="modal">
+                <SignUpButton fallbackRedirectUrl="/dashboard" mode="modal">
                   <Button size="lg" className="text-lg px-8 py-6">
                     <Play className="h-5 w-5 mr-2" />
-                    Start Learning Free
+                    Go to Dashboard
                   </Button>
+                </SignUpButton>
+                <SignUpButton>
+                  <Button size="lg" className="text-lg px-8 py-6"> Browse Courses</Button>
                 </SignUpButton>
               </SignedOut>
 
               <SignedIn>
-                <Link href="/explore">
+                <Link href="/dashboard">
                   <Button size="lg" className="text-lg px-8 py-6">
                     <Play className="h-5 w-5 mr-2" />
-                    Go to Explore Page
+                    Go to Dashboard
                   </Button>
+                </Link>
+                <Link href="/courses">
+                  <Button size="lg" className="text-lg px-8 py-6"> Browse Courses</Button>
                 </Link>
               </SignedIn>
             </div>
