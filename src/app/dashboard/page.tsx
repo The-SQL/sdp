@@ -10,8 +10,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 async function Page() {
-  const user = await currentUser();
-  if (!user) redirect("/");
+//   const user = await currentUser();
+//   if (!user) redirect("/");
   return (
     <div>
       Dashboard{" "}
