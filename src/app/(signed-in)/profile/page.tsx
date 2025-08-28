@@ -1,53 +1,52 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useUser } from "@clerk/nextjs";
 import {
-  User,
-  Mail,
-  Calendar,
-  MapPin,
-  Languages,
-  Target,
-  Trophy,
-  BookOpen,
-  Clock,
-  Star,
-  Heart,
-  Bell,
-  Shield,
-} from "lucide-react"
-import {useUser } from "@clerk/nextjs"
+    Bell,
+    BookOpen,
+    Calendar,
+    Clock,
+    Heart,
+    Languages,
+    Mail,
+    MapPin,
+    Shield,
+    Star,
+    Target,
+    Trophy,
+    User,
+} from "lucide-react";
+import { useState } from "react";
 
 export default function Profile() {
-
   // --- Clerk (client) ---
   const { user } = useUser();
-  const displayName = 
-  (user?.firstName && user?.lastName
-    ? `${user.firstName} ${user.lastName}`
-    : user?.firstName) ??
-  user?.username ??
-  user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
-  "there";
+  const displayName =
+    (user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.firstName) ??
+    user?.username ??
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
+    "there";
 
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
   const [profile] = useState({
-    name: {displayName},
+    name: { displayName },
     email: "mayuri@example.com",
     bio: "Passionate language learner exploring the world through words. Currently focusing on Spanish and French!",
     location: "Tokyo, Japan",
     joinDate: "January 2024",
     nativeLanguage: "Japanese",
     learningLanguages: ["Spanish", "French", "Italian"],
-  })
+  });
 
   const stats = {
     coursesCompleted: 3,
@@ -56,15 +55,45 @@ export default function Profile() {
     currentStreak: 15,
     longestStreak: 28,
     totalPoints: 2450,
-  }
+  };
 
   const achievements = [
-    { id: 1, name: "First Steps", description: "Complete your first lesson", earned: true, date: "Jan 15, 2024" },
-    { id: 2, name: "Week Warrior", description: "Maintain a 7-day streak", earned: true, date: "Jan 22, 2024" },
-    { id: 3, name: "Course Crusher", description: "Complete your first course", earned: true, date: "Feb 10, 2024" },
-    { id: 4, name: "Streak Master", description: "Maintain a 30-day streak", earned: false, progress: 15 },
-    { id: 5, name: "Polyglot", description: "Learn 3 different languages", earned: false, progress: 2 },
-  ]
+    {
+      id: 1,
+      name: "First Steps",
+      description: "Complete your first lesson",
+      earned: true,
+      date: "Jan 15, 2024",
+    },
+    {
+      id: 2,
+      name: "Week Warrior",
+      description: "Maintain a 7-day streak",
+      earned: true,
+      date: "Jan 22, 2024",
+    },
+    {
+      id: 3,
+      name: "Course Crusher",
+      description: "Complete your first course",
+      earned: true,
+      date: "Feb 10, 2024",
+    },
+    {
+      id: 4,
+      name: "Streak Master",
+      description: "Maintain a 30-day streak",
+      earned: false,
+      progress: 15,
+    },
+    {
+      id: 5,
+      name: "Polyglot",
+      description: "Learn 3 different languages",
+      earned: false,
+      progress: 2,
+    },
+  ];
 
   const enrolledCourses = [
     {
@@ -88,7 +117,7 @@ export default function Profile() {
       status: "Completed",
       completedDate: "March 15, 2024",
     },
-  ]
+  ];
 
   const favoritesCourses = [
     {
@@ -105,7 +134,7 @@ export default function Profile() {
       rating: 4.6,
       savedDate: "1 week ago",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -115,14 +144,27 @@ export default function Profile() {
           <CardContent className="p-8">
             <div className="flex items-start gap-6">
               <Avatar className="w-24 h-24">
-                <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">M</AvatarFallback>
+                <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">
+                  M
+                </AvatarFallback>
               </Avatar>
 
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{displayName}</h1>
-                    <p className="text-gray-600">Language Learner</p>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                      {displayName}
+                    </h1>
+                    {/* Maybe we don't need to do this. Anyone can create by default?  */}
+                    {/* <div className="flex items-center space-x-2 mt-2">
+                      <Switch id="course-creation"/>
+                      <Label
+                        htmlFor="course-creation"
+                        className="ml-2 text-sm text-gray-600 cursor-pointer"
+                      >
+                        Enable Course Creation
+                      </Label>
+                    </div> */}
                   </div>
                   <Button
                     onClick={() => setIsEditing(!isEditing)}
@@ -173,42 +215,54 @@ export default function Profile() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <Trophy className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.coursesCompleted}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.coursesCompleted}
+                  </p>
                   <p className="text-sm text-gray-600">Completed</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <BookOpen className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.coursesInProgress}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.coursesInProgress}
+                  </p>
                   <p className="text-sm text-gray-600">In Progress</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <Target className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalLessons}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalLessons}
+                  </p>
                   <p className="text-sm text-gray-600">Lessons</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.currentStreak}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.currentStreak}
+                  </p>
                   <p className="text-sm text-gray-600">Day Streak</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.longestStreak}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.longestStreak}
+                  </p>
                   <p className="text-sm text-gray-600">Best Streak</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <Trophy className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalPoints}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalPoints}
+                  </p>
                   <p className="text-sm text-gray-600">Points</p>
                 </CardContent>
               </Card>
@@ -222,7 +276,11 @@ export default function Profile() {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {profile.learningLanguages.map((language, index) => (
-                    <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-blue-100 text-blue-800"
+                    >
                       {language}
                     </Badge>
                   ))}
@@ -237,10 +295,20 @@ export default function Profile() {
                 <Card key={course.id}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">{course.title}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {course.title}
+                      </h3>
                       <Badge
-                        variant={course.status === "Completed" ? "default" : "secondary"}
-                        className={course.status === "Completed" ? "bg-green-600" : "bg-blue-100 text-blue-800"}
+                        variant={
+                          course.status === "Completed"
+                            ? "default"
+                            : "secondary"
+                        }
+                        className={
+                          course.status === "Completed"
+                            ? "bg-green-600"
+                            : "bg-blue-100 text-blue-800"
+                        }
                       >
                         {course.status}
                       </Badge>
@@ -266,7 +334,12 @@ export default function Profile() {
           <TabsContent value="achievements" className="space-y-6">
             <div className="grid gap-4">
               {achievements.map((achievement) => (
-                <Card key={achievement.id} className={achievement.earned ? "border-green-200 bg-green-50" : ""}>
+                <Card
+                  key={achievement.id}
+                  className={
+                    achievement.earned ? "border-green-200 bg-green-50" : ""
+                  }
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
                       <div
@@ -274,23 +347,38 @@ export default function Profile() {
                           achievement.earned ? "bg-green-600" : "bg-gray-200"
                         }`}
                       >
-                        <Trophy className={`h-6 w-6 ${achievement.earned ? "text-white" : "text-gray-400"}`} />
+                        <Trophy
+                          className={`h-6 w-6 ${
+                            achievement.earned ? "text-white" : "text-gray-400"
+                          }`}
+                        />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{achievement.name}</h3>
-                        <p className="text-gray-600">{achievement.description}</p>
+                        <h3 className="font-semibold text-gray-900">
+                          {achievement.name}
+                        </h3>
+                        <p className="text-gray-600">
+                          {achievement.description}
+                        </p>
                         {achievement.earned ? (
-                          <p className="text-sm text-green-600">Earned on {achievement.date}</p>
+                          <p className="text-sm text-green-600">
+                            Earned on {achievement.date}
+                          </p>
                         ) : (
                           <div className="mt-2">
                             <div className="flex items-center justify-between text-sm mb-1">
                               <span>Progress</span>
                               <span>
-                                {achievement.progress}/{achievement.id === 4 ? 30 : 3}
+                                {achievement.progress}/
+                                {achievement.id === 4 ? 30 : 3}
                               </span>
                             </div>
                             <Progress
-                              value={((achievement.progress ?? 0)/ (achievement.id === 4 ? 30 : 3)) * 100}
+                              value={
+                                ((achievement.progress ?? 0) /
+                                  (achievement.id === 4 ? 30 : 3)) *
+                                100
+                              }
                               className="h-2"
                             />
                           </div>
@@ -310,7 +398,9 @@ export default function Profile() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">{course.title}</h3>
+                        <h3 className="font-semibold text-gray-900 mb-1">
+                          {course.title}
+                        </h3>
                         <p className="text-gray-600 mb-2">by {course.author}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
@@ -324,7 +414,11 @@ export default function Profile() {
                         <Button variant="outline" size="sm">
                           View Course
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600"
+                        >
                           <Heart className="h-4 w-4 fill-current" />
                         </Button>
                       </div>
@@ -347,25 +441,35 @@ export default function Profile() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Name</label>
+                      <label className="text-sm font-medium text-gray-700">
+                        Name
+                      </label>
                       <Input value={displayName} className="mt-1" />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Email</label>
+                      <label className="text-sm font-medium text-gray-700">
+                        Email
+                      </label>
                       <Input value={profile.email} className="mt-1" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Bio</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Bio
+                    </label>
                     <Textarea value={profile.bio} className="mt-1" rows={3} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Location</label>
+                      <label className="text-sm font-medium text-gray-700">
+                        Location
+                      </label>
                       <Input value={profile.location} className="mt-1" />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Native Language</label>
+                      <label className="text-sm font-medium text-gray-700">
+                        Native Language
+                      </label>
                       <Input value={profile.nativeLanguage} className="mt-1" />
                     </div>
                   </div>
@@ -383,7 +487,9 @@ export default function Profile() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Daily Reminders</p>
-                      <p className="text-sm text-gray-600">Get reminded to practice daily</p>
+                      <p className="text-sm text-gray-600">
+                        Get reminded to practice daily
+                      </p>
                     </div>
                     <Button variant="outline" size="sm">
                       Enable
@@ -392,7 +498,9 @@ export default function Profile() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Course Updates</p>
-                      <p className="text-sm text-gray-600">New lessons and course announcements</p>
+                      <p className="text-sm text-gray-600">
+                        New lessons and course announcements
+                      </p>
                     </div>
                     <Button variant="outline" size="sm">
                       Enable
@@ -409,10 +517,16 @@ export default function Profile() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent"
+                  >
                     Change Password
                   </Button>
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start bg-transparent"
+                  >
                     Download My Data
                   </Button>
                   <Button
@@ -428,5 +542,5 @@ export default function Profile() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
