@@ -29,7 +29,7 @@ import {useUser } from "@clerk/nextjs"
 export default function Profile() {
 
   // --- Clerk (client) ---
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
   const displayName = 
   (user?.firstName && user?.lastName
     ? `${user.firstName} ${user.lastName}`
@@ -39,7 +39,7 @@ export default function Profile() {
   "there";
 
   const [isEditing, setIsEditing] = useState(false)
-  const [profile, setProfile] = useState({
+  const [profile] = useState({
     name: {displayName},
     email: "mayuri@example.com",
     bio: "Passionate language learner exploring the world through words. Currently focusing on Spanish and French!",

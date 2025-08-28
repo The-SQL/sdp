@@ -27,7 +27,6 @@ export default function Flashcards() {
   const [currentCard, setCurrentCard] = useState(0)
   const [showAnswer, setShowAnswer] = useState(false)
   const [studyMode, setStudyMode] = useState("review")
-  const [createSetOpen, setCreateSetOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   const flashcardSets = [
@@ -221,7 +220,7 @@ export default function Flashcards() {
                       ) : (
                         <div className="text-center p-8">
                           <div className="text-4xl font-bold text-blue-600 mb-3">{currentFlashcard.back}</div>
-                          <div className="text-gray-700 text-base mb-2 italic">"{currentFlashcard.example}"</div>
+                          <div className="text-gray-700 text-base mb-2 italic">{currentFlashcard.example}</div>
                           <div className="text-gray-500 text-sm">{currentFlashcard.exampleTranslation}</div>
                           <div className="mt-4 text-xs text-gray-400">Next review: {currentFlashcard.nextReview}</div>
                         </div>
@@ -294,7 +293,7 @@ export default function Flashcards() {
                 {/* Study Stats */}
                 <Card className="border border-gray-200">
                   <CardHeader>
-                    <CardTitle className="text-lg">Today's Progress</CardTitle>
+                    <CardTitle className="text-lg">{"Today's Progress"}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">

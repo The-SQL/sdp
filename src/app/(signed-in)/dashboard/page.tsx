@@ -1,30 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import Link from "next/link"
-import { Calendar, Trophy, Star, TrendingUp, Heart, Plus, Bell, Settings } from "lucide-react"
-import { useUser } from "@clerk/nextjs"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { useUser } from "@clerk/nextjs";
+import {
+  Bell,
+  Calendar,
+  Heart,
+  Plus,
+  Settings,
+  Star,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+export default function Dashboard() {
+  const [goalDialogOpen, setGoalDialogOpen] = useState(false);
+  const [newGoal, setNewGoal] = useState("");
+  const [goalDeadline, setGoalDeadline] = useState("");
+  const { user } = useUser();
 
-export default  function Dashboard() {
-  const [goalDialogOpen, setGoalDialogOpen] = useState(false)
-  const [newGoal, setNewGoal] = useState("")
-  const [goalDeadline, setGoalDeadline] = useState("")
-  const {user, isLoaded } = useUser();
-
-  const displayName = 
-  (user?.firstName && user?.lastName
-    ? `${user.firstName} ${user.lastName}`
-    : user?.firstName) ??
-  user?.username ??
-  user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
-  "there";
+  const displayName =
+    (user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.firstName) ??
+    user?.username ??
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
+    "there";
 
   const achievements = [
     {
@@ -78,7 +92,7 @@ export default  function Dashboard() {
       total: 10,
       points: 150,
     },
-  ]
+  ];
 
   const currentCourses = [
     {
@@ -117,15 +131,15 @@ export default  function Dashboard() {
       quizScore: 92,
       timeSpent: "25h 45m",
     },
-  ]
+  ];
 
   const starredCourses = [
     { name: "Advanced German Grammar", author: "Hans Mueller", rating: 4.7 },
     { name: "Italian Pronunciation", author: "Giuseppe Rossi", rating: 4.8 },
     { name: "Korean Basics", author: "Kim Min-jun", rating: 4.6 },
-  ]
+  ];
 
-  const [goals, setGoals] = useState([
+  const [goals] = useState([
     {
       id: 1,
       title: "Complete Spanish course by March",
@@ -147,7 +161,7 @@ export default  function Dashboard() {
       progress: 75,
       reminder: false,
     },
-  ])
+  ]);
 
   const weeklyActivity = [
     { day: "Mon", studied: true, minutes: 45, lessons: 2 },
@@ -157,30 +171,25 @@ export default  function Dashboard() {
     { day: "Fri", studied: true, minutes: 40, lessons: 2 },
     { day: "Sat", studied: false, minutes: 0, lessons: 0 },
     { day: "Sun", studied: false, minutes: 0, lessons: 0 },
-  ]
+  ];
 
-  const currentStreak = weeklyActivity.filter((day) => day.studied).length
-  const totalMinutesThisWeek = weeklyActivity.reduce((sum, day) => sum + day.minutes, 0)
+  const currentStreak = weeklyActivity.filter((day) => day.studied).length;
+  const totalMinutesThisWeek = weeklyActivity.reduce(
+    (sum, day) => sum + day.minutes,
+    0
+  );
 
-import { Button } from "@/components/ui/button";
-import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
-} from "@clerk/nextjs";
-
-async function Page() {
-//   const user = await currentUser();
-//   if (!user) redirect("/");
   return (
     <div className="bg-white">
       <div className="p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {displayName}!</h1>
-          <p className="text-gray-600">Continue your language learning journey</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {displayName}!
+          </h1>
+          <p className="text-gray-600">
+            Continue your language learning journey
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -189,14 +198,19 @@ async function Page() {
             {/* Current Courses */}
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Your Courses</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Your Courses
+                </h2>
                 <Button variant="outline" asChild>
                   <Link href="/courses">Browse More</Link>
                 </Button>
               </div>
               <div className="space-y-4">
                 {currentCourses.map((course) => (
-                  <Card key={course.id} className="hover:shadow-md transition-shadow border border-gray-200">
+                  <Card
+                    key={course.id}
+                    className="hover:shadow-md transition-shadow border border-gray-200"
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
                         <img
@@ -206,27 +220,44 @@ async function Page() {
                         />
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold text-lg text-gray-900">{course.name}</h3>
+                            <h3 className="font-semibold text-lg text-gray-900">
+                              {course.name}
+                            </h3>
                             <div className="flex items-center gap-2">
                               <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                              <span className="text-sm text-gray-600">{course.quizScore}% avg</span>
+                              <span className="text-sm text-gray-600">
+                                {course.quizScore}% avg
+                              </span>
                             </div>
                           </div>
-                          <p className="text-gray-600 text-sm mb-3">{course.nextLesson}</p>
+                          <p className="text-gray-600 text-sm mb-3">
+                            {course.nextLesson}
+                          </p>
                           <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
                             <span>
-                              {course.completedLessons}/{course.totalLessons} lessons
+                              {course.completedLessons}/{course.totalLessons}{" "}
+                              lessons
                             </span>
                             <span>{course.timeSpent} studied</span>
                             <span>Last: {course.lastStudied}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Progress value={course.progress} className="flex-1" />
-                            <span className="text-sm font-medium text-gray-700">{course.progress}%</span>
+                            <Progress
+                              value={course.progress}
+                              className="flex-1"
+                            />
+                            <span className="text-sm font-medium text-gray-700">
+                              {course.progress}%
+                            </span>
                           </div>
                         </div>
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white" asChild>
-                          <Link href={`/course/${course.id}/learn`}>Continue</Link>
+                        <Button
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          asChild
+                        >
+                          <Link href={`/course/${course.id}/learn`}>
+                            Continue
+                          </Link>
                         </Button>
                       </div>
                     </CardContent>
@@ -238,7 +269,9 @@ async function Page() {
             {/* Learning Goals */}
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Learning Goals</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Learning Goals
+                </h2>
                 <Dialog open={goalDialogOpen} onOpenChange={setGoalDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm">
@@ -252,7 +285,9 @@ async function Page() {
                     </DialogHeader>
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-700">Goal Description</label>
+                        <label className="text-sm font-medium text-gray-700">
+                          Goal Description
+                        </label>
                         <Textarea
                           placeholder="e.g., Complete intermediate French course"
                           value={newGoal}
@@ -260,10 +295,18 @@ async function Page() {
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-700">Target Date</label>
-                        <Input type="date" value={goalDeadline} onChange={(e) => setGoalDeadline(e.target.value)} />
+                        <label className="text-sm font-medium text-gray-700">
+                          Target Date
+                        </label>
+                        <Input
+                          type="date"
+                          value={goalDeadline}
+                          onChange={(e) => setGoalDeadline(e.target.value)}
+                        />
                       </div>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Create Goal</Button>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        Create Goal
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -273,9 +316,13 @@ async function Page() {
                   <Card key={goal.id} className="border border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">{goal.title}</h3>
+                        <h3 className="font-medium text-gray-900">
+                          {goal.title}
+                        </h3>
                         <div className="flex items-center gap-2">
-                          {goal.reminder && <Bell className="h-4 w-4 text-blue-600" />}
+                          {goal.reminder && (
+                            <Bell className="h-4 w-4 text-blue-600" />
+                          )}
                           <Button variant="ghost" size="sm">
                             <Settings className="h-4 w-4" />
                           </Button>
@@ -289,7 +336,9 @@ async function Page() {
                       </div>
                       <div className="flex items-center gap-3">
                         <Progress value={goal.progress} className="flex-1" />
-                        <span className="text-sm font-medium text-gray-700">{goal.progress}%</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          {goal.progress}%
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -302,33 +351,47 @@ async function Page() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-blue-600" />
-                  This Week's Activity
+                  {"This Week's Activity"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-7 gap-3 mb-6">
-                  {weeklyActivity.map((day, index) => (
+                  {weeklyActivity.map((day) => (
                     <div key={day.day} className="text-center">
-                      <div className="text-xs text-gray-500 mb-2">{day.day}</div>
+                      <div className="text-xs text-gray-500 mb-2">
+                        {day.day}
+                      </div>
                       <div
                         className={`w-10 h-10 rounded-full mx-auto flex items-center justify-center text-xs font-medium ${
-                          day.studied ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
+                          day.studied
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 text-gray-400"
                         }`}
                       >
                         {day.studied ? day.lessons : "0"}
                       </div>
-                      {day.studied && <div className="text-xs text-gray-500 mt-1">{day.minutes}m</div>}
+                      {day.studied && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {day.minutes}m
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">{currentStreak}</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {currentStreak}
+                    </div>
                     <div className="text-sm text-gray-600">Day Streak</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">{totalMinutesThisWeek}</div>
-                    <div className="text-sm text-gray-600">Minutes This Week</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {totalMinutesThisWeek}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Minutes This Week
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -356,7 +419,9 @@ async function Page() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Current Streak</span>
-                  <span className="font-semibold text-blue-600">{currentStreak} days</span>
+                  <span className="font-semibold text-blue-600">
+                    {currentStreak} days
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Languages Learning</span>
@@ -371,32 +436,56 @@ async function Page() {
 
             {/* Achievements */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Achievements</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Recent Achievements
+              </h2>
               <div className="space-y-3">
                 {achievements.slice(0, 4).map((achievement, index) => (
                   <Card
                     key={index}
                     className={`border ${
-                      achievement.earned ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"
+                      achievement.earned
+                        ? "bg-green-50 border-green-200"
+                        : "bg-gray-50 border-gray-200"
                     }`}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className={`text-2xl ${achievement.earned ? "" : "grayscale opacity-50"}`}>
+                        <div
+                          className={`text-2xl ${
+                            achievement.earned ? "" : "grayscale opacity-50"
+                          }`}
+                        >
                           {achievement.icon}
                         </div>
                         <div className="flex-1">
                           <h3
-                            className={`font-medium text-sm ${achievement.earned ? "text-green-800" : "text-gray-600"}`}
+                            className={`font-medium text-sm ${
+                              achievement.earned
+                                ? "text-green-800"
+                                : "text-gray-600"
+                            }`}
                           >
                             {achievement.name}
                           </h3>
-                          <p className={`text-xs ${achievement.earned ? "text-green-600" : "text-gray-500"}`}>
+                          <p
+                            className={`text-xs ${
+                              achievement.earned
+                                ? "text-green-600"
+                                : "text-gray-500"
+                            }`}
+                          >
                             {achievement.description}
                           </p>
                           {!achievement.earned && achievement.progress && (
                             <div className="mt-2">
-                              <Progress value={(achievement.progress / achievement.total) * 100} className="h-1" />
+                              <Progress
+                                value={
+                                  (achievement.progress / achievement.total) *
+                                  100
+                                }
+                                className="h-1"
+                              />
                               <span className="text-xs text-gray-500">
                                 {achievement.progress}/{achievement.total}
                               </span>
@@ -404,13 +493,19 @@ async function Page() {
                           )}
                         </div>
                         {achievement.earned && (
-                          <Badge className="bg-green-100 text-green-800 text-xs">+{achievement.points}</Badge>
+                          <Badge className="bg-green-100 text-green-800 text-xs">
+                            +{achievement.points}
+                          </Badge>
                         )}
                       </div>
                     </CardContent>
                   </Card>
                 ))}
-                <Button variant="outline" className="w-full bg-transparent" asChild>
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  asChild
+                >
                   <Link href="/achievements">View All Achievements</Link>
                 </Button>
               </div>
@@ -418,28 +513,44 @@ async function Page() {
 
             {/* Starred Courses */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Starred Courses</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Starred Courses
+              </h2>
               <div className="space-y-3">
                 {starredCourses.map((course, index) => (
                   <Card key={index} className="border border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h3 className="font-medium text-sm text-gray-900">{course.name}</h3>
-                          <p className="text-xs text-gray-600">by {course.author}</p>
+                          <h3 className="font-medium text-sm text-gray-900">
+                            {course.name}
+                          </h3>
+                          <p className="text-xs text-gray-600">
+                            by {course.author}
+                          </p>
                           <div className="flex items-center gap-1 mt-1">
                             <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                            <span className="text-xs text-gray-600">{course.rating}</span>
+                            <span className="text-xs text-gray-600">
+                              {course.rating}
+                            </span>
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm" className="text-red-500">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500"
+                        >
                           <Heart className="h-4 w-4 fill-current" />
                         </Button>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
-                <Button variant="outline" className="w-full bg-transparent" asChild>
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  asChild
+                >
                   <Link href="/starred">View All Starred</Link>
                 </Button>
               </div>
@@ -448,5 +559,5 @@ async function Page() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -136,7 +136,7 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <div className="p-8">
         {/* Course Header */}
         <div className="max-w-6xl mx-auto">
@@ -334,7 +334,7 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="border border-gray-200">
                   <CardHeader>
-                    <CardTitle>What you'll learn</CardTitle>
+                    <CardTitle>{"What you'll learn"}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">

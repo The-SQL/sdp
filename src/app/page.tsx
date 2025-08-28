@@ -43,7 +43,7 @@ export default function LandingPage() {
           if (!isCancelled) {
             console.log("USER EXISTS", userExists);
             if (userExists) {
-              router.push("/explore"); //TODO: Redirect to dashboard
+              router.push("/dashboard"); //TODO: Redirect to dashboard
             }
           }
         }
@@ -51,7 +51,7 @@ export default function LandingPage() {
 
       if (isSignedIn) {
         checkAndRedirect();
-        console.log("Redirecting to /explore...");
+        console.log("Redirecting to /dashboard...");
       } else {
         setIsPageLoading(false);
       }
@@ -69,6 +69,10 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 flex items-center p-4 h-16">
+        <div className="flex items-center gap-2">
+          <Globe className="h-8 w-8 text-primary" />
+          <span className="text-xl font-bold">OSLearn</span>
+        </div>
         <div className="hidden md:flex ml-auto gap-4">
           <nav className="flex items-center gap-6">
             <a
@@ -123,7 +127,10 @@ export default function LandingPage() {
                   </Button>
                 </SignUpButton>
                 <SignUpButton>
-                  <Button size="lg" className="text-lg px-8 py-6"> Browse Courses</Button>
+                  <Button size="lg" className="text-lg px-8 py-6">
+                    {" "}
+                    Browse Courses
+                  </Button>
                 </SignUpButton>
               </SignedOut>
 
@@ -135,7 +142,10 @@ export default function LandingPage() {
                   </Button>
                 </Link>
                 <Link href="/courses">
-                  <Button size="lg" className="text-lg px-8 py-6"> Browse Courses</Button>
+                  <Button size="lg" className="text-lg px-8 py-6">
+                    {" "}
+                    Browse Courses
+                  </Button>
                 </Link>
               </SignedIn>
             </div>

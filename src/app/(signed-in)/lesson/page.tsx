@@ -52,8 +52,7 @@ export default function Lesson() {
               <CardContent className="p-8">
                 <h2 className="text-xl font-semibold mb-4">Introduction to Past Tense</h2>
                 <p className="text-gray-700 mb-6">
-                  In this lesson, we'll learn how to talk about completed actions in the past using the pretérito
-                  perfecto (present perfect) tense. This tense is formed using "haber" + past participle.
+                {"In this lesson"}
                 </p>
 
                 <div className="bg-blue-50 p-4 rounded-lg mb-6">
@@ -64,7 +63,7 @@ export default function Lesson() {
                   </p>
                 </div>
 
-                <h3 className="font-semibold mb-3">Conjugation of "haber":</h3>
+                <h3 className="font-semibold mb-3">Conjugation of</h3>
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="space-y-2">
                     <p>

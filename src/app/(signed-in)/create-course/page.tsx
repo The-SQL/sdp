@@ -27,7 +27,7 @@ import {
 import { useUser } from "@clerk/nextjs"
 
 export default function CreateCourse() {
-  const {user, isLoaded } = useUser();
+  const {user } = useUser();
   const displayName = 
   (user?.firstName && user?.lastName
     ? `${user.firstName} ${user.lastName}`
@@ -58,8 +58,8 @@ export default function CreateCourse() {
       ],
     },
   ])
-  const [collaborators, setCollaborators] = useState([])
-  const [pendingRequests, setPendingRequests] = useState([
+  const [collaborators] = useState([])
+  const [pendingRequests] = useState([
     { id: 1, user: "Alex Chen", message: "I'd love to help with pronunciation sections", date: "2 days ago" },
     { id: 2, user: "Sarah Johnson", message: "Can I contribute cultural context lessons?", date: "1 week ago" },
   ])
@@ -229,7 +229,7 @@ export default function CreateCourse() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
                         <Select
                           value={courseData.language}
-                          onValueChange={(value) => setCourseData({ ...courseData, language: value })}
+                          onValueChange={(value: string) => setCourseData({ ...courseData, language: value })}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select language" />
@@ -248,7 +248,7 @@ export default function CreateCourse() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
                         <Select
                           value={courseData.difficulty}
-                          onValueChange={(value) => setCourseData({ ...courseData, difficulty: value })}
+                          onValueChange={(value:string) => setCourseData({ ...courseData, difficulty: value })}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select difficulty" />
