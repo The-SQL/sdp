@@ -1,40 +1,70 @@
+"use client";
+
+import Loading from "@/components/loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { checkUserExists } from "@/utils/db/server";
+import { checkUserExists } from "@/utils/db/client";
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  useAuth,
+  UserButton,
 } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
+export default function LandingPage() {
+  const { userId, sessionId, isSignedIn, isLoaded } = useAuth();
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const router = useRouter();
+  useEffect(() => {
+    if (isLoaded) {
+      console.log("USER ID", userId);
+      console.log("SESSION ID", sessionId);
+      console.log("IS SIGNED IN", isSignedIn);
+      console.log("IS LOADED", isLoaded);
 
-export default async function LandingPage() {
-  const user = await currentUser();
+      let isCancelled = false;
 
-  if (user) {
-    const userExists = await checkUserExists(user.id);
+      const checkAndRedirect = async () => {
+        if (userId && sessionId) {
+          const userExists = await checkUserExists(userId);
+          if (!isCancelled) {
+            console.log("USER EXISTS", userExists);
+            if (userExists) {
+              router.push("/explore"); //TODO: Redirect to dashboard
+            }
+          }
+        }
+      };
 
-    if (userExists) {
-      redirect("/dashboard"); //TODO: Redirect to dashboard
-    }else{
-      console.log("What the heck??")
+      if (isSignedIn) {
+        checkAndRedirect();
+        console.log("Redirecting to /explore...");
+      } else {
+        setIsPageLoading(false);
+      }
+
+      return () => {
+        isCancelled = true;
+      };
     }
-  }
+  }, [isSignedIn, isLoaded, sessionId, userId, router]);
 
+  if (isPageLoading) {
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -86,7 +116,7 @@ export default async function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <SignedOut>
-                <SignUpButton fallbackRedirectUrl="/dashboard" mode="modal">
+                <SignUpButton>
                   <Button size="lg" className="text-lg px-8 py-6">
                     <Play className="h-5 w-5 mr-2" />
                     Go to Dashboard
