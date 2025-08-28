@@ -23,8 +23,11 @@ import { redirect } from "next/navigation";
 export default async function LandingPage() {
   const { userId, sessionId } = await auth();
 
+  console.log("USER ID", userId);
+  console.log("SESSION ID", sessionId);
   if (userId && sessionId) {
     const userExists = await checkUserExists(userId);
+    console.log("USER EXISTS", userExists);
     if (userExists) {
       redirect("/explore"); //TODO: Redirect to dashboard
     }
