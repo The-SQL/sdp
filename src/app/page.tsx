@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,32 +9,45 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { checkUserExists } from "@/utils/db/server";
+import { checkUserExists } from "@/utils/db/client";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
   SignUpButton,
+  useAuth,
   UserButton,
 } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
-export default async function LandingPage() {
-  const { userId, sessionId } = await auth();
+export default function LandingPage() {
+  const { userId, sessionId, isSignedIn, isLoaded } = useAuth();
 
-  console.log("USER ID", userId);
-  console.log("SESSION ID", sessionId);
-  if (userId && sessionId) {
-    const userExists = await checkUserExists(userId);
-    console.log("USER EXISTS", userExists);
-    if (userExists) {
-      redirect("/explore"); //TODO: Redirect to dashboard
+  useEffect(() => {
+    console.log("USER ID", userId);
+    console.log("SESSION ID", sessionId);
+    console.log("IS SIGNED IN", isSignedIn);
+    console.log("IS LOADED", isLoaded);
+    const checkAndRedirect = async () => {
+      if (userId && sessionId) {
+        const userExists = await checkUserExists(userId);
+        console.log("USER EXISTS", userExists);
+        if (userExists) {
+          redirect("/explore"); //TODO: Redirect to dashboard
+        }
+      }
+    };
+    if (isSignedIn) {
+      checkAndRedirect();
     }
-  }
+  }, [isSignedIn]);
 
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -88,7 +103,7 @@ export default async function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <SignedOut>
-                <SignUpButton fallbackRedirectUrl="/explore" mode="modal">
+                <SignUpButton>
                   <Button size="lg" className="text-lg px-8 py-6">
                     <Play className="h-5 w-5 mr-2" />
                     Start Learning Free
