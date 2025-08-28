@@ -21,31 +21,38 @@ import {
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const { userId, sessionId, isSignedIn, isLoaded } = useAuth();
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
-    console.log("USER ID", userId);
-    console.log("SESSION ID", sessionId);
-    console.log("IS SIGNED IN", isSignedIn);
-    console.log("IS LOADED", isLoaded);
-    const checkAndRedirect = async () => {
-      if (userId && sessionId) {
-        const userExists = await checkUserExists(userId);
-        console.log("USER EXISTS", userExists);
-        if (userExists) {
-          redirect("/explore"); //TODO: Redirect to dashboard
+    if (isLoaded) {
+      console.log("USER ID", userId);
+      console.log("SESSION ID", sessionId);
+      console.log("IS SIGNED IN", isSignedIn);
+      console.log("IS LOADED", isLoaded);
+      const checkAndRedirect = async () => {
+        if (userId && sessionId) {
+          const userExists = await checkUserExists(userId);
+          console.log("USER EXISTS", userExists);
+          if (userExists) {
+            redirect("/explore"); //TODO: Redirect to dashboard
+          }
         }
+      };
+      if (isSignedIn) {
+        checkAndRedirect();
+        console.log("Redirecting to /explore...");
+      } else {
+        console.log("What");
+        setIsPageLoading(false);
       }
-    };
-    if (isSignedIn) {
-      checkAndRedirect();
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, isLoaded, sessionId, userId]);
 
-  if (!isLoaded) {
+  if (isPageLoading) {
     return <div>Loading...</div>;
   }
   return (
