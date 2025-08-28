@@ -20,7 +20,6 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -30,28 +29,19 @@ export default function LandingPage() {
   const router = useRouter();
   useEffect(() => {
     if (isLoaded) {
-      console.log("USER ID", userId);
-      console.log("SESSION ID", sessionId);
-      console.log("IS SIGNED IN", isSignedIn);
-      console.log("IS LOADED", isLoaded);
-
       let isCancelled = false;
 
       const checkAndRedirect = async () => {
         if (userId && sessionId) {
           const userExists = await checkUserExists(userId);
-          if (!isCancelled) {
-            console.log("USER EXISTS", userExists);
-            if (userExists) {
-              router.push("/dashboard"); //TODO: Redirect to dashboard
-            }
+          if (!isCancelled && userExists) {
+            router.push("/dashboard");
           }
         }
       };
 
       if (isSignedIn) {
         checkAndRedirect();
-        console.log("Redirecting to /dashboard...");
       } else {
         setIsPageLoading(false);
       }
@@ -69,10 +59,11 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 flex items-center p-4 h-16">
-        <div className="flex items-center gap-2">
+        <a href="#hero" className="flex items-center gap-2">
           <Globe className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold">OSLearn</span>
-        </div>
+        </a>
+
         <div className="hidden md:flex ml-auto gap-4">
           <nav className="flex items-center gap-6">
             <a
@@ -104,7 +95,7 @@ export default function LandingPage() {
         </div>
       </header>
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
+      <section id="hero" className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="max-w-4xl mx-auto text-center">
@@ -123,31 +114,10 @@ export default function LandingPage() {
                 <SignUpButton>
                   <Button size="lg" className="text-lg px-8 py-6">
                     <Play className="h-5 w-5 mr-2" />
-                    Go to Dashboard
-                  </Button>
-                </SignUpButton>
-                <SignUpButton>
-                  <Button size="lg" className="text-lg px-8 py-6">
-                    {" "}
-                    Browse Courses
+                    Start Learning for Free
                   </Button>
                 </SignUpButton>
               </SignedOut>
-
-              <SignedIn>
-                <Link href="/dashboard">
-                  <Button size="lg" className="text-lg px-8 py-6">
-                    <Play className="h-5 w-5 mr-2" />
-                    Go to Dashboard
-                  </Button>
-                </Link>
-                <Link href="/courses">
-                  <Button size="lg" className="text-lg px-8 py-6">
-                    {" "}
-                    Browse Courses
-                  </Button>
-                </Link>
-              </SignedIn>
             </div>
           </div>
         </div>
