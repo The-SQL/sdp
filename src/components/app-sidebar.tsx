@@ -1,5 +1,3 @@
-"use client";
-
 import {
   CreditCard,
   Globe,
@@ -35,6 +33,7 @@ const NAV_LINKS = [
 ];
 
 function AppSideBar() {
+  const pathname = usePathname();
   return (
     <Sidebar variant="sidebar">
       <SidebarHeader className="text-center text-xl font-medium pt-4">
@@ -52,7 +51,7 @@ function AppSideBar() {
                 <SidebarMenuItem key={link.name}>
                   <SidebarMenuButton
                     asChild
-                    isActive={usePathname() === link.href}
+                    isActive={pathname === link.href}
                     className="truncate font-medium text-base py-6"
                   >
                     <Link href={link.href} className="flex items-center gap-2">
