@@ -1,3 +1,167 @@
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import Link from "next/link"
+import { Calendar, Trophy, Star, TrendingUp, Heart, Plus, Bell, Settings } from "lucide-react"
+import { useUser } from "@clerk/nextjs"
+
+export default  function Dashboard() {
+  const [goalDialogOpen, setGoalDialogOpen] = useState(false)
+  const [newGoal, setNewGoal] = useState("")
+  const [goalDeadline, setGoalDeadline] = useState("")
+  const {user, isLoaded } = useUser();
+
+  const displayName = 
+  (user?.firstName && user?.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : user?.firstName) ??
+  user?.username ??
+  user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
+  "there";
+
+  const achievements = [
+    {
+      name: "First Steps",
+      description: "Complete your first lesson",
+      earned: true,
+      icon: "🎯",
+      earnedDate: "2024-01-15",
+      points: 50,
+    },
+    {
+      name: "Week Warrior",
+      description: "Study for 7 consecutive days",
+      earned: true,
+      icon: "🔥",
+      earnedDate: "2024-01-22",
+      points: 100,
+    },
+    {
+      name: "Grammar Master",
+      description: "Complete 50 grammar exercises",
+      earned: false,
+      icon: "📚",
+      progress: 32,
+      total: 50,
+      points: 200,
+    },
+    {
+      name: "Conversation Starter",
+      description: "Join 5 community discussions",
+      earned: true,
+      icon: "💬",
+      earnedDate: "2024-01-20",
+      points: 75,
+    },
+    {
+      name: "Polyglot",
+      description: "Study 3 different languages",
+      earned: false,
+      icon: "🌍",
+      progress: 2,
+      total: 3,
+      points: 300,
+    },
+    {
+      name: "Helper",
+      description: "Help 10 fellow learners",
+      earned: false,
+      icon: "🤝",
+      progress: 3,
+      total: 10,
+      points: 150,
+    },
+  ]
+
+  const currentCourses = [
+    {
+      id: 1,
+      name: "Spanish for Beginners",
+      progress: 65,
+      nextLesson: "Lesson 12: Past Tense",
+      image: "/mock/spanish.png",
+      totalLessons: 20,
+      completedLessons: 13,
+      lastStudied: "2 hours ago",
+      quizScore: 85,
+      timeSpent: "12h 30m",
+    },
+    {
+      id: 2,
+      name: "French Conversation",
+      progress: 30,
+      nextLesson: "Lesson 5: At the Restaurant",
+      image: "/mock/french-conversation.png",
+      totalLessons: 15,
+      completedLessons: 4,
+      lastStudied: "1 day ago",
+      quizScore: 78,
+      timeSpent: "8h 15m",
+    },
+    {
+      id: 3,
+      name: "Japanese Writing",
+      progress: 85,
+      nextLesson: "Lesson 18: Kanji Practice",
+      image: "/mock/japanese.png",
+      totalLessons: 22,
+      completedLessons: 18,
+      lastStudied: "3 hours ago",
+      quizScore: 92,
+      timeSpent: "25h 45m",
+    },
+  ]
+
+  const starredCourses = [
+    { name: "Advanced German Grammar", author: "Hans Mueller", rating: 4.7 },
+    { name: "Italian Pronunciation", author: "Giuseppe Rossi", rating: 4.8 },
+    { name: "Korean Basics", author: "Kim Min-jun", rating: 4.6 },
+  ]
+
+  const [goals, setGoals] = useState([
+    {
+      id: 1,
+      title: "Complete Spanish course by March",
+      deadline: "2024-03-15",
+      progress: 65,
+      reminder: true,
+    },
+    {
+      id: 2,
+      title: "Practice French speaking 3x per week",
+      deadline: "2024-02-28",
+      progress: 40,
+      reminder: true,
+    },
+    {
+      id: 3,
+      title: "Learn 100 new Japanese Kanji",
+      deadline: "2024-04-01",
+      progress: 75,
+      reminder: false,
+    },
+  ])
+
+  const weeklyActivity = [
+    { day: "Mon", studied: true, minutes: 45, lessons: 2 },
+    { day: "Tue", studied: true, minutes: 30, lessons: 1 },
+    { day: "Wed", studied: true, minutes: 60, lessons: 3 },
+    { day: "Thu", studied: true, minutes: 25, lessons: 1 },
+    { day: "Fri", studied: true, minutes: 40, lessons: 2 },
+    { day: "Sat", studied: false, minutes: 0, lessons: 0 },
+    { day: "Sun", studied: false, minutes: 0, lessons: 0 },
+  ]
+
+  const currentStreak = weeklyActivity.filter((day) => day.studied).length
+  const totalMinutesThisWeek = weeklyActivity.reduce((sum, day) => sum + day.minutes, 0)
+
 import { Button } from "@/components/ui/button";
 import {
     SignedIn,
