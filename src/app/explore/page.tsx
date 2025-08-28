@@ -1,7 +1,5 @@
-import { ExploreLayout } from "@/components/ui/explore/explore-layout";
 import { CoursesView } from "@/components/courses/courses-view";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { ExploreLayout } from "@/components/ui/explore/explore-layout";
 
 export default async function ExplorePage() {
 //   const user = await currentUser();

@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  UserButton,
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    SignUpButton,
+    UserButton,
 } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 async function Page() {
 //   const user = await currentUser();

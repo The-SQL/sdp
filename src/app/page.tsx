@@ -1,32 +1,30 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { checkUserExists } from "@/utils/db/server";
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    SignUpButton,
-    UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
 } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function LandingPage() {
-  const user = await currentUser();
+  const { userId, sessionId } = await auth();
 
-  if (user) {
-    const userExists = await checkUserExists(user.id);
-
+  if (userId && sessionId) {
+    const userExists = await checkUserExists(userId);
     if (userExists) {
       redirect("/explore"); //TODO: Redirect to dashboard
     }
