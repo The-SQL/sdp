@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,40 +21,49 @@ import {
 } from "@clerk/nextjs";
 import { BookOpen, Globe, Play, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const { userId, sessionId, isSignedIn, isLoaded } = useAuth();
   const [isPageLoading, setIsPageLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
     if (isLoaded) {
       console.log("USER ID", userId);
       console.log("SESSION ID", sessionId);
       console.log("IS SIGNED IN", isSignedIn);
       console.log("IS LOADED", isLoaded);
+
+      let isCancelled = false;
+
       const checkAndRedirect = async () => {
         if (userId && sessionId) {
           const userExists = await checkUserExists(userId);
-          console.log("USER EXISTS", userExists);
-          if (userExists) {
-            redirect("/explore"); //TODO: Redirect to dashboard
+          if (!isCancelled) {
+            console.log("USER EXISTS", userExists);
+            if (userExists) {
+              router.push("/explore"); //TODO: Redirect to dashboard
+            }
           }
         }
       };
+
       if (isSignedIn) {
         checkAndRedirect();
         console.log("Redirecting to /explore...");
       } else {
-        console.log("What");
         setIsPageLoading(false);
       }
+
+      return () => {
+        isCancelled = true;
+      };
     }
-  }, [isSignedIn, isLoaded, sessionId, userId]);
+  }, [isSignedIn, isLoaded, sessionId, userId, router]);
 
   if (isPageLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   return (
     <div className="min-h-screen bg-background">
