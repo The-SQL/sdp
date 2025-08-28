@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Link from "next/link"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 import {
   Star,
   Clock,
@@ -19,12 +19,13 @@ import {
   Trophy,
   ChevronRight,
   UserPlus,
-} from "lucide-react"
+} from "lucide-react";
+import { useParams } from "next/navigation";
 
-export default function CourseOverview({ params }: { params: { id: string } }) {
-  const [isStarred, setIsStarred] = useState(false)
-  const [isEnrolled, setIsEnrolled] = useState(false)
-
+export default function CourseOverview() {
+  const [isStarred, setIsStarred] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const params = useParams();
   // Mock course data based on ID
   const course = {
     id: params.id,
@@ -71,9 +72,17 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
         duration: "45 min",
         completed: false,
         lessons_detail: [
-          { title: "Spanish Alphabet and Sounds", duration: "15 min", type: "video" },
+          {
+            title: "Spanish Alphabet and Sounds",
+            duration: "15 min",
+            type: "video",
+          },
           { title: "Basic Greetings", duration: "20 min", type: "interactive" },
-          { title: "Practice: First Conversations", duration: "10 min", type: "exercise" },
+          {
+            title: "Practice: First Conversations",
+            duration: "10 min",
+            type: "exercise",
+          },
         ],
       },
       {
@@ -83,9 +92,17 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
         duration: "60 min",
         completed: false,
         lessons_detail: [
-          { title: "Family and Relationships", duration: "15 min", type: "video" },
+          {
+            title: "Family and Relationships",
+            duration: "15 min",
+            type: "video",
+          },
           { title: "Numbers 1-100", duration: "15 min", type: "interactive" },
-          { title: "Colors and Descriptions", duration: "15 min", type: "video" },
+          {
+            title: "Colors and Descriptions",
+            duration: "15 min",
+            type: "video",
+          },
           { title: "Vocabulary Quiz", duration: "15 min", type: "quiz" },
         ],
       },
@@ -97,14 +114,18 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
         completed: false,
         lessons_detail: [
           { title: "Articles and Gender", duration: "20 min", type: "video" },
-          { title: "Present Tense Verbs", duration: "25 min", type: "interactive" },
+          {
+            title: "Present Tense Verbs",
+            duration: "25 min",
+            type: "interactive",
+          },
           { title: "Question Formation", duration: "15 min", type: "video" },
           { title: "Grammar Exercises", duration: "10 min", type: "exercise" },
           { title: "Chapter Assessment", duration: "5 min", type: "quiz" },
         ],
       },
     ],
-  }
+  };
 
   const reviews = [
     {
@@ -131,9 +152,10 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
       avatar: "/placeholder.svg",
       rating: 5,
       date: "2024-01-05",
-      comment: "This course exceeded my expectations. The pronunciation guides are particularly helpful.",
+      comment:
+        "This course exceeded my expectations. The pronunciation guides are particularly helpful.",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen">
@@ -144,10 +166,16 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
             {/* Course Info */}
             <div className="lg:col-span-2">
               <div className="mb-4">
-                <Badge className="mb-2 bg-green-100 text-green-800">{course.level}</Badge>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.title}</h1>
+                <Badge className="mb-2 bg-green-100 text-green-800">
+                  {course.level}
+                </Badge>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {course.title}
+                </h1>
                 <p className="text-xl text-gray-600 mb-4">{course.subtitle}</p>
-                <p className="text-gray-700 leading-relaxed">{course.description}</p>
+                <p className="text-gray-700 leading-relaxed">
+                  {course.description}
+                </p>
               </div>
 
               {/* Course Stats */}
@@ -183,7 +211,9 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
               {/* Author Info */}
               <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={course.author.avatar || "/placeholder.svg"} />
+                  <AvatarImage
+                    src={course.author.avatar || "/placeholder.svg"}
+                  />
                   <AvatarFallback>
                     {course.author.name
                       .split(" ")
@@ -192,11 +222,15 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{course.author.name}</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    {course.author.name}
+                  </h3>
                   <p className="text-sm text-gray-600">{course.author.bio}</p>
                   <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                     <span>⭐ {course.author.rating} instructor rating</span>
-                    <span>👥 {course.author.students.toLocaleString()} students</span>
+                    <span>
+                      👥 {course.author.students.toLocaleString()} students
+                    </span>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">
@@ -217,7 +251,10 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg">
-                      <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
+                      <Button
+                        size="lg"
+                        className="bg-white text-gray-900 hover:bg-gray-100"
+                      >
                         <Play className="h-5 w-5 mr-2" />
                         Preview Course
                       </Button>
@@ -225,8 +262,12 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                   </div>
                   <div className="p-6">
                     <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">{course.price}</div>
-                      <div className="text-sm text-gray-600">Full lifetime access</div>
+                      <div className="text-3xl font-bold text-gray-900 mb-1">
+                        {course.price}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Full lifetime access
+                      </div>
                     </div>
 
                     <div className="space-y-3 mb-6">
@@ -238,8 +279,13 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                           Enroll Now
                         </Button>
                       ) : (
-                        <Button className="w-full bg-green-600 hover:bg-green-700 text-white" asChild>
-                          <Link href={`/course/${course.id}/learn`}>Continue Learning</Link>
+                        <Button
+                          className="w-full bg-green-600 hover:bg-green-700 text-white"
+                          asChild
+                        >
+                          <Link href={`/course/${course.id}/learn`}>
+                            Continue Learning
+                          </Link>
                         </Button>
                       )}
 
@@ -249,10 +295,17 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                           className="flex-1 bg-transparent"
                           onClick={() => setIsStarred(!isStarred)}
                         >
-                          <Heart className={`h-4 w-4 mr-2 ${isStarred ? "fill-current text-red-500" : ""}`} />
+                          <Heart
+                            className={`h-4 w-4 mr-2 ${
+                              isStarred ? "fill-current text-red-500" : ""
+                            }`}
+                          />
                           {isStarred ? "Starred" : "Star"}
                         </Button>
-                        <Button variant="outline" className="flex-1 bg-transparent">
+                        <Button
+                          variant="outline"
+                          className="flex-1 bg-transparent"
+                        >
                           <Share2 className="h-4 w-4 mr-2" />
                           Share
                         </Button>
@@ -286,20 +339,26 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                 <CardHeader>
                   <CardTitle>Course Curriculum</CardTitle>
                   <p className="text-sm text-gray-600">
-                    {course.chapters.length} chapters • {course.totalLessons} lessons • {course.duration} total
+                    {course.chapters.length} chapters • {course.totalLessons}{" "}
+                    lessons • {course.duration} total
                   </p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {course.chapters.map((chapter, index) => (
-                      <div key={chapter.id} className="border border-gray-200 rounded-lg">
+                      <div
+                        key={chapter.id}
+                        className="border border-gray-200 rounded-lg"
+                      >
                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-t-lg">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                               {index + 1}
                             </div>
                             <div>
-                              <h3 className="font-semibold text-gray-900">{chapter.title}</h3>
+                              <h3 className="font-semibold text-gray-900">
+                                {chapter.title}
+                              </h3>
                               <p className="text-sm text-gray-600">
                                 {chapter.lessons} lessons • {chapter.duration}
                               </p>
@@ -309,17 +368,32 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                         </div>
                         <div className="p-4 space-y-2">
                           {chapter.lessons_detail.map((lesson, lessonIndex) => (
-                            <div key={lessonIndex} className="flex items-center justify-between py-2">
+                            <div
+                              key={lessonIndex}
+                              className="flex items-center justify-between py-2"
+                            >
                               <div className="flex items-center gap-3">
                                 <div className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                                  {lesson.type === "video" && <Play className="h-3 w-3" />}
-                                  {lesson.type === "quiz" && <Trophy className="h-3 w-3" />}
-                                  {lesson.type === "exercise" && <BookOpen className="h-3 w-3" />}
-                                  {lesson.type === "interactive" && <MessageSquare className="h-3 w-3" />}
+                                  {lesson.type === "video" && (
+                                    <Play className="h-3 w-3" />
+                                  )}
+                                  {lesson.type === "quiz" && (
+                                    <Trophy className="h-3 w-3" />
+                                  )}
+                                  {lesson.type === "exercise" && (
+                                    <BookOpen className="h-3 w-3" />
+                                  )}
+                                  {lesson.type === "interactive" && (
+                                    <MessageSquare className="h-3 w-3" />
+                                  )}
                                 </div>
-                                <span className="text-sm text-gray-700">{lesson.title}</span>
+                                <span className="text-sm text-gray-700">
+                                  {lesson.title}
+                                </span>
                               </div>
-                              <span className="text-xs text-gray-500">{lesson.duration}</span>
+                              <span className="text-xs text-gray-500">
+                                {lesson.duration}
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -377,18 +451,27 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                       <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                      <span className="text-2xl font-bold">{course.rating}</span>
+                      <span className="text-2xl font-bold">
+                        {course.rating}
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-600">Based on {course.reviews} reviews</div>
+                    <div className="text-sm text-gray-600">
+                      Based on {course.reviews} reviews
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                     {reviews.map((review) => (
-                      <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                      <div
+                        key={review.id}
+                        className="border-b border-gray-200 pb-6 last:border-b-0"
+                      >
                         <div className="flex items-start gap-4">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={review.avatar || "/placeholder.svg"} />
+                            <AvatarImage
+                              src={review.avatar || "/placeholder.svg"}
+                            />
                             <AvatarFallback>
                               {review.user
                                 .split(" ")
@@ -398,18 +481,24 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
                           </Avatar>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold text-gray-900">{review.user}</h4>
+                              <h4 className="font-semibold text-gray-900">
+                                {review.user}
+                              </h4>
                               <div className="flex items-center">
                                 {[...Array(5)].map((_, i) => (
                                   <Star
                                     key={i}
                                     className={`h-4 w-4 ${
-                                      i < review.rating ? "text-yellow-400 fill-current" : "text-gray-300"
+                                      i < review.rating
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-300"
                                     }`}
                                   />
                                 ))}
                               </div>
-                              <span className="text-sm text-gray-500">{review.date}</span>
+                              <span className="text-sm text-gray-500">
+                                {review.date}
+                              </span>
                             </div>
                             <p className="text-gray-700">{review.comment}</p>
                           </div>
@@ -425,16 +514,23 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
               <Card className="border border-gray-200">
                 <CardHeader>
                   <CardTitle>Course Discussions</CardTitle>
-                  <p className="text-sm text-gray-600">Connect with fellow students and ask questions</p>
+                  <p className="text-sm text-gray-600">
+                    Connect with fellow students and ask questions
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-8">
                     <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Join the Discussion</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Join the Discussion
+                    </h3>
                     <p className="text-gray-600 mb-4">
-                      Enroll in this course to participate in discussions with other students
+                      Enroll in this course to participate in discussions with
+                      other students
                     </p>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">Enroll to Join Discussions</Button>
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                      Enroll to Join Discussions
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -443,5 +539,5 @@ export default function CourseOverview({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

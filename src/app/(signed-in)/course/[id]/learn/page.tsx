@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,15 +25,17 @@ import {
   Bot,
   Send,
   Users,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-export default function CourseLearning({ params }: { params: { id: string } }) {
-  const [currentLesson, setCurrentLesson] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [chatOpen, setChatOpen] = useState(false)
-  const [chatMessage, setChatMessage] = useState("")
-  const [forumOpen, setForumOpen] = useState(false)
+export default function CourseLearning() {
+  const [currentLesson, setCurrentLesson] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessage, setChatMessage] = useState("");
+  const [forumOpen, setForumOpen] = useState(false);
+  const params = useParams();
 
   const course = {
     id: params.id,
@@ -35,7 +43,7 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
     totalLessons: 20,
     completedLessons: 8,
     currentChapter: "Basic Grammar",
-  }
+  };
 
   const lessons = [
     {
@@ -46,7 +54,8 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
       completed: true,
       content: {
         videoUrl: "/placeholder-video.mp4",
-        transcript: "Welcome to your first Spanish lesson. Today we'll learn the Spanish alphabet...",
+        transcript:
+          "Welcome to your first Spanish lesson. Today we'll learn the Spanish alphabet...",
         notes: "The Spanish alphabet has 27 letters, including the unique 'ñ'.",
       },
     },
@@ -81,17 +90,21 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
         ],
       },
     },
-  ]
+  ];
 
   const chatMessages = [
-    { type: "bot", message: "Hello! I'm your Spanish learning assistant. How can I help you today?" },
+    {
+      type: "bot",
+      message:
+        "Hello! I'm your Spanish learning assistant. How can I help you today?",
+    },
     { type: "user", message: "I'm having trouble with pronunciation of 'rr'" },
     {
       type: "bot",
       message:
         "The rolled 'rr' is tricky! Try placing your tongue tip against the roof of your mouth and blow air to make it vibrate. Practice with words like 'perro' (dog) and 'carro' (car).",
     },
-  ]
+  ];
 
   const forumPosts = [
     {
@@ -106,9 +119,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
       question: "Difference between 'ser' and 'estar'?",
       replies: 7,
     },
-  ]
+  ];
 
-  const currentLessonData = lessons[currentLesson]
+  const currentLessonData = lessons[currentLesson];
 
   return (
     <div className="min-h-screen bg-white">
@@ -124,7 +137,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
               Back to Course
             </Link>
             <h2 className="font-bold text-lg text-gray-900">{course.title}</h2>
-            <p className="text-sm text-gray-600 mb-4">{course.currentChapter}</p>
+            <p className="text-sm text-gray-600 mb-4">
+              {course.currentChapter}
+            </p>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Progress</span>
@@ -132,7 +147,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                   {course.completedLessons}/{course.totalLessons}
                 </span>
               </div>
-              <Progress value={(course.completedLessons / course.totalLessons) * 100} />
+              <Progress
+                value={(course.completedLessons / course.totalLessons) * 100}
+              />
             </div>
           </div>
 
@@ -143,7 +160,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                 <div
                   key={lesson.id}
                   className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                    index === currentLesson ? "bg-blue-50 border border-blue-200" : "hover:bg-gray-100"
+                    index === currentLesson
+                      ? "bg-blue-50 border border-blue-200"
+                      : "hover:bg-gray-100"
                   }`}
                   onClick={() => setCurrentLesson(index)}
                 >
@@ -158,7 +177,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                     <div className="flex-1 min-w-0">
                       <h4
                         className={`text-sm font-medium truncate ${
-                          index === currentLesson ? "text-blue-900" : "text-gray-900"
+                          index === currentLesson
+                            ? "text-blue-900"
+                            : "text-gray-900"
                         }`}
                       >
                         {lesson.title}
@@ -167,7 +188,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                         <Badge variant="outline" className="text-xs">
                           {lesson.type}
                         </Badge>
-                        <span className="text-xs text-gray-500">{lesson.duration}</span>
+                        <span className="text-xs text-gray-500">
+                          {lesson.duration}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -183,7 +206,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
           <div className="p-6 border-b border-gray-200 bg-white">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{currentLessonData.title}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {currentLessonData.title}
+                </h1>
                 <p className="text-gray-600">
                   Lesson {currentLesson + 1} of {lessons.length}
                 </p>
@@ -202,19 +227,33 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                     </DialogHeader>
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                       {forumPosts.map((post, index) => (
-                        <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                        <div
+                          key={index}
+                          className="p-4 border border-gray-200 rounded-lg"
+                        >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-gray-900">{post.user}</span>
-                            <span className="text-sm text-gray-500">{post.time}</span>
+                            <span className="font-medium text-gray-900">
+                              {post.user}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              {post.time}
+                            </span>
                           </div>
                           <p className="text-gray-700 mb-2">{post.question}</p>
-                          <div className="text-sm text-blue-600">{post.replies} replies</div>
+                          <div className="text-sm text-blue-600">
+                            {post.replies} replies
+                          </div>
                         </div>
                       ))}
                     </div>
                     <div className="flex gap-2">
-                      <Textarea placeholder="Ask a question..." className="flex-1" />
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white">Post</Button>
+                      <Textarea
+                        placeholder="Ask a question..."
+                        className="flex-1"
+                      />
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                        Post
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -232,10 +271,19 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                     </DialogHeader>
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                       {chatMessages.map((msg, index) => (
-                        <div key={index} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
+                        <div
+                          key={index}
+                          className={`flex ${
+                            msg.type === "user"
+                              ? "justify-end"
+                              : "justify-start"
+                          }`}
+                        >
                           <div
                             className={`max-w-xs p-3 rounded-lg ${
-                              msg.type === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"
+                              msg.type === "user"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-100 text-gray-900"
                             }`}
                           >
                             {msg.message}
@@ -269,10 +317,18 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                     <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
                       <div className="text-center text-white">
                         <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                          {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                          {isPlaying ? (
+                            <Pause className="h-8 w-8" />
+                          ) : (
+                            <Play className="h-8 w-8" />
+                          )}
                         </div>
-                        <p className="text-lg">Video: {currentLessonData.title}</p>
-                        <p className="text-sm opacity-75">{currentLessonData.duration}</p>
+                        <p className="text-lg">
+                          Video: {currentLessonData.title}
+                        </p>
+                        <p className="text-sm opacity-75">
+                          {currentLessonData.duration}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center justify-center gap-4">
@@ -280,7 +336,11 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                         onClick={() => setIsPlaying(!isPlaying)}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                       >
-                        {isPlaying ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
+                        {isPlaying ? (
+                          <Pause className="h-4 w-4 mr-2" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-2" />
+                        )}
                         {isPlaying ? "Pause" : "Play"}
                       </Button>
                       <Button variant="outline">
@@ -290,7 +350,9 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <h3 className="font-semibold mb-2">Lesson Notes</h3>
-                      <p className="text-gray-700">{currentLessonData.content.notes}</p>
+                      <p className="text-gray-700">
+                        {currentLessonData.content.notes}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -298,25 +360,35 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                 {currentLessonData.type === "interactive" && (
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">{currentLessonData.title}</h2>
-                      <p className="text-gray-600 mb-8">{currentLessonData.content.text}</p>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        {currentLessonData.title}
+                      </h2>
+                      <p className="text-gray-600 mb-8">
+                        {currentLessonData.content.text}
+                      </p>
                     </div>
                     <div className="space-y-4">
-                      {currentLessonData.content.exercises?.map((exercise, index) => (
-                        <Card key={index} className="border border-gray-200">
-                          <CardContent className="p-6">
-                            <h3 className="font-semibold mb-4">{exercise.question}</h3>
-                            <div className="flex gap-4">
-                              <input
-                                type="text"
-                                className="flex-1 p-3 border border-gray-300 rounded-lg"
-                                placeholder="Type your answer..."
-                              />
-                              <Button className="bg-blue-600 hover:bg-blue-700 text-white">Check</Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                      {currentLessonData.content.exercises?.map(
+                        (exercise, index) => (
+                          <Card key={index} className="border border-gray-200">
+                            <CardContent className="p-6">
+                              <h3 className="font-semibold mb-4">
+                                {exercise.question}
+                              </h3>
+                              <div className="flex gap-4">
+                                <input
+                                  type="text"
+                                  className="flex-1 p-3 border border-gray-300 rounded-lg"
+                                  placeholder="Type your answer..."
+                                />
+                                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                                  Check
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -324,13 +396,19 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
                 {currentLessonData.type === "exercise" && (
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Practice Exercise</h2>
-                      <p className="text-gray-600 mb-8">{currentLessonData.content.text}</p>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        Practice Exercise
+                      </h2>
+                      <p className="text-gray-600 mb-8">
+                        {currentLessonData.content.text}
+                      </p>
                     </div>
                     {currentLessonData.content.quiz?.map((question, index) => (
                       <Card key={index} className="border border-gray-200">
                         <CardContent className="p-6">
-                          <h3 className="font-semibold mb-4">{question.question}</h3>
+                          <h3 className="font-semibold mb-4">
+                            {question.question}
+                          </h3>
                           <div className="space-y-2">
                             {question.options.map((option, optionIndex) => (
                               <button
@@ -378,7 +456,11 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
               <Button
                 className="bg-blue-600 hover:bg-blue-700 text-white"
                 disabled={currentLesson === lessons.length - 1}
-                onClick={() => setCurrentLesson(Math.min(lessons.length - 1, currentLesson + 1))}
+                onClick={() =>
+                  setCurrentLesson(
+                    Math.min(lessons.length - 1, currentLesson + 1)
+                  )
+                }
               >
                 Next Lesson
                 <ChevronRight className="h-4 w-4 ml-2" />
@@ -388,5 +470,5 @@ export default function CourseLearning({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
