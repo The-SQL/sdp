@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/loading";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@clerk/nextjs";
+import {
+  UserProfile,
+  UserAchievement,
+  UserCourse,
+  UserCoursesState,
+  UserProgress,
+  UserStats,
+  EditableProfile,
+} from "@/utils/types";
 import {
   Bell,
   BookOpen,
@@ -25,142 +35,73 @@ import {
   Trophy,
   User,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useEffect,
-  useState,
-} from "react";
+  getUserProfile,
+  getUserStats,
+  getUserAchievements,
+  getUserProgress,
+  getUserCourses,
+} from "@/utils/db/client"; // Adjust the import path as needed
 
 export default function Profile() {
-  // --- Clerk (client) ---
   const { user } = useUser();
   const supabase = createClient();
 
-  const displayName =
-    (user?.firstName && user?.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user?.firstName) ??
-    user?.username ??
-    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
-    "User";
-
-  const [profiles, setProfile] = useState<any>(null);
+  const [profiles, setProfile] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editableProfile, setEditableProfile] = useState({
-    name: profiles?.name,
-    email: profiles?.email || "",
-    bio: profiles?.bio || "",
-    location: profiles?.location || "",
-    nativeLanguage: profiles?.nativeLanguage || "",
+  const [editableProfile, setEditableProfile] = useState<EditableProfile>({
+    name: "",
+    email: "",
+    bio: "",
+    location: "",
+    nativeLanguage: "",
   });
-  const [activeTab, setActiveTab] = useState("overview");
-  const [stats1, setStats] = useState<any>(null);
-  const [achievements1, setAchievements] = useState<any>(null);
-  const [courses, setCourses] = useState<any>(null);
-  const [progress, setProgress] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "courses" | "achievements" | "favorites" | "settings"
+  >("overview");
+  const [stats1, setStats] = useState<UserStats | null>(null);
+  const [achievements1, setAchievements] = useState<UserAchievement[] | null>(
+    null
+  );
+  const [courses, setCourses] = useState<UserCoursesState | null>(null);
+  const [progress, setProgress] = useState<UserProgress[] | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  let isMounted = true; // Track component mount state
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [
+          profileData,
+          statsData,
+          achievementsData,
+          progressData,
+          coursesData,
+        ] = await Promise.all([
+          getUserProfile(user.id),
+          getUserStats(user.id),
+          getUserAchievements(user.id),
+          getUserProgress(user.id),
+          getUserCourses(user.id),
+        ]);
 
-  const loadData = async () => {
-    try {
-      // Execute all requests in parallel
-      const [
-        profileResponse,
-        statsResponse,
-        achievementsResponse,
-        progressResponse,
-        coursesResponse
-      ] = await Promise.allSettled([
-        supabase.from("users").select("*").eq("clerk_id", user.id).single(),
-        supabase.from("user_streaks").select("*").eq("user_id", user.id).maybeSingle(),
-        supabase.from("user_achievements").select("*").eq("user_id", user.id),
-        supabase.from("user_progress").select("*").eq("user_id", user.id),
-        supabase.from("user_courses").select(`
-          *,
-          course:course_id (
-            title,
-            language:language_id (name)
-          )
-        `).eq("user_id", user.id)
-      ]);
-
-      // Only update state if component is still mounted
-      if (!isMounted) return;
-
-      // Helper function to handle responses
-      const handleResponse = <T,>(
-        response: PromiseSettledResult<any>,
-        setState: (data: T) => void,
-        name: string
-      ) => {
-        if (response.status === 'fulfilled') {
-          const { data, error } = response.value;
-          if (!error) {
-            setState(data);
-          } else {
-            console.error(`${name} fetch error:`, error);
-          }
-        } else {
-          console.error(`${name} request failed:`, response.reason);
-        }
-      };
-
-      // Handle each response
-      handleResponse(profileResponse, setProfile, 'Profile');
-      handleResponse(statsResponse, setStats, 'Stats');
-      handleResponse(achievementsResponse, setAchievements, 'Achievements');
-      handleResponse(progressResponse, setProgress, 'Progress');
-
-      // Handle courses response separately
-      if (coursesResponse.status === 'fulfilled') {
-        const { data, error } = coursesResponse.value;
-        if (!error) {
-          const userCourses = data.map((c: any) => ({
-            id: c.id,
-            course_id: c.course_id,
-            enrolled_at: c.enrolled_at,
-            completed_at: c.completed_at,
-            overall_progress: c.overall_progress,
-            course_title: c.course.title,
-          }));
-
-          const languageNames = [...new Set(data.map((c: any) => c.course.language.name))];
-          
-          const num_completed = userCourses.filter((c: any) => c.completed_at !== null).length;
-          const num_in_progress = userCourses.filter((c: any) => c.completed_at === null).length;
-
-          setCourses({
-            data: userCourses,
-            languageNames,
-            num_completed,
-            num_in_progress,
-          });
-        } else {
-          console.error('Courses fetch error:', error);
-        }
-      } else {
-        console.error('Courses request failed:', coursesResponse.reason);
+        setProfile(profileData);
+        setStats(statsData);
+        setAchievements(achievementsData);
+        setProgress(progressData);
+        setCourses(coursesData);
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-    } catch (error) {
-      console.error('Unexpected error in loadData:', error);
-    }
-  };
-
-  loadData();
-
-  // Cleanup function to prevent state updates after unmount
-  return () => {
-    isMounted = false;
-  };
-}, [user]);
+    loadData();
+  }, [user]);
 
   useEffect(() => {
     if (profiles) {
@@ -249,10 +190,23 @@ export default function Profile() {
       })
       .eq("clerk_id", user.id);
 
-    setProfile({ ...profiles, ...editableProfile });
+    if (profiles) {
+      setProfile({
+        ...profiles,
+        ...editableProfile,
+        id: profiles.id,
+        clerk_id: profiles.clerk_id,
+        profile_url: profiles.profile_url,
+        created_at: profiles.created_at,
+      });
+    }
     setIsEditing(false);
     setActiveTab("settings");
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -270,7 +224,7 @@ export default function Profile() {
                   />
                 ) : (
                   <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">
-                    {profiles?.name[0] || displayName[0]}
+                    {profiles?.name[0]}
                   </AvatarFallback>
                 )}
               </Avatar>
@@ -279,13 +233,13 @@ export default function Profile() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center justify-between w-full">
                     <h1 className="text-3xl font-bold text-gray-900">
-                      {profiles?.name || displayName}
+                      {profiles?.name}
                     </h1>
                     <Button
                       onClick={() => {
-                        if (isEditing) handleSave(); // Save if editing
+                        if (isEditing) handleSave();
                         else {
-                          setIsEditing(true); // Start editing
+                          setIsEditing(true);
                           setActiveTab("settings");
                         }
                       }}
@@ -342,7 +296,7 @@ export default function Profile() {
 
         <Tabs
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={(value) => setActiveTab(value as typeof activeTab)}
           className="space-y-6"
         >
           <TabsList className="grid w-full grid-cols-5">
@@ -419,37 +373,7 @@ export default function Profile() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {courses?.languageNames.map(
-                    (
-                      language:
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                        | Iterable<ReactNode>
-                        | ReactPortal
-                        | Promise<
-                            | string
-                            | number
-                            | bigint
-                            | boolean
-                            | ReactPortal
-                            | ReactElement<
-                                unknown,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | null
-                            | undefined
-                          >
-                        | null
-                        | undefined,
-                      index: Key | null | undefined
-                    ) => (
+                  {courses?.languageNames.map((language, index) => (
                       <Badge
                         key={index}
                         variant="secondary"
@@ -457,8 +381,7 @@ export default function Profile() {
                       >
                         {language}
                       </Badge>
-                    )
-                  )}
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -467,84 +390,7 @@ export default function Profile() {
           <TabsContent value="courses" className="space-y-6">
             <div className="grid gap-6">
               {courses?.data.map(
-                (course: {
-                  completed_at: any;
-                  overall_progress: number;
-                  course_title: ReactNode;
-                  id: Key | null | undefined;
-                  title:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<unknown, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Promise<
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactPortal
-                        | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                        | Iterable<ReactNode>
-                        | null
-                        | undefined
-                      >
-                    | null
-                    | undefined;
-                  status:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<unknown, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | Promise<
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactPortal
-                        | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                        | Iterable<ReactNode>
-                        | null
-                        | undefined
-                      >
-                    | null
-                    | undefined;
-                  progress:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<unknown, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | Promise<
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactPortal
-                        | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                        | Iterable<ReactNode>
-                        | null
-                        | undefined
-                      >
-                    | null
-                    | undefined;
-                  completedDate: any;
-                  lastAccessed: any;
-                }) => (
+                (course: UserCourse) => (
                   <Card key={course.id}>
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
@@ -563,9 +409,9 @@ export default function Profile() {
                               : "bg-blue-100 text-blue-800"
                           }
                         >
-                          { course.overall_progress === 100
-                              ? "Completed"
-                              : "In Progress"}
+                          {course.overall_progress === 100
+                            ? "Completed"
+                            : "In Progress"}
                         </Badge>
                       </div>
                       <div className="space-y-2">
@@ -573,19 +419,23 @@ export default function Profile() {
                           <span>Progress</span>
                           <span>{course.overall_progress}%</span>
                         </div>
-                        <Progress value={Number(course.overall_progress) || 0} className="h-2" />
+                        <Progress
+                          value={Number(course.overall_progress) || 0}
+                          className="h-2"
+                        />
                         <p className="text-sm text-gray-600">
                           {course.overall_progress === 100
-                            ? `Completed on ${course?.completed_at
-                        ? new Date(course.completed_at).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            }
-                          )
-                        : "Unknown"}`
+                            ? `Completed on ${
+                                course?.completed_at
+                                  ? new Date(
+                                      course.completed_at
+                                    ).toLocaleDateString("en-US", {
+                                      month: "long",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    })
+                                  : "Unknown"
+                              }`
                             : ``}
                         </p>
                       </div>
