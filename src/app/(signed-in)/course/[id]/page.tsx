@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,143 +19,118 @@ import {
   Trophy,
   ChevronRight,
   UserPlus,
+  Ear
 } from "lucide-react";
 import { useParams } from "next/navigation";
+import { getCourseById, checkIfFavorited, addToFavorites, removeFromFavorites } from "@/utils/db/client";
+import { useAuth } from "@clerk/nextjs"; // ADDED: Import useAuth
+
+
+// ADDED: Interface for course data
+interface Course {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  author: {
+    name: string;
+    avatar: string;
+    bio: string;
+    rating: number;
+    students: number;
+  };
+  level: string;
+  language: string;
+  duration: string;
+  totalLessons: number;
+  students: number;
+  rating: number;
+  reviews: number;
+  lastUpdated: string;
+  tags: string[];
+  price: string;
+  whatYouWillLearn: string[];
+  requirements: string[];
+  chapters: Array<{
+    id: string;
+    title: string;
+    lessons: number;
+    duration: string;
+    completed: boolean;
+    lessons_detail: Array<{
+      title: string;
+      duration: string;
+      type: string;
+    }>;
+  }>;
+  reviews_list: Array<{
+    id: string;
+    user: string;
+    avatar: string;
+    rating: number;
+    date: string;
+    comment: string;
+  }>;
+}
 
 export default function CourseOverview() {
   const [isStarred, setIsStarred] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const params = useParams();
-  // Mock course data based on ID
-  const course = {
-    id: params.id,
-    title: "Spanish for Beginners",
-    subtitle: "Master the fundamentals of Spanish language",
-    description:
-      "Learn essential Spanish vocabulary and grammar for everyday conversations. This comprehensive course covers basic grammar rules, common phrases, pronunciation, and cultural insights to help you start your Spanish learning journey with confidence.",
-    image: "/spanish-learning-colorful.png",
-    author: {
-      name: "Maria Rodriguez",
-      avatar: "/placeholder.svg",
-      bio: "Native Spanish speaker with 10+ years of teaching experience",
-      rating: 4.9,
-      students: 15000,
-    },
-    level: "Beginner",
-    language: "Spanish",
-    duration: "10 weeks",
-    totalLessons: 20,
-    students: 2567,
-    rating: 4.6,
-    reviews: 234,
-    lastUpdated: "2024-01-15",
-    tags: ["Grammar", "Vocabulary", "Speaking", "Culture"],
-    price: "Free",
-    whatYouWillLearn: [
-      "Basic Spanish grammar and sentence structure",
-      "Essential vocabulary for daily conversations",
-      "Proper pronunciation and accent patterns",
-      "Cultural context and social customs",
-      "Numbers, dates, and time expressions",
-      "Common phrases for travel and dining",
-    ],
-    requirements: [
-      "No prior Spanish knowledge required",
-      "Dedication to practice 30 minutes daily",
-      "Access to audio playback for pronunciation",
-    ],
-    chapters: [
-      {
-        id: 1,
-        title: "Introduction to Spanish",
-        lessons: 3,
-        duration: "45 min",
-        completed: false,
-        lessons_detail: [
-          {
-            title: "Spanish Alphabet and Sounds",
-            duration: "15 min",
-            type: "video",
-          },
-          { title: "Basic Greetings", duration: "20 min", type: "interactive" },
-          {
-            title: "Practice: First Conversations",
-            duration: "10 min",
-            type: "exercise",
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "Essential Vocabulary",
-        lessons: 4,
-        duration: "60 min",
-        completed: false,
-        lessons_detail: [
-          {
-            title: "Family and Relationships",
-            duration: "15 min",
-            type: "video",
-          },
-          { title: "Numbers 1-100", duration: "15 min", type: "interactive" },
-          {
-            title: "Colors and Descriptions",
-            duration: "15 min",
-            type: "video",
-          },
-          { title: "Vocabulary Quiz", duration: "15 min", type: "quiz" },
-        ],
-      },
-      {
-        id: 3,
-        title: "Basic Grammar",
-        lessons: 5,
-        duration: "75 min",
-        completed: false,
-        lessons_detail: [
-          { title: "Articles and Gender", duration: "20 min", type: "video" },
-          {
-            title: "Present Tense Verbs",
-            duration: "25 min",
-            type: "interactive",
-          },
-          { title: "Question Formation", duration: "15 min", type: "video" },
-          { title: "Grammar Exercises", duration: "10 min", type: "exercise" },
-          { title: "Chapter Assessment", duration: "5 min", type: "quiz" },
-        ],
-      },
-    ],
+  const [course, setCourse] = useState<Course | null>(null); // ADDED type annotation
+  const [loading, setLoading] = useState(true);
+  const { userId } = useAuth(); // ADDED: Get current user ID
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const courseData = await getCourseById(params.id as string);
+        setCourse(courseData as Course);
+        
+        // Check if course is favorited
+        if (userId) {
+          const favorited = await checkIfFavorited(params.id as string, userId);
+          setIsStarred(favorited);
+        }
+      } catch (error) {
+        console.error('Error fetching course:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [params.id, userId]); // ADDED: userId dependency
+
+  // ADDED: Toggle favorite function
+  const toggleFavorite = async () => {
+    if (!userId || !course) return;
+    
+    try {
+      if (isStarred) {
+        await removeFromFavorites(course.id, userId);
+      } else {
+        await addToFavorites(course.id, userId);
+      }
+      
+      setIsStarred(!isStarred);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
-  const reviews = [
-    {
-      id: 1,
-      user: "Alex Chen",
-      avatar: "/placeholder.svg",
-      rating: 5,
-      date: "2024-01-10",
-      comment:
-        "Excellent course! Maria's teaching style is very clear and engaging. The interactive exercises really help reinforce the lessons.",
-    },
-    {
-      id: 2,
-      user: "Sarah Johnson",
-      avatar: "/placeholder.svg",
-      rating: 4,
-      date: "2024-01-08",
-      comment:
-        "Great for beginners. The pace is perfect and the cultural insights are really valuable. Would recommend!",
-    },
-    {
-      id: 3,
-      user: "David Kim",
-      avatar: "/placeholder.svg",
-      rating: 5,
-      date: "2024-01-05",
-      comment:
-        "This course exceeded my expectations. The pronunciation guides are particularly helpful.",
-    },
-  ];
+  if (loading || !course) {
+    return (
+      <div className="min-h-screen bg-white p-8">
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">Loading course...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const reviews = course.reviews_list;
 
   return (
     <div className="min-h-screen">
@@ -201,7 +176,7 @@ export default function CourseOverview() {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {course.tags.map((tag, index) => (
+                {course.tags.map((tag: string, index: number) => ( // ADDED type annotations
                   <Badge key={index} variant="outline" className="text-xs">
                     {tag}
                   </Badge>
@@ -217,7 +192,7 @@ export default function CourseOverview() {
                   <AvatarFallback>
                     {course.author.name
                       .split(" ")
-                      .map((n) => n[0])
+                      .map((n: string) => n[0]) // ADDED type annotation
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
@@ -293,14 +268,15 @@ export default function CourseOverview() {
                         <Button
                           variant="outline"
                           className="flex-1 bg-transparent"
-                          onClick={() => setIsStarred(!isStarred)}
+                          onClick={toggleFavorite} // UPDATED: Use toggleFavorite function
+                          disabled={!userId}
                         >
                           <Heart
                             className={`h-4 w-4 mr-2 ${
                               isStarred ? "fill-current text-red-500" : ""
                             }`}
                           />
-                          {isStarred ? "Starred" : "Star"}
+                          {isStarred ? "Added to Favorites" : "Add to Favorites"}
                         </Button>
                         <Button
                           variant="outline"
@@ -345,7 +321,7 @@ export default function CourseOverview() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {course.chapters.map((chapter, index) => (
+                    {course.chapters.map((chapter, index: number) => ( // ADDED type annotation
                       <div
                         key={chapter.id}
                         className="border border-gray-200 rounded-lg"
@@ -367,7 +343,7 @@ export default function CourseOverview() {
                           <ChevronRight className="h-5 w-5 text-gray-400" />
                         </div>
                         <div className="p-4 space-y-2">
-                          {chapter.lessons_detail.map((lesson, lessonIndex) => (
+                          {chapter.lessons_detail.map((lesson, lessonIndex: number) => ( // ADDED type annotation
                             <div
                               key={lessonIndex}
                               className="flex items-center justify-between py-2"
@@ -377,13 +353,13 @@ export default function CourseOverview() {
                                   {lesson.type === "video" && (
                                     <Play className="h-3 w-3" />
                                   )}
-                                  {lesson.type === "quiz" && (
-                                    <Trophy className="h-3 w-3" />
+                                  {lesson.type === "audio" && (
+                                    <Ear className="h-3 w-3" />
                                   )}
                                   {lesson.type === "exercise" && (
                                     <BookOpen className="h-3 w-3" />
                                   )}
-                                  {lesson.type === "interactive" && (
+                                  {lesson.type === "text" && (
                                     <MessageSquare className="h-3 w-3" />
                                   )}
                                 </div>
@@ -412,7 +388,7 @@ export default function CourseOverview() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {course.whatYouWillLearn.map((item, index) => (
+                      {course.whatYouWillLearn.map((item: string, index: number) => ( // ADDED type annotations
                         <li key={index} className="flex items-start gap-2">
                           <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
                             <div className="w-2 h-2 bg-green-600 rounded-full"></div>
@@ -430,7 +406,7 @@ export default function CourseOverview() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {course.requirements.map((item, index) => (
+                      {course.requirements.map((item: string, index: number) => ( // ADDED type annotations
                         <li key={index} className="flex items-start gap-2">
                           <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
                             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -475,7 +451,7 @@ export default function CourseOverview() {
                             <AvatarFallback>
                               {review.user
                                 .split(" ")
-                                .map((n) => n[0])
+                                .map((n: string) => n[0]) // ADDED type annotation
                                 .join("")}
                             </AvatarFallback>
                           </Avatar>
