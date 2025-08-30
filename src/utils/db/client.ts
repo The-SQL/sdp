@@ -8,7 +8,6 @@ import {
   UserProgress,
   UserStats,
 } from "../types";
-import { PostgrestError } from "@supabase/supabase-js";
 
 export async function checkUserExists(clerk_id: string) {
   const supabase = createClient();
