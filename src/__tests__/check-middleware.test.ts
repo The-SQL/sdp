@@ -9,7 +9,6 @@ jest.mock("@clerk/nextjs/server", () => ({
   }),
   createRouteMatcher: jest.fn(() => {
     return () => true; // always match for test simplicity
-  }),
 }));
 
 import middleware, { config } from "@/middleware";
