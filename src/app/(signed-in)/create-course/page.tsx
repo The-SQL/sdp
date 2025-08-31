@@ -2,12 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    insertCourse,
-    insertCourseTags,
-    insertLessons,
-    insertUnits,
-    updateCourse,
-    uploadImageToSupabase
+  insertCourse,
+  insertCourseTags,
+  insertLessons,
+  insertUnits,
+  updateCourse,
+  uploadImageToSupabase,
 } from "@/utils/db/client";
 import { Course, Lesson, Tag, Unit } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
@@ -83,7 +83,9 @@ export default function CreateCourse() {
     ]);
   };
 
-  const publishCourse = async (state: string) => {
+  const publishCourse = async (
+    state: string
+  ): Promise<{ success: boolean; data: Course | null }> => {
     try {
       const courseToPublish = {
         ...courseData,
@@ -121,8 +123,10 @@ export default function CreateCourse() {
       }
 
       console.log("Done");
+      return { success: true, data: result };
     } catch (error) {
       console.error("Error saving draft: ", error);
+      return { success: false, data: null };
     }
   };
 
@@ -176,7 +180,10 @@ export default function CreateCourse() {
           </TabsContent>
 
           <TabsContent value="collaboration" className="space-y-6">
-            <CollaborationTab collaborators={collaborators} pendingRequests={pendingRequests} />
+            <CollaborationTab
+              collaborators={collaborators}
+              pendingRequests={pendingRequests}
+            />
           </TabsContent>
 
           <TabsContent value="publish" className="space-y-6">
