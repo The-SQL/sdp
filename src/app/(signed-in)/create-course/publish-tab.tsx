@@ -2,17 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Course } from "@/utils/types";
 import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 function PublishTab({
   publishCourse,
 }: {
-  publishCourse: (state: string) => Promise<void>;
+  publishCourse: (
+    state: string
+  ) => Promise<{ success: boolean; data: Course | null }>;
 }) {
   const [state, setState] = useState("draft");
   const [isPublishing, setIsPublishing] = useState(false);
-
+  const router = useRouter();
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <Card className="border border-gray-200">
@@ -87,11 +91,22 @@ function PublishTab({
             <Button
               className="flex-1 bg-green-600 hover:bg-green-700 text-white"
               disabled={isPublishing}
-              onClick={() => {
+              onClick={async () => {
                 setIsPublishing(true);
 
-                publishCourse(state);
-                
+                const { success, data } = await publishCourse(state);
+
+                if (success) {
+                  alert(
+                    state === "draft"
+                      ? "Course saved as draft."
+                      : "Course published successfully!"
+                  );
+                  router.push(`/course/${data?.id}`);
+                } else {
+                  alert("There was an error publishing your course.");
+                }
+
                 setIsPublishing(false);
               }}
             >
