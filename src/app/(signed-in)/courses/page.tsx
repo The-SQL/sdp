@@ -1,5 +1,6 @@
 "use client"
 
+// Import necessary React hooks and components
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { Search, Filter, Star, Clock, Users, Heart } from "lucide-react"
 import { getAllCourses, getRecommendedCourses, checkIfFavorited, addToFavorites, removeFromFavorites } from "@/utils/db/client"
 import { useAuth } from "@clerk/nextjs"
 
+// Define the Course interface for type safety
 interface Course {
   id: string;
   title: string;
@@ -27,9 +29,13 @@ interface Course {
   isRecommended: boolean;
   price: string;
   isFavorited?: boolean;
+  isPublic: boolean;
+  isPublished: boolean;
 }
 
+// Main component for displaying courses list
 export default function Courses() {
+  // State management for filters, sorting, and course data
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLevel, setSelectedLevel] = useState("all")
   const [selectedLanguage, setSelectedLanguage] = useState("all")
@@ -38,6 +44,7 @@ export default function Courses() {
   const [loading, setLoading] = useState(true)
   const { userId } = useAuth()
 
+  // Fetch all courses and recommended courses, and check favorite status
   useEffect(() => {
     const fetchCourses = async () => {
       if (!userId) return;
@@ -73,6 +80,7 @@ export default function Courses() {
     fetchCourses()
   }, [userId])
 
+  // Handle favorite/unfavorite course action
   const toggleFavorite = async (courseId: string, currentlyFavorited: boolean) => {
     if (!userId) return;
     
@@ -95,12 +103,22 @@ export default function Courses() {
     }
   };
 
+  // Compute available languages for filtering
   const availableLanguages = useMemo(() => {
-    const languages = courses.map(course => course.language).filter(Boolean);
+    const languages = courses
+      .filter(course => course.isPublic && course.isPublished)
+      .map(course => course.language)
+      .filter(Boolean);
     return [...new Set(languages)].sort();
   }, [courses]);
 
-  const filteredCourses = courses.filter((course) => {
+  // Filter courses to only show public and published ones
+  const publicPublishedCourses = courses.filter(course => 
+    course.isPublic && course.isPublished
+  );
+
+  // Apply search, level, and language filters
+  const filteredCourses = publicPublishedCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -111,21 +129,26 @@ export default function Courses() {
     return matchesSearch && matchesLevel && matchesLanguage
   })
 
+  // Sort courses by recommended status and selected sort criteria
   const sortedCourses = [...filteredCourses].sort((a, b) => {
+    // First, sort by recommended status (recommended courses first)
+    if (a.isRecommended && !b.isRecommended) return -1;
+    if (!a.isRecommended && b.isRecommended) return 1;
+    
+    // If both are recommended or both are not, use the selected sort criteria
     switch (sortBy) {
       case "rating":
-        return b.rating - a.rating
+        return b.rating - a.rating;
       case "students":
-        return b.students - a.students
+        return b.students - a.students;
       case "duration":
-        return Number.parseInt(a.duration) - Number.parseInt(b.duration)
+        return Number.parseInt(a.duration) - Number.parseInt(b.duration);
       default:
-        return b.students - a.students
+        return b.students - a.students;
     }
-  })
+  });
 
-  const recommendedCourses = courses.filter((course) => course.isRecommended)
-
+  // Display loading state
   if (loading) {
     return (
       <div className="bg-white p-8">
@@ -136,14 +159,17 @@ export default function Courses() {
     )
   }
 
+  // Main render of the courses page
   return (
     <div className="bg-white">
       <div className="p-8">
+        {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Courses</h1>
           <p className="text-gray-600">Discover language learning courses from our global community</p>
         </div>
 
+        {/* Search and Filter Controls */}
         <div className="mb-8 space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -196,6 +222,7 @@ export default function Courses() {
           </div>
         </div>
 
+        {/* Courses List Section */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
@@ -206,6 +233,7 @@ export default function Courses() {
             <span className="text-sm text-gray-500">{sortedCourses.length} courses found</span>
           </div>
 
+          {/* Course Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedCourses.map((course) => (
               <Card key={course.id} className="hover:shadow-lg transition-shadow border border-gray-200 flex flex-col h-auto">
@@ -293,93 +321,7 @@ export default function Courses() {
           </div>
         </div>
 
-        {searchQuery === "" && selectedLevel === "all" && selectedLanguage === "all" && (
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Recommended for You</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedCourses.map((course) => (
-                <Card key={course.id} className="hover:shadow-lg transition-shadow border border-gray-200 flex flex-col h-auto">
-                  <CardContent className="p-0 flex flex-col flex-1">
-                    <div className="relative">
-                      <img
-                        src={course.image || "/placeholder.svg"}
-                        alt={course.title}
-                        className="h-48 w-full object-cover rounded-t-lg"
-                      />
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-blue-600 text-white">Recommended</Badge>
-                      </div>
-                    </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-lg text-gray-900">{course.title}</h3>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className={`hover:text-red-500 ${course.isFavorited ? 'text-red-500' : 'text-gray-400'}`}
-                          onClick={() => toggleFavorite(course.id, course.isFavorited || false)}
-                          disabled={!userId}
-                        >
-                          <Heart className={`h-4 w-4 ${course.isFavorited ? 'fill-current' : ''}`} />
-                        </Button>
-                      </div>
-                      
-                      {course.description && (
-                        <p className="text-gray-600 text-sm mb-3 line-clamp-3">{course.description}</p>
-                      )}
-                      
-                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          <span>{course.duration}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          <span>{course.students.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span>{course.rating.toFixed(1)}</span>
-                        </div>
-                      </div>
-                      
-                      {course.tags && course.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-4">
-                          {course.tags.map((tag, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                      
-                      <div className="flex items-center justify-between mb-4 mt-auto">
-                        <Badge
-                          variant="secondary"
-                          className={
-                            course.level === "Beginner"
-                              ? "bg-green-100 text-green-800"
-                              : course.level === "Intermediate"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                          }
-                        >
-                          {course.level}
-                        </Badge>
-                        <span className="text-sm text-gray-600">by {course.author}</span>
-                      </div>
-                      
-                      <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-2">
-                        <Link href={`/course/${course.id}`}>View Course</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
+        {/* Empty State for No Results */}
         {sortedCourses.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No courses found matching your criteria.</p>

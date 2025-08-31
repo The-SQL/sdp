@@ -10,6 +10,8 @@ interface SupabaseCourse {
   estimated_duration: string | null;
   learning_objectives: string | null;
   profile_url: string | null;
+  is_public: boolean;
+  is_published: boolean;
   updated_at: string | null;
   languages: { name: string } | null;
   users: { name: string; profile_url: string | null; bio: string | null } | null;
@@ -31,6 +33,7 @@ interface SupabaseCourse {
       title: string;
       content_type: string;
       order_index: number;
+      duration: number;
     }>;
   }>;
 }
@@ -42,6 +45,8 @@ interface SupabaseCourseList {
   difficulty: string | null;
   estimated_duration: string | null;
   profile_url: string | null;
+  is_public: boolean;
+  is_published: boolean;
   languages: { name: string } | null;
   users: { name: string } | null;
   course_tags: Array<{ tags: { name: string } | null }>;
@@ -50,6 +55,12 @@ interface SupabaseCourseList {
 }
 
 // Existing functions remain the same
+
+/**
+ * Checks if a user exists in the database based on their Clerk ID
+ * @param clerk_id - The Clerk user ID to check
+ * @returns Boolean indicating if the user exists
+ */
 export async function checkUserExists(clerk_id: string) {
   const supabase = createClient();
 
@@ -66,6 +77,11 @@ export async function checkUserExists(clerk_id: string) {
   return data.length > 0;
 }
 
+/**
+ * Inserts a new course into the database
+ * @param course - The course object to insert
+ * @returns The inserted course data
+ */
 export async function insertCourse(course: Course): Promise<Course> {
   const supabase = createClient();
 
@@ -84,6 +100,12 @@ export async function insertCourse(course: Course): Promise<Course> {
   return data[0];
 }
 
+/**
+ * Updates an existing course in the database
+ * @param courseId - The ID of the course to update
+ * @param updates - Partial course object with fields to update
+ * @returns The updated course data
+ */
 export async function updateCourse(
   courseId: string,
   updates: Partial<Course>
@@ -104,6 +126,13 @@ export async function updateCourse(
   return data[0];
 }
 
+/**
+ * Uploads an image file to Supabase storage
+ * @param file - The image file to upload
+ * @param bucket - The storage bucket name
+ * @param fileName - The name to give the uploaded file
+ * @returns The public URL of the uploaded image
+ */
 export const uploadImageToSupabase = async (
   file: File,
   bucket: string,
@@ -121,6 +150,11 @@ export const uploadImageToSupabase = async (
 };
 
 // NEW: Function to get all courses on explore courses page
+
+/**
+ * Fetches all public and published courses for the explore page
+ * @returns Array of transformed course data with ratings and enrollment info
+ */
 export async function getAllCourses() {
   const supabase = createClient();
 
@@ -140,6 +174,8 @@ export async function getAllCourses() {
         id
       )
     `)
+    .eq('is_public', true)  // Add this filter
+    .eq('is_published', true)  // Add this filter
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -166,12 +202,14 @@ export async function getAllCourses() {
       duration: course.estimated_duration || 'Unknown',
       students: enrolledStudents,
       rating: averageRating,
-      reviews: reviewCount || "Be the first to review",
+      reviews: reviewCount || "No reviews yet",
       author: course.users?.name || 'Unknown Author',
       description: course.description || 'No description available',
       tags: course.course_tags?.map(ct => ct.tags?.name).filter((name): name is string => name !== null) || ['Language'],
       isRecommended: Math.random() > 0.5,
-      price: "Free"
+      price: "Free",
+      isPublic: course.is_public || false,  // Add this
+      isPublished: course.is_published || false  // Add this
     };
   });
 
@@ -179,18 +217,14 @@ export async function getAllCourses() {
 }
 
 // NEW: Function to get a single course by ID to view a course's details page
+
+/**
+ * Fetches detailed information about a specific course by ID
+ * @param id - The course ID to fetch
+ * @returns Detailed course information including author stats, reviews, and curriculum
+ */
 export async function getCourseById(id: string) {
   const supabase = createClient();
-
-  function getDuration(type: string): string {
-    switch (type) {
-      case 'video': return '15 min';
-      case 'audio': return '10 min';
-      case 'text': return '10 min';
-      case 'exercise': return '20 min';
-      default: return '15 min';
-    }
-  }
 
   const { data: course, error } = await supabase
     .from('courses')
@@ -202,9 +236,18 @@ export async function getCourseById(id: string) {
       estimated_duration,
       learning_objectives,
       profile_url,
+      is_public,
+      is_published,
       updated_at,
       languages(name),
-      users!courses_author_id_fkey(name, profile_url, bio),
+      users!courses_author_id_fkey(
+        clerk_id,
+        name, 
+        profile_url, 
+        bio,
+        courses:courses!courses_author_id_fkey(count),
+        students:user_courses(count)
+      ),
       course_tags(
         tags(name)
       ),
@@ -226,7 +269,8 @@ export async function getCourseById(id: string) {
           id,
           title,
           content_type,
-          order_index
+          order_index,
+          duration
         )
       )
     `)
@@ -238,25 +282,65 @@ export async function getCourseById(id: string) {
     throw new Error('Failed to fetch course');
   }
 
-  const supabaseCourse = course as unknown as SupabaseCourse;
+  const supabaseCourse = course as unknown as any;
 
-  // Transform single course data to view a course's details page
-  const ratings = supabaseCourse.course_feedback?.map(fb => fb.rating) || [];
+  // Get author stats - published courses count and total students
+  const authorId = supabaseCourse.users?.clerk_id;
+  let authorCoursesCount = 0;
+  let authorStudentsCount = 0;
+
+  if (authorId) {
+    // Get count of published courses by this author
+    const { count: publishedCoursesCount, error: coursesError } = await supabase
+      .from('courses')
+      .select('*', { count: 'exact', head: true })
+      .eq('author_id', authorId)
+      .eq('is_published', true)
+      .eq('is_public', true);
+
+    if (!coursesError) {
+      authorCoursesCount = publishedCoursesCount || 0;
+    }
+
+    // Get total students across all courses by this author
+    const { data: authorCourses, error: authorCoursesError } = await supabase
+      .from('courses')
+      .select(`
+        id,
+        user_courses(count)
+      `)
+      .eq('author_id', authorId)
+      .eq('is_published', true)
+      .eq('is_public', true);
+
+    if (!authorCoursesError && authorCourses) {
+      authorStudentsCount = authorCourses.reduce((total: number, course: any) => {
+        return total + (course.user_courses?.[0]?.count || 0);
+      }, 0);
+    }
+  }
+
+  // Calculate course stats
+  const ratings = supabaseCourse.course_feedback?.map((fb: any) => fb.rating) || [];
   const averageRating = ratings.length > 0 
-    ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length : 0;
+    ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length 
+    : 0;
   
   const reviewCount = ratings.length;
   const enrolledStudents = supabaseCourse.user_courses?.length || 0;
-  const tags = supabaseCourse.course_tags?.map(ct => ct.tags?.name).filter((name): name is string => name !== null) || ['Language'];
+  const tags = supabaseCourse.course_tags?.map((ct: any) => ct.tags?.name).filter((name: string | null): name is string => name !== null) || ['Language'];
 
-  const chapters = supabaseCourse.units.map(unit => {
-    const lessons_detail = unit.lessons.map(lesson => ({
+  // Transform lessons to use actual duration from database
+  const chapters = supabaseCourse.units.map((unit: any) => {
+    const lessons_detail = unit.lessons.map((lesson: any) => ({
       title: lesson.title,
-      duration: getDuration(lesson.content_type),
+      duration: `${lesson.duration} min`,
       type: lesson.content_type,
     }));
 
-    const totalMin = lessons_detail.reduce((sum: number, l: { duration: string }) => sum + (parseInt(l.duration) || 0), 0);
+    const totalMin = lessons_detail.reduce((sum: number, l: { duration: string }) => 
+      sum + (parseInt(l.duration) || 0), 0);
+    
     return {
       id: unit.id,
       title: unit.title,
@@ -269,10 +353,10 @@ export async function getCourseById(id: string) {
 
   const totalLessons = chapters.reduce((acc: number, ch: { lessons: number }) => acc + ch.lessons, 0);
 
-  const reviews_list = supabaseCourse.course_feedback.map(fb => ({
+  const reviews_list = supabaseCourse.course_feedback.map((fb: any) => ({
     id: fb.id,
     user: fb.users?.name || 'Anonymous',
-    avatar: fb.users?.profile_url || '/placeholder.svg',
+    avatar: fb.users?.profile_url || '/placeholder.png',
     rating: fb.rating,
     date: fb.created_at?.split('T')[0] || 'Unknown',
     comment: fb.comment || '',
@@ -286,10 +370,11 @@ export async function getCourseById(id: string) {
     image: supabaseCourse.profile_url || '/placeholder.svg',
     author: {
       name: supabaseCourse.users?.name || 'Unknown Author',
-      avatar: supabaseCourse.users?.profile_url || '/placeholder.svg',
+      avatar: supabaseCourse.users?.profile_url || '/placeholder.',
       bio: supabaseCourse.users?.bio || 'Experienced instructor',
       rating: 4.9,
-      students: 15000,
+      students: authorStudentsCount,
+      courses_count: authorCoursesCount,
     },
     level: supabaseCourse.difficulty || 'Beginner',
     language: supabaseCourse.languages?.name || 'Unknown',
@@ -302,7 +387,7 @@ export async function getCourseById(id: string) {
     tags,
     price: "Free",
     whatYouWillLearn: supabaseCourse.learning_objectives 
-      ? supabaseCourse.learning_objectives.split('\n').map(l => l.trim()).filter(Boolean)
+      ? supabaseCourse.learning_objectives.split('\n').map((l: string) => l.trim()).filter(Boolean)
       : ['Basics of the language', 'Essential vocabulary', 'Basic grammar'],
     requirements: [
       `No prior ${supabaseCourse.languages?.name || 'language'} knowledge required`,
@@ -311,12 +396,19 @@ export async function getCourseById(id: string) {
     ],
     chapters,
     reviews_list,
+    isPublic: supabaseCourse.is_public || false,	
+    isPublished: supabaseCourse.is_published || false
   };
 
   return transformedCourse;
 }
 
 // NEW: Function to get recommended courses
+
+/**
+ * Fetches a limited number of recommended courses (public and published)
+ * @returns Array of recommended courses with transformed data
+ */
 export async function getRecommendedCourses() {
 
   const supabase = createClient();
@@ -334,6 +426,8 @@ export async function getRecommendedCourses() {
         id
       )
     `)
+    .eq('is_public', true)  // Add this filter
+    .eq('is_published', true)  // Add this filter
     .order('created_at', { ascending: false })
     .limit(3);
 
@@ -365,7 +459,9 @@ export async function getRecommendedCourses() {
       description: course.description || 'No description available',
       tags: ['Language'],
       isRecommended: true,
-      price: "Free"
+      price: "Free",
+      isPublic: course.is_public || false,  // Add this
+      isPublished: course.is_published || false  // Add this
     };
   });
 
@@ -373,7 +469,12 @@ export async function getRecommendedCourses() {
 }
 
 
-// Check if a course is favorited by the current user
+/**
+ * Checks if a course is favorited by a specific user
+ * @param courseId - The course ID to check
+ * @param userId - The user ID to check against
+ * @returns Boolean indicating if the course is favorited by the user
+ */
 export async function checkIfFavorited(courseId: string, userId: string): Promise<boolean> {
   const supabase = createClient();
   
@@ -392,7 +493,11 @@ export async function checkIfFavorited(courseId: string, userId: string): Promis
   return !!data;
 }
 
-// Add course to favorites
+/**
+ * Adds a course to a user's favorites
+ * @param courseId - The course ID to add to favorites
+ * @param userId - The user ID who is favoriting the course
+ */
 export async function addToFavorites(courseId: string, userId: string): Promise<void> {
   const supabase = createClient();
   
@@ -406,7 +511,11 @@ export async function addToFavorites(courseId: string, userId: string): Promise<
   }
 }
 
-// Remove course from favorites
+/**
+ * Removes a course from a user's favorites
+ * @param courseId - The course ID to remove from favorites
+ * @param userId - The user ID who is unfavoriting the course
+ */
 export async function removeFromFavorites(courseId: string, userId: string): Promise<void> {
   const supabase = createClient();
   
@@ -418,6 +527,48 @@ export async function removeFromFavorites(courseId: string, userId: string): Pro
 
   if (error) {
     console.error('Error removing from favorites:', error);
+    throw error;
+  }
+}
+
+/**
+ * Checks if a user is enrolled in a specific course
+ * @param courseId - The course ID to check
+ * @param userId - The user ID to check against
+ * @returns Boolean indicating if the user is enrolled in the course
+ */
+export async function checkIfEnrolled(courseId: string, userId: string): Promise<boolean> {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('user_courses')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('course_id', courseId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error checking enrollment:', error);
+    return false;
+  }
+
+  return !!data;
+}
+
+/**
+ * Enrolls a user in a specific course
+ * @param courseId - The course ID to enroll in
+ * @param userId - The user ID to enroll in the course
+ */
+export async function enrollInCourse(courseId: string, userId: string): Promise<void> {
+  const supabase = createClient();
+  
+  const { error } = await supabase
+    .from('user_courses')
+    .insert([{ user_id: userId, course_id: courseId }]);
+
+  if (error) {
+    console.error('Error enrolling in course:', error);
     throw error;
   }
 }
