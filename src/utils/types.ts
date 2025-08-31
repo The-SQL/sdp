@@ -18,3 +18,26 @@ export type Language = {
   id: string;
   name: string;
 };
+
+export type Tag = {
+  id: string;
+  name: string;
+};
+
+export type Unit = {
+  id: string;
+  course_id: string;
+  title: string;
+  order_index: number;
+  created_at?: string;
+};
+
+export type Lesson = {
+  id: string;
+  unit_id: string;
+  title: string;
+  content_type: string;
+  content:object;
+  order_index: number;
+  created_at?: string;
+};
