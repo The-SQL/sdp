@@ -71,6 +71,7 @@ export default function Profile() {
   useEffect(() => {
     if (!user) return;
 
+    // Update the loadData function in the useEffect
     const loadData = async () => {
       setLoading(true);
       try {
@@ -81,11 +82,16 @@ export default function Profile() {
           progressData,
           coursesData,
         ] = await Promise.all([
-          getUserProfile(user.id),
-          getUserStats(user.id),
-          getUserAchievements(user.id),
-          getUserProgress(user.id),
-          getUserCourses(user.id),
+          getUserProfile(user.id).catch(() => null),
+          getUserStats(user.id).catch(() => null),
+          getUserAchievements(user.id).catch(() => []),
+          getUserProgress(user.id).catch(() => []),
+          getUserCourses(user.id).catch(() => ({
+            data: [],
+            num_completed: 0,
+            num_in_progress: 0,
+            languageNames: [],
+          })),
         ]);
 
         setProfile(profileData);
@@ -99,7 +105,6 @@ export default function Profile() {
         setLoading(false);
       }
     };
-
     loadData();
   }, [user]);
 
@@ -204,10 +209,24 @@ export default function Profile() {
     setActiveTab("settings");
   };
 
+  // Add this useEffect to handle cases where data might not load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading) {
+        console.error("Data loading timed out");
+        setLoading(false);
+      }
+    }, 5000); // 5 second timeout
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   if (loading) {
     return <Loading />;
   }
-
+  if (!profiles) {
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-6xl mx-auto">
@@ -313,7 +332,10 @@ export default function Profile() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <Trophy className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p
+                    data-testid="completed-courses"
+                    className="text-2xl font-bold text-gray-900"
+                  >
                     {courses?.num_completed}
                   </p>
                   <p className="text-sm text-gray-600">Completed Courses</p>
@@ -322,7 +344,10 @@ export default function Profile() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <BookOpen className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p
+                    data-testid="in-progress-courses"
+                    className="text-2xl font-bold text-gray-900"
+                  >
                     {courses?.num_in_progress}
                   </p>
                   <p className="text-sm text-gray-600">In Progress</p>
@@ -340,7 +365,10 @@ export default function Profile() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p
+                    data-testid="current-streak"
+                    className="text-2xl font-bold text-gray-900"
+                  >
                     {stats1?.current_streak || 0}
                   </p>
                   <p className="text-sm text-gray-600">Day Streak</p>
@@ -349,7 +377,10 @@ export default function Profile() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p
+                    data-testid="longest-streak"
+                    className="text-2xl font-bold text-gray-900"
+                  >
                     {stats1?.longest_streak || 0}
                   </p>
                   <p className="text-sm text-gray-600">Best Streak</p>
@@ -374,75 +405,80 @@ export default function Profile() {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {courses?.languageNames.map((language, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="bg-blue-100 text-blue-800"
-                      >
-                        {language}
-                      </Badge>
-                    ))}
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-blue-100 text-blue-800"
+                    >
+                      {language}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="courses" className="space-y-6">
+          <TabsContent
+            value="courses"
+            className="space-y-6"
+            data-testid="courses-tab-content"
+          >
             <div className="grid gap-6">
-              {courses?.data.map(
-                (course: UserCourse) => (
-                  <Card key={course.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {course?.course_title}
-                        </h3>
-                        <Badge
-                          variant={
-                            course.overall_progress === 100
-                              ? "default"
-                              : "secondary"
-                          }
-                          className={
-                            course.overall_progress === 100
-                              ? "bg-green-600"
-                              : "bg-blue-100 text-blue-800"
-                          }
-                        >
-                          {course.overall_progress === 100
-                            ? "Completed"
-                            : "In Progress"}
-                        </Badge>
+              {courses?.data.map((course: UserCourse, idx) => (
+                <Card key={course.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3
+                        data-testid={`course-title-${idx + 1}`}
+                        className="text-lg font-semibold text-gray-900"
+                      >
+                        {course?.course_title}
+                      </h3>
+                      <Badge
+                        variant={
+                          course.overall_progress === 100
+                            ? "default"
+                            : "secondary"
+                        }
+                        className={
+                          course.overall_progress === 100
+                            ? "bg-green-600"
+                            : "bg-blue-100 text-blue-800"
+                        }
+                      >
+                        {course.overall_progress === 100
+                          ? "Completed"
+                          : "In Progress"}
+                      </Badge>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Progress</span>
+                        <span>{course.overall_progress}%</span>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span>Progress</span>
-                          <span>{course.overall_progress}%</span>
-                        </div>
-                        <Progress
-                          value={Number(course.overall_progress) || 0}
-                          className="h-2"
-                        />
-                        <p className="text-sm text-gray-600">
-                          {course.overall_progress === 100
-                            ? `Completed on ${
-                                course?.completed_at
-                                  ? new Date(
-                                      course.completed_at
-                                    ).toLocaleDateString("en-US", {
-                                      month: "long",
-                                      day: "numeric",
-                                      year: "numeric",
-                                    })
-                                  : "Unknown"
-                              }`
-                            : ``}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              )}
+                      <Progress
+                        value={Number(course.overall_progress) || 0}
+                        className="h-2"
+                      />
+                      <p className="text-sm text-gray-600">
+                        {course.overall_progress === 100
+                          ? `Completed on ${
+                              course?.completed_at
+                                ? new Date(
+                                    course.completed_at
+                                  ).toLocaleDateString("en-US", {
+                                    month: "long",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })
+                                : "Unknown"
+                            }`
+                          : ``}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
 
@@ -556,10 +592,15 @@ export default function Profile() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="name"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Name
                       </label>
                       <Input
+                        id="name"
+                        data-testid="name-input"
                         value={editableProfile.name}
                         disabled={!isEditing}
                         onChange={(e) =>
@@ -572,41 +613,52 @@ export default function Profile() {
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="email"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Email
                       </label>
                       <Input
+                        id="email"
+                        data-testid="email-input"
                         value={editableProfile.email}
                         disabled
                         className="mt-1"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      Bio
-                    </label>
-                    <Textarea
-                      value={editableProfile.bio}
-                      disabled={!isEditing}
-                      onChange={(e) =>
-                        setEditableProfile({
-                          ...editableProfile,
-                          bio: e.target.value,
-                        })
-                      }
-                      className="mt-1"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="bio"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Bio
+                      </label>
+                      <Textarea
+                        id="bio"
+                        data-testid="bio-textarea"
+                        value={editableProfile.bio}
+                        disabled={!isEditing}
+                        onChange={(e) =>
+                          setEditableProfile({
+                            ...editableProfile,
+                            bio: e.target.value,
+                          })
+                        }
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="location"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Location
                       </label>
                       <Input
+                        id="location"
+                        data-testid="location-input"
                         value={editableProfile.location}
                         disabled={!isEditing}
                         onChange={(e) =>
@@ -619,10 +671,15 @@ export default function Profile() {
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="nativeLanguage"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Native Language
                       </label>
                       <Input
+                        id="nativeLanguage"
+                        data-testid="native-language-input"
                         value={editableProfile.nativeLanguage}
                         disabled={!isEditing}
                         onChange={(e) =>

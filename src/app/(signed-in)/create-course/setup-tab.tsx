@@ -7,63 +7,58 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/utils/supabase/client";
-import { Course } from "@/utils/types";
+import { Course, Language, Tag } from "@/utils/types";
+import { PostgrestError } from "@supabase/supabase-js";
 
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { useDebounce } from "use-debounce";
+import SearchableInput from "@/components/ui/searchable-input";
+import { createLanguage, createTag } from "@/utils/db/client";
+import { XIcon } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 function SetupTab({
   courseData,
   setCourseData,
   setCourseImageFile,
+  tags,
+  setTags,
 }: {
   courseData: Course;
   setCourseData: Dispatch<SetStateAction<Course>>;
   setCourseImageFile: Dispatch<SetStateAction<File | null>>;
+  tags: Tag[];
+  setTags: Dispatch<SetStateAction<Tag[]>>;
 }) {
-  const searchTag = (tag: string) => {};
   const [localImageUrl, setLocalImageUrl] = useState<string>("");
-  const [languageQuery, setLanguageQuery] = useState("");
-  const [debouncedQuery] = useDebounce(languageQuery, 300);
-  const [languageResults, setLanguageResults] = useState<
-    { id: string; name: string }[]
-  >([]);
-  const languageInputRef = useRef<HTMLInputElement>(null);
-  const [showLanguagePopover, setShowLanguagePopover] = useState(false);
 
-  useEffect(() => {
-    if (debouncedQuery.trim().length === 0) {
-      setLanguageResults([]);
-      setShowLanguagePopover(false);
-      return;
-    }
-    const searchLanguages = async () => {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("languages")
-        .select("id, name")
-        .ilike("name", `%${debouncedQuery}%`);
-      if (!error && data && data.length > 0) {
-        setLanguageResults(data);
-      } else {
-        setLanguageResults([]);
-      }
-    };
+  const removeTag = (id: string) => {
+    setTags((prev) => prev.filter((tag) => tag.id !== id));
+  };
 
-    console.log("Searching languages for query:", debouncedQuery);
+  const searchLanguages = async (
+    query: string
+  ): Promise<{ data: Language[]; error: PostgrestError | null }> => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("languages")
+      .select("id, name")
+      .ilike("name", `%${query}%`);
+    return { data: data ?? [], error };
+  };
 
-    searchLanguages();
-  }, [debouncedQuery]);
+  const searchTags = async (
+    query: string
+  ): Promise<{ data: Tag[]; error: PostgrestError | null }> => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("tags")
+      .select("id, name")
+      .ilike("name", `%${query}%`);
+    return { data: data ?? [], error };
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -110,48 +105,15 @@ function SetupTab({
                 <Label className="block text-sm font-medium text-gray-700 mb-2">
                   Language
                 </Label>
-
-                <Popover
-                  open={showLanguagePopover && languageResults.length > 0}
-                >
-                  <PopoverTrigger asChild>
-                    <Input
-                      ref={languageInputRef}
-                      type="text"
-                      placeholder="Enter language"
-                      value={languageQuery}
-                      onKeyDown={() => setShowLanguagePopover(true)}
-                      onChange={(e) => {
-                        setLanguageQuery(e.target.value);
-                      }}
-                    />
-                  </PopoverTrigger>
-
-                  <PopoverContent
-                    className="p-0 max-w-[200px]"
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                  >
-                    <span className="text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0">
-                      Results
-                    </span>
-                    {languageResults.map((lang) => (
-                      <div
-                        key={lang.id}
-                        className="p-2 cursor-pointer hover:bg-muted text-sm font-medium"
-                        onClick={() => {
-                          setCourseData({
-                            ...courseData,
-                            language_id: lang.id,
-                          });
-                          setLanguageQuery(lang.name);
-                          setShowLanguagePopover(false);
-                        }}
-                      >
-                        {lang.name}
-                      </div>
-                    ))}
-                  </PopoverContent>
-                </Popover>
+                <SearchableInput<Language>
+                  dbCall={searchLanguages}
+                  onSelect={(lang) => {
+                    setCourseData((p) => ({ ...p, language_id: lang.id })); // your actual state update
+                  }}
+                  isCreationAllowed
+                  createSearchType={createLanguage}
+                  placeholder="Enter language..."
+                />
               </div>
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-2">
@@ -226,28 +188,29 @@ function SetupTab({
               <Label className="block text-sm font-medium text-gray-700 mb-2">
                 Tags
               </Label>
-              <Input
-                placeholder="conversation, travel, beginner-friendly"
-                onChange={(e) => searchTag(e.target.value)}
+              <SearchableInput<Tag>
+                dbCall={searchTags}
+                onSelect={(tag) => {
+                  if (tags.find((t) => t.id === tag.id)) return;
+                  setTags((prev) => [...prev, tag]);
+                }}
+                isCreationAllowed
+                clearOnSelect
+                createSearchType={createTag}
+                placeholder="Enter tag..."
               />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700">
-                    Public Course
-                  </Label>
-                  <p className="text-xs text-gray-500">
-                    Allow anyone to discover and enroll
-                  </p>
-                </div>
-                <Switch
-                  checked={courseData.is_public}
-                  onCheckedChange={(checked: boolean) =>
-                    setCourseData({ ...courseData, is_public: checked })
-                  }
-                />
+              <div className="mt-2 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Badge key={tag.id} className="cursor-pointer">
+                    {tag.name}{" "}
+                    <span
+                      className="text-gray-400"
+                      onClick={() => removeTag(tag.id)}
+                    >
+                      <XIcon className="w-4 h-4" />
+                    </span>
+                  </Badge>
+                ))}
               </div>
             </div>
           </CardContent>
