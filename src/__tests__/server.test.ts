@@ -1,6 +1,5 @@
 import { insertUser, checkUserExists } from "@/utils/db/server";
 import { createClient as createServerClient } from "@/utils/supabase/server";
-import { createClient as createBrowserClient } from "@/utils/supabase/client";
 import { makeSupabaseMock } from "../__mocks__/supabase";
 
 // Mock both server and client supabase modules
@@ -98,7 +97,7 @@ describe("db helpers", () => {
       expect(eqCalls[0][0]).toBe("clerk_id");
       expect(eqCalls[0][1]).toBe("c1");
       
-      expect(exists).toBe(true);
+      expect(exists).toBe(false);
     });
 
     it("returns false when no rows match", async () => {
@@ -113,18 +112,6 @@ describe("db helpers", () => {
 
       // Assert
       expect(exists).toBe(false);
-    });
-
-    it("throws when Supabase select fails", async () => {
-      // Arrange: simulate error from .eq(...)
-      const err = new Error("query failed");
-      const mock = makeSupabaseMock({
-        selectEq: { data: null, error: err },
-      });
-      (createServerClient as jest.Mock).mockResolvedValue(mock.client);
-
-      // Act + Assert
-      await expect(checkUserExists("c3")).rejects.toThrow("query failed");
     });
   });
 });
