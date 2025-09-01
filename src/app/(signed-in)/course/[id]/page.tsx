@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -245,7 +246,7 @@ export default function CourseOverview() {
               <Card className="sticky top-8 border border-gray-200">
                 <CardContent className="p-0">
                   <div className="relative">
-                    <img
+                    <Image
                       src={course.image || "/placeholder.svg"}
                       alt={course.title}
                       className="w-full h-48 object-cover rounded-t-lg"

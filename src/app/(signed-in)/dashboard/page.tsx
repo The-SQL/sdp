@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -246,7 +247,7 @@ export default function Dashboard() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={course.image || "/placeholder.svg"}
                           alt={course.name}
                           className="w-16 h-16 rounded-lg object-cover"
