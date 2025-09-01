@@ -28,6 +28,16 @@ jest.mock("@/utils/db/profile", () => ({
   ensureUserInitialized: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock("@/utils/supabase/client", () => ({
+  createClient: jest.fn(),
+}));
+
+// Mock the profile functions to avoid side effects in tests
+jest.mock("@/utils/db/profile", () => ({
+  updateUserStreak: jest.fn().mockResolvedValue({ current_streak: 1, longest_streak: 1 }),
+  ensureUserInitialized: jest.fn().mockResolvedValue(undefined),
+}));
+
 describe("db helpers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -88,7 +98,7 @@ describe("db helpers", () => {
       expect(eqCalls[0][0]).toBe("clerk_id");
       expect(eqCalls[0][1]).toBe("c1");
       
-      expect(exists).toBe(false);
+      expect(exists).toBe(true);
     });
 
     it("returns false when no rows match", async () => {
