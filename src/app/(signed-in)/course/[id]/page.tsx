@@ -19,10 +19,17 @@ import {
   Share2,
   MessageSquare,
   ChevronRight,
-  Ear
+  Ear,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { getCourseById, checkIfFavorited, addToFavorites, removeFromFavorites, enrollInCourse, checkIfEnrolled } from "@/utils/db/client";
+import {
+  getCourseById,
+  checkIfFavorited,
+  addToFavorites,
+  removeFromFavorites,
+  enrollInCourse,
+  checkIfEnrolled,
+} from "@/utils/db/client";
 import { useAuth } from "@clerk/nextjs";
 
 // Define the Course interface for type safety
@@ -90,7 +97,7 @@ export default function CourseOverview() {
       try {
         const courseData = await getCourseById(params.id as string);
         setCourse(courseData as Course);
-        
+
         if (userId) {
           const favorited = await checkIfFavorited(params.id as string, userId);
           setIsStarred(favorited);
@@ -99,7 +106,7 @@ export default function CourseOverview() {
           setIsEnrolled(enrolled);
         }
       } catch (error) {
-        console.error('Error fetching course:', error);
+        console.error("Error fetching course:", error);
       } finally {
         setLoading(false);
       }
@@ -111,41 +118,42 @@ export default function CourseOverview() {
   // Handle favorite/unfavorite course action
   const toggleFavorite = async () => {
     if (!userId || !course) return;
-    
+
     try {
       if (isStarred) {
         await removeFromFavorites(course.id, userId);
       } else {
         await addToFavorites(course.id, userId);
       }
-      
+
       setIsStarred(!isStarred);
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error("Error toggling favorite:", error);
     }
   };
 
   // Handle course enrollment
   const handleEnroll = async () => {
     if (!userId || !course) return;
-    
+
     try {
       await enrollInCourse(course.id, userId);
       setIsEnrolled(true);
     } catch (error) {
-      console.error('Error enrolling in course:', error);
+      console.error("Error enrolling in course:", error);
     }
   };
 
   // Copy course URL to clipboard for sharing
   const handleShare = () => {
     const courseUrl = `https://sdp-orpin-iota.vercel.app/course/${course?.id}`;
-    navigator.clipboard.writeText(courseUrl)
+    navigator.clipboard
+      .writeText(courseUrl)
       .then(() => {
-        alert('Course link copied to clipboard!');
+        alert("Course link copied to clipboard!");
       })
-      .catch(err => {
-        console.error('Failed to copy link:', err);
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
       });
   };
 
@@ -189,17 +197,23 @@ export default function CourseOverview() {
               <div className="flex flex-wrap gap-6 text-sm text-gray-600 mb-6">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="font-medium">{course.rating.toFixed(1)}</span>
+                  <span className="font-medium">
+                    {course.rating.toFixed(1)}
+                  </span>
                   <span>
-                    {course.reviews === 0 ? " (no reviews yet)" : 
-                     course.reviews === 1 ? " (1 review)" : 
-                     ` (${course.reviews} reviews)`}
+                    {course.reviews === 0
+                      ? " (no reviews yet)"
+                      : course.reviews === 1
+                      ? " (1 review)"
+                      : ` (${course.reviews} reviews)`}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
                   <span>
-                    {course.students === 1 ? "1 student" : `${course.students.toLocaleString()} students`}
+                    {course.students === 1
+                      ? "1 student"
+                      : `${course.students.toLocaleString()} students`}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -253,13 +267,14 @@ export default function CourseOverview() {
             <div className="lg:col-span-1">
               <Card className="sticky top-8 border border-gray-200">
                 <CardContent className="p-0">
-                  <div className="relative">
+                  <div className="relative w-full h-48 rounded-t-lg overflow-hidden">
                     <Image
                       src={course.image || "/placeholder.svg"}
                       alt={course.title}
-                      className="w-full h-48 object-cover rounded-t-lg"
+                      fill
+                      className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg">
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                       <Button
                         size="lg"
                         className="bg-white text-gray-900 hover:bg-gray-100"
@@ -310,7 +325,9 @@ export default function CourseOverview() {
                               isStarred ? "fill-current text-red-500" : ""
                             }`}
                           />
-                          {isStarred ? "Added to Favorites" : "Add to Favorites"}
+                          {isStarred
+                            ? "Added to Favorites"
+                            : "Add to Favorites"}
                         </Button>
                         <Button
                           variant="outline"
@@ -350,8 +367,8 @@ export default function CourseOverview() {
                 <CardContent>
                   <div className="space-y-4">
                     {course.chapters.map((chapter, index: number) => (
-                      <Link 
-                        key={chapter.id} 
+                      <Link
+                        key={chapter.id}
                         href={`/course/${course.id}/learn?unit=${chapter.id}`}
                         className="block"
                       >
@@ -373,35 +390,37 @@ export default function CourseOverview() {
                             <ChevronRight className="h-5 w-5 text-gray-400" />
                           </div>
                           <div className="p-4 space-y-2">
-                            {chapter.lessons_detail.map((lesson, lessonIndex: number) => (
-                              <div
-                                key={lessonIndex}
-                                className="flex items-center justify-between py-2"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                                    {lesson.type === "video" && (
-                                      <Play className="h-3 w-3" />
-                                    )}
-                                    {lesson.type === "audio" && (
-                                      <Ear className="h-3 w-3" />
-                                    )}
-                                    {lesson.type === "exercise" && (
-                                      <BookOpen className="h-3 w-3" />
-                                    )}
-                                    {lesson.type === "text" && (
-                                      <MessageSquare className="h-3 w-3" />
-                                    )}
+                            {chapter.lessons_detail.map(
+                              (lesson, lessonIndex: number) => (
+                                <div
+                                  key={lessonIndex}
+                                  className="flex items-center justify-between py-2"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                      {lesson.type === "video" && (
+                                        <Play className="h-3 w-3" />
+                                      )}
+                                      {lesson.type === "audio" && (
+                                        <Ear className="h-3 w-3" />
+                                      )}
+                                      {lesson.type === "exercise" && (
+                                        <BookOpen className="h-3 w-3" />
+                                      )}
+                                      {lesson.type === "text" && (
+                                        <MessageSquare className="h-3 w-3" />
+                                      )}
+                                    </div>
+                                    <span className="text-sm text-gray-700">
+                                      {lesson.title}
+                                    </span>
                                   </div>
-                                  <span className="text-sm text-gray-700">
-                                    {lesson.title}
+                                  <span className="text-xs text-gray-500">
+                                    {lesson.duration}
                                   </span>
                                 </div>
-                                <span className="text-xs text-gray-500">
-                                  {lesson.duration}
-                                </span>
-                              </div>
-                            ))}
+                              )
+                            )}
                           </div>
                         </div>
                       </Link>
@@ -419,14 +438,16 @@ export default function CourseOverview() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {course.whatYouWillLearn.map((item: string, index: number) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                          <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                        </div>
-                        <span className="text-sm text-gray-700">{item}</span>
-                      </li>
-                    ))}
+                    {course.whatYouWillLearn.map(
+                      (item: string, index: number) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                          </div>
+                          <span className="text-sm text-gray-700">{item}</span>
+                        </li>
+                      )
+                    )}
                   </ul>
                 </CardContent>
               </Card>
@@ -445,9 +466,11 @@ export default function CourseOverview() {
                       </span>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {course.reviews === 0 ? "No reviews yet" : 
-                       course.reviews === 1 ? "Based on 1 review" : 
-                       `Based on ${course.reviews} reviews`}
+                      {course.reviews === 0
+                        ? "No reviews yet"
+                        : course.reviews === 1
+                        ? "Based on 1 review"
+                        : `Based on ${course.reviews} reviews`}
                     </div>
                   </div>
                 </CardHeader>
@@ -532,11 +555,13 @@ export default function CourseOverview() {
                       Enroll in this course to participate in discussions with
                       other students
                     </p>
-                    <Button 
+                    <Button
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                       onClick={!isEnrolled ? handleEnroll : undefined}
                     >
-                      {isEnrolled ? "Go to Discussions" : "Enroll to Join Discussions"}
+                      {isEnrolled
+                        ? "Go to Discussions"
+                        : "Enroll to Join Discussions"}
                     </Button>
                   </div>
                 </CardContent>

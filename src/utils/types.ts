@@ -70,16 +70,22 @@ export interface UserStats {
   longest_streak: number;
   total_lessons?: number;
   total_points?: number;
+  lessons_completed: number;
+  courses_completed: number;
+  streak: number; // map from current_streak
+  languages_learned: number;
+  quizzes_passed: number;
 }
 
 // --- Achievements (from `user_achievements`) ---
 export interface UserAchievement {
-  id: number;
+  id: string;
   name: string;
   description: string;
   earned: boolean;
   date?: string;
   progress?: number;
+  goal?: number;
 }
 
 // --- Course progress entry (from `user_courses`) ---

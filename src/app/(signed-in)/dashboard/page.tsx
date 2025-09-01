@@ -27,18 +27,21 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
-import { getUserAchievements, getUserCourses, getUserStats, getUserProgress } from "@/utils/db/client";
+import {
+  getUserAchievements,
+  getUserCourses,
+  getUserStats,
+  getUserProgress,
+} from "@/utils/db/client";
 
-type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>;       // UserCoursesState | null
-type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>;  // UserAchievement[] | null
-type StatsT = Awaited<ReturnType<typeof getUserStats>>;                // UserStats | null
-type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>;      // UserProgress[] | null
+type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>; // UserCoursesState | null
+type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
+type StatsT = Awaited<ReturnType<typeof getUserStats>>; // UserStats | null
+type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>; // UserProgress[] | null
 type UserCourseT = NonNullable<CoursesStateT>["data"][number];
-
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
-  
 
   const [goalDialogOpen, setGoalDialogOpen] = useState(false);
   const [newGoal, setNewGoal] = useState("");
@@ -48,7 +51,6 @@ export default function Dashboard() {
   const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
-  
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -58,7 +60,7 @@ export default function Dashboard() {
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
     "there";
 
-    useEffect(() => {
+  useEffect(() => {
     if (!isLoaded || !user?.id) return;
 
     let isCancelled = false;
@@ -95,10 +97,10 @@ export default function Dashboard() {
       name: a.name,
       description: a.description,
       earned: a.earned,
-      icon: "🏅",                         // default icon
+      icon: "🏅", // default icon
       earnedDate: a.date ?? null,
-      points: 0,                          // no per-achievement points in your type
-      progress: a.progress ?? 0,          // optional
+      points: 0, // no per-achievement points in your type
+      progress: a.progress ?? 0, // optional
       total: undefined as number | undefined, // not in your type
     }));
   }, [achievements]);
@@ -106,18 +108,18 @@ export default function Dashboard() {
   const currentCourses = useMemo(() => {
     const list: UserCourseT[] = coursesState?.data ?? [];
     return list.map((c) => ({
-      id: c.course_id ?? c.id,                                 // link target
-      name: c.course_title ?? "Untitled course",               // title
-      progress: Math.round(c.overall_progress ?? 0),           // %
-      nextLesson: "",                                          // plug in later if you track it
-      image: "/placeholder.svg",                               // plug in later
-      totalLessons: undefined,                                 // optional for now
-      completedLessons: undefined,                             // optional for now
+      id: c.course_id ?? c.id, // link target
+      name: c.course_title ?? "Untitled course", // title
+      progress: Math.round(c.overall_progress ?? 0), // %
+      nextLesson: "", // plug in later if you track it
+      image: "/placeholder.svg", // plug in later
+      totalLessons: undefined, // optional for now
+      completedLessons: undefined, // optional for now
       lastStudied: c.enrolled_at
         ? new Date(c.enrolled_at).toLocaleDateString()
         : "—",
-      quizScore: undefined,                                    // optional
-      timeSpent: "",                                           // optional
+      quizScore: undefined, // optional
+      timeSpent: "", // optional
     }));
   }, [coursesState]);
 
@@ -153,15 +155,20 @@ export default function Dashboard() {
 
   const weeklyActivity = useMemo(() => {
     const now = new Date();
-    const day = now.getDay();                    // 0..6 (Sun..Sat)
-    const diffToMonday = (day + 6) % 7;          // Monday=0
+    const day = now.getDay(); // 0..6 (Sun..Sat)
+    const diffToMonday = (day + 6) % 7; // Monday=0
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - diffToMonday);
     startOfWeek.setHours(0, 0, 0, 0);
 
-    const template = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d) => ({
-      day: d, studied: false, minutes: 0, lessons: 0,
-    }));
+    const template = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+      (d) => ({
+        day: d,
+        studied: false,
+        minutes: 0,
+        lessons: 0,
+      })
+    );
 
     if (!progressRows || progressRows.length === 0) return template;
 
@@ -172,7 +179,7 @@ export default function Dashboard() {
       const dt = new Date(ts);
       if (dt < startOfWeek) continue;
 
-      const weekday = (dt.getDay() + 6) % 7;    // Monday=0
+      const weekday = (dt.getDay() + 6) % 7; // Monday=0
       res[weekday].studied = true;
       // no duration info in schema -> mark at least 1 “lesson”
       res[weekday].lessons = Math.max(res[weekday].lessons, 1);
@@ -181,14 +188,16 @@ export default function Dashboard() {
   }, [progressRows]);
 
   const currentStreak = weeklyActivity.filter((d) => d.studied).length;
-  const totalMinutesThisWeek = weeklyActivity.reduce((s, d) => s + d.minutes, 0);
+  const totalMinutesThisWeek = weeklyActivity.reduce(
+    (s, d) => s + d.minutes,
+    0
+  );
 
   const totalTimeStr = "—"; // not present in your schema; show dash for now
   const lessonsCompleted = stats?.total_lessons ?? 0;
   const streakDays = stats?.current_streak ?? currentStreak; // fallback to weekly calc
   const languagesCount = coursesState?.languageNames.length ?? 0;
   const achievementPoints = stats?.total_points ?? 0;
-
 
   return (
     <div className="bg-white">
@@ -224,7 +233,8 @@ export default function Dashboard() {
                         No Courses Yet
                       </h3>
                       <p className="text-sm text-gray-600 mb-4">
-                        You haven’t enrolled in any courses. Browse the catalog to get started.
+                        You haven’t enrolled in any courses. Browse the catalog
+                        to get started.
                       </p>
                       <Button asChild>
                         <Link href="/courses">Browse Courses</Link>
@@ -236,7 +246,9 @@ export default function Dashboard() {
                 {/* Optional: loading placeholder */}
                 {loading && (
                   <Card className="border border-gray-200">
-                    <CardContent className="p-6 text-gray-600">Loading your courses…</CardContent>
+                    <CardContent className="p-6 text-gray-600">
+                      Loading your courses…
+                    </CardContent>
                   </Card>
                 )}
 
@@ -250,8 +262,11 @@ export default function Dashboard() {
                         <Image
                           src={course.image || "/placeholder.svg"}
                           alt={course.name}
-                          className="w-16 h-16 rounded-lg object-cover"
+                          width={64} // corresponds to w-16 (16 * 4px)
+                          height={64} // corresponds to h-16
+                          className="rounded-lg object-cover"
                         />
+
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <h3 className="font-semibold text-lg text-gray-900">
