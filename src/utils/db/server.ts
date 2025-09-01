@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { updateUserStreak,ensureUserInitialized } from "./profile";
 
 export async function insertUser(
   clerk_id: string,
@@ -16,6 +17,9 @@ export async function insertUser(
     console.error("Error inserting user:", error);
     throw error;
   }
+
+   await ensureUserInitialized(clerk_id);
+   await updateUserStreak(clerk_id)
 
   return data;
 }
@@ -35,3 +39,4 @@ export async function checkUserExists(clerk_id: string) {
 
     return data ? data.length > 0 : false;
 }
+
