@@ -17,9 +17,7 @@ import {
   Heart,
   Share2,
   MessageSquare,
-  Trophy,
   ChevronRight,
-  UserPlus,
   Ear
 } from "lucide-react";
 import { useParams } from "next/navigation";

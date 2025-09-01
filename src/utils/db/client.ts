@@ -65,6 +65,37 @@ interface SupabaseCourseList {
   user_courses: Array<{ id: string }>;
 }
 
+// Define interfaces for the transformed course data
+interface AuthorStats {
+  clerk_id: string;
+  name: string;
+  profile_url: string | null;
+  bio: string | null;
+  courses: { count: number } | null;
+  students: { count: number } | null;
+}
+
+interface UnitWithLessons {
+  id: string;
+  title: string;
+  order_index: number;
+  lessons: Array<{
+    id: string;
+    title: string;
+    content_type: string;
+    order_index: number;
+    duration: number;
+  }>;
+}
+
+interface CourseFeedback {
+  id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string | null;
+  users: { name: string; profile_url: string | null } | null;
+}
+
 /**
  * Checks if a user exists in the database based on their Clerk ID
  * @param clerk_id - The Clerk user ID to check
@@ -354,7 +385,7 @@ export async function getAllCourses() {
       reviews: reviewCount || "No reviews yet",
       author: course.users?.name || 'Unknown Author',
       description: course.description || 'No description available',
-      tags: course.course_tags?.map(ct => ct.tags?.name).filter((name): name is string => name !== null) || ['Language'],
+      tags: course.course_tags?.map(ct => ct.tags?.name).filter((name): name is string => name != null) || ['Language'],
       isRecommended: Math.random() > 0.5,
       price: "Free",
       isPublic: course.is_public || false,
@@ -429,7 +460,24 @@ export async function getCourseById(id: string) {
     throw new Error('Failed to fetch course');
   }
 
-  const supabaseCourse = course as unknown as any;
+  const supabaseCourse = course as unknown as {
+    id: string;
+    title: string;
+    description: string | null;
+    difficulty: string | null;
+    estimated_duration: string | null;
+    learning_objectives: string | null;
+    profile_url: string | null;
+    is_public: boolean;
+    is_published: boolean;
+    updated_at: string | null;
+    languages: { name: string } | null;
+    users: AuthorStats | null;
+    course_tags: Array<{ tags: { name: string } | null }>;
+    course_feedback: CourseFeedback[];
+    user_courses: Array<{ id: string }>;
+    units: UnitWithLessons[];
+  };
 
   const authorId = supabaseCourse.users?.clerk_id;
   let authorCoursesCount = 0;
@@ -458,23 +506,23 @@ export async function getCourseById(id: string) {
       .eq('is_public', true);
 
     if (!authorCoursesError && authorCourses) {
-      authorStudentsCount = authorCourses.reduce((total: number, course: any) => {
+      authorStudentsCount = authorCourses.reduce((total: number, course: { user_courses: Array<{ count: number }> }) => {
         return total + (course.user_courses?.[0]?.count || 0);
       }, 0);
     }
   }
 
-  const ratings = supabaseCourse.course_feedback?.map((fb: any) => fb.rating) || [];
+  const ratings = supabaseCourse.course_feedback?.map((fb: CourseFeedback) => fb.rating) || [];
   const averageRating = ratings.length > 0 
     ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length 
     : 0;
   
   const reviewCount = ratings.length;
   const enrolledStudents = supabaseCourse.user_courses?.length || 0;
-  const tags = supabaseCourse.course_tags?.map((ct: any) => ct.tags?.name).filter((name: string | null): name is string => name !== null) || ['Language'];
+  const tags = supabaseCourse.course_tags?.map((ct: { tags: { name: string } | null }) => ct.tags?.name).filter((name): name is string => name != null) || ['Language'];
 
-  const chapters = supabaseCourse.units.map((unit: any) => {
-    const lessons_detail = unit.lessons.map((lesson: any) => ({
+  const chapters = supabaseCourse.units.map((unit: UnitWithLessons) => {
+    const lessons_detail = unit.lessons.map((lesson: { title: string; duration: number; content_type: string }) => ({
       title: lesson.title,
       duration: `${lesson.duration} min`,
       type: lesson.content_type,
@@ -495,7 +543,7 @@ export async function getCourseById(id: string) {
 
   const totalLessons = chapters.reduce((acc: number, ch: { lessons: number }) => acc + ch.lessons, 0);
 
-  const reviews_list = supabaseCourse.course_feedback.map((fb: any) => ({
+  const reviews_list = supabaseCourse.course_feedback.map((fb: CourseFeedback) => ({
     id: fb.id,
     user: fb.users?.name || 'Anonymous',
     avatar: fb.users?.profile_url || '/placeholder.png',
