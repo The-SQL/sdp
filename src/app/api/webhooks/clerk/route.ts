@@ -1,6 +1,5 @@
-import { NextResponse, NextRequest } from "next/server";
 import { insertUser } from "@/utils/db/server";
-import { getAllCourses, getCourseById, getRecommendedCourses } from "@/utils/db/client";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -25,27 +24,6 @@ export async function POST(req: Request) {
   } catch (err) {
     return NextResponse.json(
       { error: `Failed to insert user: ${err}` },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(req: NextRequest) {
-  try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get('id');
-
-    if (id) {
-      const course = await getCourseById(id);
-      return NextResponse.json(course);
-    } else {
-      const courses = await getAllCourses();
-      return NextResponse.json(courses);
-    }
-  } catch (err) {
-    console.error('Server error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
       { status: 500 }
     );
   }

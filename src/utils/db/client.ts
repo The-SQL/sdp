@@ -1,53 +1,17 @@
 import { createClient } from "@/utils/supabase/client";
 import {
-  Course,
-  Language,
-  Lesson,
-  Unit,
-  UserProfile,
-  UserAchievement,
-  UserProgress,
-  UserStats,
-  UserCourse,
-  UserCoursesState,
+    Course,
+    Language,
+    Lesson,
+    Unit,
+    UserAchievement,
+    UserCourse,
+    UserCoursesState,
+    UserProfile,
+    UserProgress,
+    UserStats,
 } from "../types";
 
-// Define interfaces for the Supabase response data
-interface SupabaseCourse {
-  id: string;
-  title: string;
-  description: string | null;
-  difficulty: string | null;
-  estimated_duration: string | null;
-  learning_objectives: string | null;
-  profile_url: string | null;
-  is_public: boolean;
-  is_published: boolean;
-  updated_at: string | null;
-  languages: { name: string } | null;
-  users: { name: string; profile_url: string | null; bio: string | null } | null;
-  course_tags: Array<{ tags: { name: string } | null }>;
-  course_feedback: Array<{
-    id: string;
-    rating: number;
-    comment: string | null;
-    created_at: string | null;
-    users: { name: string; profile_url: string | null } | null;
-  }>;
-  user_courses: Array<{ id: string }>;
-  units: Array<{
-    id: string;
-    title: string;
-    order_index: number;
-    lessons: Array<{
-      id: string;
-      title: string;
-      content_type: string;
-      order_index: number;
-      duration: number;
-    }>;
-  }>;
-}
 
 interface SupabaseCourseList {
   id: string;
@@ -114,7 +78,7 @@ export async function checkUserExists(clerk_id: string) {
     throw error;
   }
 
-  return data.length > 0;
+  return data ? data.length > 0 : false;
 }
 
 /**

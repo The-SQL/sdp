@@ -33,5 +33,5 @@ export async function checkUserExists(clerk_id: string) {
     throw error;
   }
 
-  return data.length > 0;
+    return data ? data.length > 0 : false;
 }

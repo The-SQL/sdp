@@ -21,7 +21,7 @@ const customJestConfig = {
     '!src/utils/types/**',
     '!src/utils/supabase/**',
     '!src/utils/**/__mocks__/**',
-    'src/app/api/**/*.ts',
+    '!src/app/api/**/*.ts',
     'src/lib/**/*.ts',
     '!src/lib/types/**',
     '!src/lib/**/__mocks__/**',
