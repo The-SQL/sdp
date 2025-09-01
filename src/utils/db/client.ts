@@ -122,10 +122,8 @@ export async function checkUserExists(clerk_id: string) {
  * @param course - The course object to insert
  * @returns The inserted course data
  */
-export async function insertCourse(course: Course): Promise<Course> {
+export async function insertCourse(course: Course): Promise<Course | null> {
   const supabase = createClient();
-
-  console.log("Inserting course:", course);
 
   const { data, error } = await supabase
     .from("courses")
@@ -137,7 +135,7 @@ export async function insertCourse(course: Course): Promise<Course> {
     throw error;
   }
 
-  return data[0];
+  return data ? data[0] : null;
 }
 
 /**

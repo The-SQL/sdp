@@ -53,6 +53,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
+    "node-fetch": "^2.7.0",
     "node-mocks-http": "^1.17.2",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.1",

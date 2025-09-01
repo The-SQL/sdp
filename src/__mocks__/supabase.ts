@@ -15,9 +15,17 @@ export function makeSupabaseMock(options: {
     .mockResolvedValue(options.selectEq ?? { data: null, error: null });
   const select = jest.fn().mockReturnValue({ eq: eqAfterSelect });
 
-  const from = jest.fn().mockReturnValue({ insert, select });
+  // Mock for update chain: .from().update().eq().select()
+  const update = jest.fn().mockImplementation(() => ({
+    eq: () => ({
+      select: selectAfterInsert,
+    }),
+  }));
 
-  const client = { from } as unknown;
+  // Add update to the object returned by from()
+  const from = jest.fn().mockReturnValue({ insert, select, update });
 
-  return { client, from, insert, select, selectAfterInsert, eqAfterSelect };
+  const client = { from }
+
+  return { client, from, update, insert, select, selectAfterInsert, eqAfterSelect };
 }
