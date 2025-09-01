@@ -25,12 +25,29 @@ import {
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { getUserAchievements, getUserCourses, getUserStats, getUserProgress } from "@/utils/db/client";
+
+type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>;       // UserCoursesState | null
+type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>;  // UserAchievement[] | null
+type StatsT = Awaited<ReturnType<typeof getUserStats>>;                // UserStats | null
+type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>;      // UserProgress[] | null
+type UserCourseT = NonNullable<CoursesStateT>["data"][number];
+
+
 export default function Dashboard() {
+  const { user, isLoaded } = useUser();
+  
+
   const [goalDialogOpen, setGoalDialogOpen] = useState(false);
   const [newGoal, setNewGoal] = useState("");
   const [goalDeadline, setGoalDeadline] = useState("");
-  const { user } = useUser();
+  const [coursesState, setCoursesState] = useState<CoursesStateT>(null);
+  const [achievements, setAchievements] = useState<AchievementsT>(null);
+  const [stats, setStats] = useState<StatsT>(null);
+  const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
+  const [loading, setLoading] = useState(true);
+  
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -40,98 +57,68 @@ export default function Dashboard() {
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
     "there";
 
-  const achievements = [
-    {
-      name: "First Steps",
-      description: "Complete your first lesson",
-      earned: true,
-      icon: "🎯",
-      earnedDate: "2024-01-15",
-      points: 50,
-    },
-    {
-      name: "Week Warrior",
-      description: "Study for 7 consecutive days",
-      earned: true,
-      icon: "🔥",
-      earnedDate: "2024-01-22",
-      points: 100,
-    },
-    {
-      name: "Grammar Master",
-      description: "Complete 50 grammar exercises",
-      earned: false,
-      icon: "📚",
-      progress: 32,
-      total: 50,
-      points: 200,
-    },
-    {
-      name: "Conversation Starter",
-      description: "Join 5 community discussions",
-      earned: true,
-      icon: "💬",
-      earnedDate: "2024-01-20",
-      points: 75,
-    },
-    {
-      name: "Polyglot",
-      description: "Study 3 different languages",
-      earned: false,
-      icon: "🌍",
-      progress: 2,
-      total: 3,
-      points: 300,
-    },
-    {
-      name: "Helper",
-      description: "Help 10 fellow learners",
-      earned: false,
-      icon: "🤝",
-      progress: 3,
-      total: 10,
-      points: 150,
-    },
-  ];
+    useEffect(() => {
+    if (!isLoaded || !user?.id) return;
 
-  const currentCourses = [
-    {
-      id: 1,
-      name: "Spanish for Beginners",
-      progress: 65,
-      nextLesson: "Lesson 12: Past Tense",
-      image: "/mock/spanish.png",
-      totalLessons: 20,
-      completedLessons: 13,
-      lastStudied: "2 hours ago",
-      quizScore: 85,
-      timeSpent: "12h 30m",
-    },
-    {
-      id: 2,
-      name: "French Conversation",
-      progress: 30,
-      nextLesson: "Lesson 5: At the Restaurant",
-      image: "/mock/french-conversation.png",
-      totalLessons: 15,
-      completedLessons: 4,
-      lastStudied: "1 day ago",
-      quizScore: 78,
-      timeSpent: "8h 15m",
-    },
-    {
-      id: 3,
-      name: "Japanese Writing",
-      progress: 85,
-      nextLesson: "Lesson 18: Kanji Practice",
-      image: "/mock/japanese.png",
-      totalLessons: 22,
-      completedLessons: 18,
-      lastStudied: "3 hours ago",
-      quizScore: 92,
-      timeSpent: "25h 45m",
-    },
-  ];
+    let isCancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const [courses, ach, st, prog] = await Promise.all([
+          getUserCourses(user.id),
+          getUserAchievements(user.id),
+          getUserStats(user.id),
+          getUserProgress(user.id),
+        ]);
+
+        if (isCancelled) return;
+        setCoursesState(courses);
+        setAchievements(ach);
+        setStats(st);
+        setProgressRows(prog);
+      } catch (e) {
+        console.error("Dashboard data load error:", e);
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isLoaded, user?.id]);
+
+  const Achievements = useMemo(() => {
+    const list = achievements ?? [];
+    return list.slice(0, 6).map((a) => ({
+      name: a.name,
+      description: a.description,
+      earned: a.earned,
+      icon: "🏅",                         // default icon
+      earnedDate: a.date ?? null,
+      points: 0,                          // no per-achievement points in your type
+      progress: a.progress ?? 0,          // optional
+      total: undefined as number | undefined, // not in your type
+    }));
+  }, [achievements]);
+
+  const currentCourses = useMemo(() => {
+    const list: UserCourseT[] = coursesState?.data ?? [];
+    return list.map((c) => ({
+      id: c.course_id ?? c.id,                                 // link target
+      name: c.course_title ?? "Untitled course",               // title
+      progress: Math.round(c.overall_progress ?? 0),           // %
+      nextLesson: "",                                          // plug in later if you track it
+      image: "/placeholder.svg",                               // plug in later
+      totalLessons: undefined,                                 // optional for now
+      completedLessons: undefined,                             // optional for now
+      lastStudied: c.enrolled_at
+        ? new Date(c.enrolled_at).toLocaleDateString()
+        : "—",
+      quizScore: undefined,                                    // optional
+      timeSpent: "",                                           // optional
+    }));
+  }, [coursesState]);
 
   const starredCourses = [
     { name: "Advanced German Grammar", author: "Hans Mueller", rating: 4.7 },
@@ -163,21 +150,44 @@ export default function Dashboard() {
     },
   ]);
 
-  const weeklyActivity = [
-    { day: "Mon", studied: true, minutes: 45, lessons: 2 },
-    { day: "Tue", studied: true, minutes: 30, lessons: 1 },
-    { day: "Wed", studied: true, minutes: 60, lessons: 3 },
-    { day: "Thu", studied: true, minutes: 25, lessons: 1 },
-    { day: "Fri", studied: true, minutes: 40, lessons: 2 },
-    { day: "Sat", studied: false, minutes: 0, lessons: 0 },
-    { day: "Sun", studied: false, minutes: 0, lessons: 0 },
-  ];
+  const weeklyActivity = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay();                    // 0..6 (Sun..Sat)
+    const diffToMonday = (day + 6) % 7;          // Monday=0
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - diffToMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
 
-  const currentStreak = weeklyActivity.filter((day) => day.studied).length;
-  const totalMinutesThisWeek = weeklyActivity.reduce(
-    (sum, day) => sum + day.minutes,
-    0
-  );
+    const template = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d) => ({
+      day: d, studied: false, minutes: 0, lessons: 0,
+    }));
+
+    if (!progressRows || progressRows.length === 0) return template;
+
+    const res = [...template];
+    for (const row of progressRows) {
+      const ts = row.updated_at;
+      if (!ts) continue;
+      const dt = new Date(ts);
+      if (dt < startOfWeek) continue;
+
+      const weekday = (dt.getDay() + 6) % 7;    // Monday=0
+      res[weekday].studied = true;
+      // no duration info in schema -> mark at least 1 “lesson”
+      res[weekday].lessons = Math.max(res[weekday].lessons, 1);
+    }
+    return res;
+  }, [progressRows]);
+
+  const currentStreak = weeklyActivity.filter((d) => d.studied).length;
+  const totalMinutesThisWeek = weeklyActivity.reduce((s, d) => s + d.minutes, 0);
+
+  const totalTimeStr = "—"; // not present in your schema; show dash for now
+  const lessonsCompleted = stats?.total_lessons ?? 0;
+  const streakDays = stats?.current_streak ?? currentStreak; // fallback to weekly calc
+  const languagesCount = coursesState?.languageNames.length ?? 0;
+  const achievementPoints = stats?.total_points ?? 0;
+
 
   return (
     <div className="bg-white">
@@ -206,6 +216,29 @@ export default function Dashboard() {
                 </Button>
               </div>
               <div className="space-y-4">
+                {!loading && (currentCourses?.length ?? 0) === 0 && (
+                  <Card className="border border-dashed border-gray-300 bg-gray-50">
+                    <CardContent className="p-6 text-center">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        No Courses Yet
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        You haven’t enrolled in any courses. Browse the catalog to get started.
+                      </p>
+                      <Button asChild>
+                        <Link href="/courses">Browse Courses</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Optional: loading placeholder */}
+                {loading && (
+                  <Card className="border border-gray-200">
+                    <CardContent className="p-6 text-gray-600">Loading your courses…</CardContent>
+                  </Card>
+                )}
+
                 {currentCourses.map((course) => (
                   <Card
                     key={course.id}
@@ -312,6 +345,21 @@ export default function Dashboard() {
                 </Dialog>
               </div>
               <div className="space-y-3">
+                {(goals?.length ?? 0) === 0 && (
+                  <Card className="border border-dashed border-gray-300 bg-gray-50">
+                    <CardContent className="p-6 text-center">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        No Goals Yet
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Set your first learning goal to stay on track.
+                      </p>
+                      <Button onClick={() => setGoalDialogOpen(true)}>
+                        Add Goal
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
                 {goals.map((goal) => (
                   <Card key={goal.id} className="border border-gray-200">
                     <CardContent className="p-4">
@@ -440,7 +488,7 @@ export default function Dashboard() {
                 Recent Achievements
               </h2>
               <div className="space-y-3">
-                {achievements.slice(0, 4).map((achievement, index) => (
+                {(achievements ?? []).slice(0, 4).map((achievement, index) => (
                   <Card
                     key={index}
                     className={`border ${
@@ -456,7 +504,7 @@ export default function Dashboard() {
                             achievement.earned ? "" : "grayscale opacity-50"
                           }`}
                         >
-                          {achievement.icon}
+                          {/* {achievement.icon} */}
                         </div>
                         <div className="flex-1">
                           <h3
@@ -477,7 +525,7 @@ export default function Dashboard() {
                           >
                             {achievement.description}
                           </p>
-                          {!achievement.earned && achievement.progress && (
+                          {/* {!achievement.earned && achievement.progress && (
                             <div className="mt-2">
                               <Progress
                                 value={
@@ -490,13 +538,13 @@ export default function Dashboard() {
                                 {achievement.progress}/{achievement.total}
                               </span>
                             </div>
-                          )}
+                          )} */}
                         </div>
-                        {achievement.earned && (
+                        {/* {achievement.earned && achievement.points > 0 && (
                           <Badge className="bg-green-100 text-green-800 text-xs">
                             +{achievement.points}
                           </Badge>
-                        )}
+                        )} */}
                       </div>
                     </CardContent>
                   </Card>
