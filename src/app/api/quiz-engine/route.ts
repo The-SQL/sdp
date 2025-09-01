@@ -4,7 +4,7 @@ import { OpenAI } from "openai";
 
 export async function POST(req: Request) {
   const apiKey = req.headers.get("x-api-key");
-  const VALID_API_KEY = process.env.QUIZ_ENGINE_API_KEY;
+  const VALID_API_KEY = process.env.QUIZ_ENGINE_API_KEY_PUBLIC;
 
   if (!apiKey || apiKey !== VALID_API_KEY) {
     return NextResponse.json(

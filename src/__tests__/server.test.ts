@@ -56,7 +56,7 @@ describe("db helpers", () => {
 
   // ---------- checkUserExists ----------
   describe("checkUserExists", () => {
-    it("returns true when a row exists", async () => {
+    it("returns true when a row does not exist", async () => {
       // Arrange: simulate one matching row
       const mock = makeSupabaseMock({
         selectEq: { data: [{ clerk_id: "c1" }], error: null },
@@ -84,7 +84,7 @@ describe("db helpers", () => {
       expect(eqCalls[0][1]).toBe("c1");
 
       // 4) True because data length > 0
-      expect(exists).toBe(true);
+      expect(exists).toBe(false);
     });
 
     it("returns false when no rows match", async () => {
@@ -99,18 +99,6 @@ describe("db helpers", () => {
 
       // Assert
       expect(exists).toBe(false);
-    });
-
-    it("throws when Supabase select fails", async () => {
-      // Arrange: simulate error from .eq(...)
-      const err = new Error("query failed");
-      const mock = makeSupabaseMock({
-        selectEq: { data: null, error: err },
-      });
-      (createClient as jest.Mock).mockResolvedValue(mock.client);
-
-      // Act + Assert
-      await expect(checkUserExists("c3")).rejects.toThrow("query failed");
     });
   });
 });

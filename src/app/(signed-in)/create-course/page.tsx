@@ -98,7 +98,7 @@ export default function CreateCourse() {
       console.log("Lessons to save:", lessons);
       const result = await insertCourse(courseToPublish);
 
-      if (result.id) {
+      if (result) {
         if (courseImageFile) {
           const publicUrl = await uploadImageToSupabase(
             courseImageFile,

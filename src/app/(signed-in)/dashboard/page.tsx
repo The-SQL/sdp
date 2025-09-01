@@ -29,6 +29,7 @@ import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { getUserAchievements, getUserCourses, getUserStats, getUserProgress } from "@/utils/db/client";
 
+
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>;       // UserCoursesState | null
 type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>;  // UserAchievement[] | null
 type StatsT = Awaited<ReturnType<typeof getUserStats>>;                // UserStats | null
@@ -48,6 +49,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
+  const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>({});
   
 
   const displayName =
@@ -110,7 +112,7 @@ export default function Dashboard() {
       name: c.course_title ?? "Untitled course",               // title
       progress: Math.round(c.overall_progress ?? 0),           // %
       nextLesson: "",                                          // plug in later if you track it
-      image: "/placeholder.svg",                               // plug in later
+      image: c.course_cover,                               // plug in later
       totalLessons: undefined,                                 // optional for now
       completedLessons: undefined,                             // optional for now
       lastStudied: c.enrolled_at
@@ -247,8 +249,8 @@ export default function Dashboard() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
-                        <Image
-                          src={course.image || "/placeholder.svg"}
+                        <img
+                          src={course.image}
                           alt={course.name}
                           className="w-16 h-16 rounded-lg object-cover"
                         />
@@ -345,7 +347,7 @@ export default function Dashboard() {
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="space-y-3">
+              {/* <div className="space-y-3">
                 {(goals?.length ?? 0) === 0 && (
                   <Card className="border border-dashed border-gray-300 bg-gray-50">
                     <CardContent className="p-6 text-center">
@@ -392,7 +394,7 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 ))}
-              </div>
+              </div> */}
             </div>
 
             {/* Weekly Progress */}

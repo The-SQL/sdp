@@ -90,6 +90,7 @@ export interface UserCourse {
   completed_at: string | null;
   overall_progress: number;
   course_title: string;
+  course_cover: string;
 }
 
 // --- Courses state after transformation ---
