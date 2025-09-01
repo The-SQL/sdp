@@ -1,5 +1,16 @@
 import { createClient } from "@/utils/supabase/client";
-import { Course } from "../types";
+import {
+  Course,
+  Language,
+  Lesson,
+  Unit,
+  UserProfile,
+  UserAchievement,
+  UserProgress,
+  UserStats,
+  UserCourse,
+  UserCoursesState,
+} from "../types";
 
 // Define interfaces for the Supabase response data
 interface SupabaseCourse {
@@ -53,8 +64,6 @@ interface SupabaseCourseList {
   course_feedback: Array<{ rating: number }>;
   user_courses: Array<{ id: string }>;
 }
-
-// Existing functions remain the same
 
 /**
  * Checks if a user exists in the database based on their Clerk ID
@@ -149,7 +158,148 @@ export const uploadImageToSupabase = async (
   return data.publicUrl;
 };
 
-// NEW: Function to get all courses on explore courses page
+export async function createLanguage(language: string): Promise<Language> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("languages")
+    .insert({ name: language })
+    .select();
+
+  if (error) {
+    console.error("Error creating language:", error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function createTag(
+  tag: string
+): Promise<{ id: string; name: string }> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("tags")
+    .insert({ name: tag })
+    .select();
+
+  if (error) {
+    console.error("Error creating tag:", error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function insertCourseTag(
+  courseId: string,
+  tagId: string
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("course_tags")
+    .insert({ course_id: courseId, tag_id: tagId });
+
+  if (error) {
+    console.error("Error inserting course tag:", error);
+    throw error;
+  }
+}
+
+export async function insertCourseTags(courseId: string, tagIds: string[]) {
+  const supabase = createClient();
+
+  const payload = tagIds.map((tagId) => ({
+    course_id: courseId,
+    tag_id: tagId,
+  }));
+
+  const { error } = await supabase.from("course_tags").insert(payload);
+
+  if (error) throw error;
+}
+
+export async function insertUnit(
+  courseId: string,
+  title: string,
+  order_index: number
+): Promise<Unit> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("units")
+    .insert({ course_id: courseId, title, order_index })
+    .select();
+
+  if (error) {
+    console.error("Error inserting unit:", error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function insertUnits(courseId: string, units: Unit[]) {
+  const supabase = createClient();
+
+  const payload = units.map((unit) => ({
+    course_id: courseId,
+    id: unit.id,
+    title: unit.title,
+    order_index: unit.order_index,
+  }));
+
+  const { error } = await supabase.from("units").insert(payload);
+
+  if (error) throw error;
+}
+
+export async function insertLesson(
+  unitId: string,
+  title: string,
+  content_type: string,
+  content: object,
+  order_index: number
+): Promise<Lesson> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("lessons")
+    .insert({
+      unit_id: unitId,
+      title,
+      content_type,
+      content,
+      order_index,
+    })
+    .select();
+
+  if (error) {
+    console.error("Error inserting lesson:", error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function insertLessons(courseId: string, lessons: Lesson[]) {
+  const supabase = createClient();
+
+  const payload = lessons.map((lesson) => ({
+    unit_id: lesson.unit_id,
+    title: lesson.title,
+    order_index: lesson.order_index,
+    content_type: lesson.content_type,
+    content: lesson.content,
+    duration: 888,
+  }));
+
+  const { error } = await supabase.from("lessons").insert(payload);
+
+  if (error) throw error;
+}
 
 /**
  * Fetches all public and published courses for the explore page
@@ -174,8 +324,8 @@ export async function getAllCourses() {
         id
       )
     `)
-    .eq('is_public', true)  // Add this filter
-    .eq('is_published', true)  // Add this filter
+    .eq('is_public', true)
+    .eq('is_published', true)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -183,7 +333,6 @@ export async function getAllCourses() {
     throw new Error('Failed to fetch courses');
   }
 
-  // Transform the data with real ratings and enrollment numbers on explore courses page
   const transformedCourses = (courses as SupabaseCourseList[]).map(course => {
     const ratings = course.course_feedback?.map(fb => fb.rating) || [];
     const averageRating = ratings.length > 0 
@@ -208,15 +357,13 @@ export async function getAllCourses() {
       tags: course.course_tags?.map(ct => ct.tags?.name).filter((name): name is string => name !== null) || ['Language'],
       isRecommended: Math.random() > 0.5,
       price: "Free",
-      isPublic: course.is_public || false,  // Add this
-      isPublished: course.is_published || false  // Add this
+      isPublic: course.is_public || false,
+      isPublished: course.is_published || false
     };
   });
 
   return transformedCourses;
 }
-
-// NEW: Function to get a single course by ID to view a course's details page
 
 /**
  * Fetches detailed information about a specific course by ID
@@ -284,13 +431,11 @@ export async function getCourseById(id: string) {
 
   const supabaseCourse = course as unknown as any;
 
-  // Get author stats - published courses count and total students
   const authorId = supabaseCourse.users?.clerk_id;
   let authorCoursesCount = 0;
   let authorStudentsCount = 0;
 
   if (authorId) {
-    // Get count of published courses by this author
     const { count: publishedCoursesCount, error: coursesError } = await supabase
       .from('courses')
       .select('*', { count: 'exact', head: true })
@@ -302,7 +447,6 @@ export async function getCourseById(id: string) {
       authorCoursesCount = publishedCoursesCount || 0;
     }
 
-    // Get total students across all courses by this author
     const { data: authorCourses, error: authorCoursesError } = await supabase
       .from('courses')
       .select(`
@@ -320,7 +464,6 @@ export async function getCourseById(id: string) {
     }
   }
 
-  // Calculate course stats
   const ratings = supabaseCourse.course_feedback?.map((fb: any) => fb.rating) || [];
   const averageRating = ratings.length > 0 
     ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length 
@@ -330,7 +473,6 @@ export async function getCourseById(id: string) {
   const enrolledStudents = supabaseCourse.user_courses?.length || 0;
   const tags = supabaseCourse.course_tags?.map((ct: any) => ct.tags?.name).filter((name: string | null): name is string => name !== null) || ['Language'];
 
-  // Transform lessons to use actual duration from database
   const chapters = supabaseCourse.units.map((unit: any) => {
     const lessons_detail = unit.lessons.map((lesson: any) => ({
       title: lesson.title,
@@ -396,21 +538,18 @@ export async function getCourseById(id: string) {
     ],
     chapters,
     reviews_list,
-    isPublic: supabaseCourse.is_public || false,	
+    isPublic: supabaseCourse.is_public || false,
     isPublished: supabaseCourse.is_published || false
   };
 
   return transformedCourse;
 }
 
-// NEW: Function to get recommended courses
-
 /**
  * Fetches a limited number of recommended courses (public and published)
  * @returns Array of recommended courses with transformed data
  */
 export async function getRecommendedCourses() {
-
   const supabase = createClient();
 
   const { data: courses, error } = await supabase
@@ -426,8 +565,8 @@ export async function getRecommendedCourses() {
         id
       )
     `)
-    .eq('is_public', true)  // Add this filter
-    .eq('is_published', true)  // Add this filter
+    .eq('is_public', true)
+    .eq('is_published', true)
     .order('created_at', { ascending: false })
     .limit(3);
 
@@ -460,14 +599,13 @@ export async function getRecommendedCourses() {
       tags: ['Language'],
       isRecommended: true,
       price: "Free",
-      isPublic: course.is_public || false,  // Add this
-      isPublished: course.is_published || false  // Add this
+      isPublic: course.is_public || false,
+      isPublished: course.is_published || false
     };
   });
 
   return transformedCourses;
 }
-
 
 /**
  * Checks if a course is favorited by a specific user
@@ -485,7 +623,7 @@ export async function checkIfFavorited(courseId: string, userId: string): Promis
     .eq('course_id', courseId)
     .single();
 
-  if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows found"
+  if (error && error.code !== 'PGRST116') {
     console.error('Error checking favorite:', error);
     return false;
   }
@@ -571,4 +709,111 @@ export async function enrollInCourse(courseId: string, userId: string): Promise<
     console.error('Error enrolling in course:', error);
     throw error;
   }
+}
+
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("clerk_id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching user profile:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getUserStats(userId: string): Promise<UserStats | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("user_streaks")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching user stats:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getUserAchievements(
+  userId: string
+): Promise<UserAchievement[] | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("user_achievements")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching user achievements:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getUserProgress(
+  userId: string
+): Promise<UserProgress[] | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("user_progress")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching user progress:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getUserCourses(userId: string): Promise<UserCoursesState | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("user_courses")
+    .select(
+      `
+        *,
+        course:course_id (
+          title,
+          language:language_id (name)
+        )
+      `
+    )
+    .eq("user_id", userId);
+
+  if (error || !data) {
+    console.error("Courses fetch error:", error);
+    return null;
+  }
+
+  const userCourses: UserCourse[] = data.map((c) => ({
+    id: c.id,
+    course_id: c.course_id,
+    enrolled_at: c.enrolled_at,
+    completed_at: c.completed_at,
+    overall_progress: c.overall_progress,
+    course_title: c.course.title,
+  }));
+
+  const languageNames = [...new Set(data.map((c) => c.course.language.name))];
+  const num_completed = userCourses.filter((c) => c.completed_at !== null).length;
+  const num_in_progress = userCourses.filter((c) => c.completed_at === null).length;
+
+  return {
+    data: userCourses,
+    languageNames,
+    num_completed,
+    num_in_progress,
+  };
 }

@@ -1,6 +1,7 @@
 // check-middleware.test.ts
 jest.mock("@clerk/nextjs/server", () => ({
   clerkMiddleware: jest.fn(() => () => new Response('OK')),
+   createRouteMatcher: jest.fn(() => jest.fn(() => false)),
 }));
 
 import middleware, { config } from "@/middleware";
