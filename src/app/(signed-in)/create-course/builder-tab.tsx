@@ -4,23 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Lesson, Unit } from "@/utils/types";
 import {
-  FileText,
-  HelpCircle,
-  ImageIcon,
-  Mic,
-  Plus,
-  Trash2,
-  Upload,
-  Video,
+    FileText,
+    HelpCircle,
+    Mic,
+    Plus,
+    Trash2,
+    Upload,
+    Video
 } from "lucide-react";
 const lessonTypes = [
   {
