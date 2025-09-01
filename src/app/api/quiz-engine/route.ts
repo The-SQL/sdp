@@ -2,14 +2,30 @@ import { SYSTEM_PROMPT } from "@/utils/ai/prompts";
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 
+// CORS headers helper
+function setCORSHeaders(response: NextResponse) {
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, x-api-key");
+  return response;
+}
+
+export async function OPTIONS() {
+  // Preflight CORS response
+  const response = NextResponse.json({}, { status: 200 });
+  return setCORSHeaders(response);
+}
+
 export async function POST(req: Request) {
   const apiKey = req.headers.get("x-api-key");
   const VALID_API_KEY = process.env.QUIZ_ENGINE_API_KEY_PUBLIC;
 
   if (!apiKey || apiKey !== VALID_API_KEY) {
-    return NextResponse.json(
-      { message: "Unauthorized: Invalid or missing API key" },
-      { status: 401 }
+    return setCORSHeaders(
+      NextResponse.json(
+        { message: "Unauthorized: Invalid or missing API key" },
+        { status: 401 }
+      )
     );
   }
 
@@ -21,9 +37,11 @@ export async function POST(req: Request) {
     !data.number_of_questions ||
     !data.additional_instructions
   ) {
-    return NextResponse.json(
-      { message: "Missing required fields" },
-      { status: 400 }
+    return setCORSHeaders(
+      NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      )
     );
   }
 
@@ -44,15 +62,19 @@ export async function POST(req: Request) {
     });
 
     const jsonResponse = JSON.parse(response.output_text);
-    return NextResponse.json(
-      { message: "Exercise generated successfully", data: jsonResponse },
-      { status: 200 }
+    return setCORSHeaders(
+      NextResponse.json(
+        { message: "Exercise generated successfully", data: jsonResponse },
+        { status: 200 }
+      )
     );
   } catch (error) {
     console.error("Error generating exercise:", error);
-    return NextResponse.json(
-      { message: `Failed to generate exercise: ${error}` },
-      { status: 500 }
+    return setCORSHeaders(
+      NextResponse.json(
+        { message: `Failed to generate exercise: ${error}` },
+        { status: 500 }
+      )
     );
   }
 }
