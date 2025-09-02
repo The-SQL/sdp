@@ -31,6 +31,7 @@ import {
   checkIfEnrolled,
 } from "@/utils/db/client";
 import { useAuth } from "@clerk/nextjs";
+import Loading from "@/components/loading";
 
 // Define the Course interface for type safety
 interface Course {
@@ -159,13 +160,7 @@ export default function CourseOverview() {
 
   // Display loading state
   if (loading || !course) {
-    return (
-      <div className="min-h-screen bg-white p-8">
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">Loading course...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   // Store reviews for easier access
