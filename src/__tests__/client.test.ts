@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/client";
+// import { getAllCourses, getCourseById, getRecommendedCourses } from "../utils/db/client";
 import { makeSupabaseMock } from "../__mocks__/supabase";
 import {
     addToFavorites,

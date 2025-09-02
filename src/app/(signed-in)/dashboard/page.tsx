@@ -1,38 +1,29 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { getUserAchievements, getUserCourses, getUserProgress, getUserStats } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
 import {
-  Bell,
-  Calendar,
-  Heart,
-  Plus,
-  Settings,
-  Star,
-  TrendingUp,
-  Trophy,
+    Heart,
+    Plus,
+    Star,
+    TrendingUp,
+    Trophy
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
-import {
-  getUserAchievements,
-  getUserCourses,
-  getUserStats,
-  getUserProgress,
-} from "@/utils/db/client";
+import { useEffect, useMemo, useState } from "react";
+
 
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>; // UserCoursesState | null
 type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
@@ -51,6 +42,8 @@ export default function Dashboard() {
   const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
+  const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>({});
+  
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -108,13 +101,13 @@ export default function Dashboard() {
   const currentCourses = useMemo(() => {
     const list: UserCourseT[] = coursesState?.data ?? [];
     return list.map((c) => ({
-      id: c.course_id ?? c.id, // link target
-      name: c.course_title ?? "Untitled course", // title
-      progress: Math.round(c.overall_progress ?? 0), // %
-      nextLesson: "", // plug in later if you track it
-      image: "/placeholder.svg", // plug in later
-      totalLessons: undefined, // optional for now
-      completedLessons: undefined, // optional for now
+      id: c.course_id ?? c.id,                                 // link target
+      name: c.course_title ?? "Untitled course",               // title
+      progress: Math.round(c.overall_progress ?? 0),           // %
+      nextLesson: "",                                          // plug in later if you track it
+      image: c.course_cover,                               // plug in later
+      totalLessons: undefined,                                 // optional for now
+      completedLessons: undefined,                             // optional for now
       lastStudied: c.enrolled_at
         ? new Date(c.enrolled_at).toLocaleDateString()
         : "—",
@@ -259,8 +252,8 @@ export default function Dashboard() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
-                        <Image
-                          src={course.image || "/placeholder.svg"}
+                        <img
+                          src={course.image}
                           alt={course.name}
                           width={64} // corresponds to w-16 (16 * 4px)
                           height={64} // corresponds to h-16
@@ -360,7 +353,7 @@ export default function Dashboard() {
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="space-y-3">
+              {/* <div className="space-y-3">
                 {(goals?.length ?? 0) === 0 && (
                   <Card className="border border-dashed border-gray-300 bg-gray-50">
                     <CardContent className="p-6 text-center">
@@ -407,7 +400,7 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 ))}
-              </div>
+              </div> */}
             </div>
 
             {/* Weekly Progress */}

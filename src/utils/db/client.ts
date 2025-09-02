@@ -796,7 +796,8 @@ export async function getUserCourses(userId: string): Promise<UserCoursesState |
         *,
         course:course_id (
           title,
-          language:language_id (name)
+          language:language_id (name),
+          profile_url
         )
       `
     )
@@ -814,6 +815,7 @@ export async function getUserCourses(userId: string): Promise<UserCoursesState |
     completed_at: c.completed_at,
     overall_progress: c.overall_progress,
     course_title: c.course.title,
+    course_cover: c.course.profile_url || '/placeholder.svg',
   }));
 
   const languageNames = [...new Set(data.map((c) => c.course.language.name))];
