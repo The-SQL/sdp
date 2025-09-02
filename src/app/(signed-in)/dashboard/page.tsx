@@ -3,27 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import { getUserAchievements, getUserCourses, getUserProgress, getUserStats } from "@/utils/db/client";
-import { useUser } from "@clerk/nextjs";
 import {
-    Heart,
-    Plus,
-    Star,
-    TrendingUp,
-    Trophy
-} from "lucide-react";
+  getUserAchievements,
+  getUserCourses,
+  getUserProgress,
+  getUserStats,
+} from "@/utils/db/client";
+import { useUser } from "@clerk/nextjs";
+import { Heart, Plus, Star, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-
 
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>; // UserCoursesState | null
 type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
@@ -42,8 +40,9 @@ export default function Dashboard() {
   const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
-  const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>({});
-  
+  const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>(
+    {}
+  );
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -101,13 +100,13 @@ export default function Dashboard() {
   const currentCourses = useMemo(() => {
     const list: UserCourseT[] = coursesState?.data ?? [];
     return list.map((c) => ({
-      id: c.course_id ?? c.id,                                 // link target
-      name: c.course_title ?? "Untitled course",               // title
-      progress: Math.round(c.overall_progress ?? 0),           // %
-      nextLesson: "",                                          // plug in later if you track it
-      image: c.course_cover,                               // plug in later
-      totalLessons: undefined,                                 // optional for now
-      completedLessons: undefined,                             // optional for now
+      id: c.course_id ?? c.id, // link target
+      name: c.course_title ?? "Untitled course", // title
+      progress: Math.round(c.overall_progress ?? 0), // %
+      nextLesson: "", // plug in later if you track it
+      image: c.course_cover, // plug in later
+      totalLessons: undefined, // optional for now
+      completedLessons: undefined, // optional for now
       lastStudied: c.enrolled_at
         ? new Date(c.enrolled_at).toLocaleDateString()
         : "—",
@@ -491,6 +490,50 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
+            {/* Starred Courses */}
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Starred Courses
+              </h2>
+              <div className="space-y-3">
+                {starredCourses.map((course, index) => (
+                  <Card key={index} className="border border-gray-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-sm text-gray-900">
+                            {course.name}
+                          </h3>
+                          <p className="text-xs text-gray-600">
+                            by {course.author}
+                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                            <span className="text-xs text-gray-600">
+                              {course.rating}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500"
+                        >
+                          <Heart className="h-4 w-4 fill-current" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  asChild
+                >
+                  <Link href="/starred">View All Starred</Link>
+                </Button>
+              </div>
+            </div>
             {/* Achievements */}
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">
@@ -564,51 +607,6 @@ export default function Dashboard() {
                   asChild
                 >
                   <Link href="/achievements">View All Achievements</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* Starred Courses */}
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Starred Courses
-              </h2>
-              <div className="space-y-3">
-                {starredCourses.map((course, index) => (
-                  <Card key={index} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-sm text-gray-900">
-                            {course.name}
-                          </h3>
-                          <p className="text-xs text-gray-600">
-                            by {course.author}
-                          </p>
-                          <div className="flex items-center gap-1 mt-1">
-                            <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                            <span className="text-xs text-gray-600">
-                              {course.rating}
-                            </span>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-500"
-                        >
-                          <Heart className="h-4 w-4 fill-current" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Button
-                  variant="outline"
-                  className="w-full bg-transparent"
-                  asChild
-                >
-                  <Link href="/starred">View All Starred</Link>
                 </Button>
               </div>
             </div>
