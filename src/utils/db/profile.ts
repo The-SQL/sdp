@@ -77,9 +77,12 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
       supabase.from("quiz_attempts").select("score").eq("user_id", userId),
     ]);
 
-    if (lessonsRes.error) console.error("Error fetching lessons:", lessonsRes.error);
-    if (coursesRes.error) console.error("Error fetching courses:", coursesRes.error);
-    if (quizzesRes.error) console.error("Error fetching quizzes:", quizzesRes.error);
+    if (lessonsRes.error)
+      console.error("Error fetching lessons:", lessonsRes.error);
+    if (coursesRes.error)
+      console.error("Error fetching courses:", coursesRes.error);
+    if (quizzesRes.error)
+      console.error("Error fetching quizzes:", quizzesRes.error);
 
     const lessons_completed =
       lessonsRes.data?.filter((l) => l.status === "completed").length ?? 0;
@@ -88,7 +91,8 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
     const languages_learned = new Set(
       coursesRes.data
         ?.filter((c) => c.completed_at)
-        .map((c) => (c as unknown as CourseWithLanguage).course.language_id) || []
+        .map((c) => (c as unknown as CourseWithLanguage).course.language_id) ||
+        []
     ).size;
 
     const quizzes_passed =
@@ -124,15 +128,24 @@ export async function getUserAchievements(
 
     const [allAchievementsRes, userAchievementsRes] = await Promise.all([
       supabase.from("achievements").select<string, Achievement>("*"),
-      supabase.from("user_achievements").select<string, UserAchievementDB>("*").eq("user_id", userId),
+      supabase
+        .from("user_achievements")
+        .select<string, UserAchievementDB>("*")
+        .eq("user_id", userId),
     ]);
 
     if (!allAchievementsRes.data || allAchievementsRes.error) {
-      console.error("Error fetching achievements:", allAchievementsRes.error?.message);
+      console.error(
+        "Error fetching achievements:",
+        allAchievementsRes.error?.message
+      );
       return null;
     }
     if (userAchievementsRes.error) {
-      console.error("Error fetching user achievements:", userAchievementsRes.error.message);
+      console.error(
+        "Error fetching user achievements:",
+        userAchievementsRes.error.message
+      );
     }
 
     const uaMap = new Map<string, UserAchievementDB>();
@@ -152,13 +165,19 @@ export async function getUserAchievements(
         .from("user_achievements")
         .upsert(missingAchievements)
         .select();
-      if (insertErr) console.error("Error upserting missing achievements:", insertErr.message);
+      if (insertErr)
+        console.error(
+          "Error upserting missing achievements:",
+          insertErr.message
+        );
       inserted?.forEach((ua) => uaMap.set(ua.achievement_id, ua));
     }
 
     const updates: UserAchievementDB[] = [];
     for (const [achievementId, ua] of uaMap) {
-      const achievement = allAchievementsRes.data.find((a) => a.id === achievementId);
+      const achievement = allAchievementsRes.data.find(
+        (a) => a.id === achievementId
+      );
       if (!achievement) continue;
 
       let progress = 0;
@@ -180,7 +199,8 @@ export async function getUserAchievements(
           break;
       }
 
-      const goal = achievement.requirement.count ?? achievement.requirement.days ?? 0;
+      const goal =
+        achievement.requirement.count ?? achievement.requirement.days ?? 0;
       const earned = !ua.earned && progress >= goal;
 
       updates.push({
@@ -195,12 +215,16 @@ export async function getUserAchievements(
       const { error: updateErr } = await supabase
         .from("user_achievements")
         .upsert(updates);
-      if (updateErr) console.error("Error updating achievements:", updateErr.message);
+      if (updateErr)
+        console.error("Error updating achievements:", updateErr.message);
     }
 
     return Array.from(uaMap.values()).map((ua) => {
-      const achievement = allAchievementsRes.data.find((a) => a.id === ua.achievement_id)!;
-      const goal = achievement.requirement.count ?? achievement.requirement.days ?? 0;
+      const achievement = allAchievementsRes.data.find(
+        (a) => a.id === ua.achievement_id
+      )!;
+      const goal =
+        achievement.requirement.count ?? achievement.requirement.days ?? 0;
       return {
         id: achievement.id,
         name: achievement.name,
@@ -245,6 +269,7 @@ export async function getUserCourses(
     completed_at: c.completed_at,
     overall_progress: c.overall_progress,
     course_title: c.course.title,
+    course_cover: c.course_cover || "",
   }));
 
   const languageNames = [...new Set(data.map((c) => c.course.language.name))];
@@ -268,7 +293,9 @@ export async function getUserProgress(
 }
 
 // ---------------- User Streak ----------------
-export async function updateUserStreak(userId: string): Promise<{ current_streak: number; longest_streak: number }> {
+export async function updateUserStreak(
+  userId: string
+): Promise<{ current_streak: number; longest_streak: number }> {
   const supabase = createClient();
   const { data: streak } = await supabase
     .from("user_streaks")
@@ -324,13 +351,11 @@ export async function ensureUserInitialized(userId: string): Promise<void> {
     .eq("user_id", userId)
     .maybeSingle();
   if (!data) {
-    await supabase
-      .from("user_streaks")
-      .insert({
-        user_id: userId,
-        current_streak: 0,
-        longest_streak: 0,
-        updated_at: new Date().toISOString(),
-      });
+    await supabase.from("user_streaks").insert({
+      user_id: userId,
+      current_streak: 0,
+      longest_streak: 0,
+      updated_at: new Date().toISOString(),
+    });
   }
 }
