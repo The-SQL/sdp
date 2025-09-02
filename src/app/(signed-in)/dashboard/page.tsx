@@ -3,20 +3,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  getUserAchievements,
-  getUserCourses,
-  getUserProgress,
-  getUserStats,
+    getUserAchievements,
+    getUserCourses,
+    getUserProgress,
+    getUserStats,
 } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
 import { Heart, Plus, Star, TrendingUp, Trophy } from "lucide-react";
@@ -535,7 +535,7 @@ export default function Dashboard() {
               </div>
             </div>
             {/* Achievements */}
-            <div>
+            {/* <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Recent Achievements
               </h2>
@@ -556,7 +556,7 @@ export default function Dashboard() {
                             achievement.earned ? "" : "grayscale opacity-50"
                           }`}
                         >
-                          {/* {achievement.icon} */}
+                          {achievement.icon}
                         </div>
                         <div className="flex-1">
                           <h3
@@ -577,7 +577,7 @@ export default function Dashboard() {
                           >
                             {achievement.description}
                           </p>
-                          {/* {!achievement.earned && achievement.progress && (
+                          {!achievement.earned && achievement.progress && (
                             <div className="mt-2">
                               <Progress
                                 value={
@@ -590,13 +590,13 @@ export default function Dashboard() {
                                 {achievement.progress}/{achievement.total}
                               </span>
                             </div>
-                          )} */}
+                          )}
                         </div>
-                        {/* {achievement.earned && achievement.points > 0 && (
+                        {achievement.earned && achievement.points > 0 && (
                           <Badge className="bg-green-100 text-green-800 text-xs">
                             +{achievement.points}
                           </Badge>
-                        )} */}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -609,7 +609,7 @@ export default function Dashboard() {
                   <Link href="/achievements">View All Achievements</Link>
                 </Button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
