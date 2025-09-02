@@ -1,16 +1,29 @@
-"use client"
+"use client";
 
 // Import necessary React hooks and components
-import { useState, useEffect, useMemo } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
-import { Search, Filter, Star, Clock, Users, Heart } from "lucide-react"
-import { getAllCourses, getRecommendedCourses, checkIfFavorited, addToFavorites, removeFromFavorites } from "@/utils/db/client"
-import { useAuth } from "@clerk/nextjs"
+import { useState, useEffect, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Link from "next/link";
+import { Search, Filter, Star, Clock, Users, Heart } from "lucide-react";
+import {
+  getAllCourses,
+  getRecommendedCourses,
+  checkIfFavorited,
+  addToFavorites,
+  removeFromFavorites,
+} from "@/utils/db/client";
+import { useAuth } from "@clerk/nextjs";
+import Loading from "@/components/loading";
 
 // Define the Course interface for type safety
 interface Course {
@@ -36,85 +49,88 @@ interface Course {
 // Main component for displaying courses list
 export default function Courses() {
   // State management for filters, sorting, and course data
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedLevel, setSelectedLevel] = useState("all")
-  const [selectedLanguage, setSelectedLanguage] = useState("all")
-  const [sortBy, setSortBy] = useState("rating")
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
-  const { userId } = useAuth()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("all");
+  const [selectedLanguage, setSelectedLanguage] = useState("all");
+  const [sortBy, setSortBy] = useState("rating");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { userId } = useAuth();
 
   // Fetch all courses and recommended courses, and check favorite status
   useEffect(() => {
     const fetchCourses = async () => {
       if (!userId) return;
-      
+
       try {
         const [allCourses, recommendedCourses] = await Promise.all([
           getAllCourses(),
-          getRecommendedCourses()
+          getRecommendedCourses(),
         ]);
-        
-        const recommendedIds = new Set(recommendedCourses.map(c => c.id));
-        
+
+        const recommendedIds = new Set(recommendedCourses.map((c) => c.id));
+
         const coursesWithStatus = await Promise.all(
           allCourses.map(async (course) => {
             const isFavorited = await checkIfFavorited(course.id, userId);
             return {
               ...course,
               isRecommended: recommendedIds.has(course.id),
-              isFavorited
+              isFavorited,
             } as Course;
           })
         );
-        
+
         setCourses(coursesWithStatus);
       } catch (error) {
-        console.error('Error fetching courses:', error)
-        setCourses([])
+        console.error("Error fetching courses:", error);
+        setCourses([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchCourses()
-  }, [userId])
+    fetchCourses();
+  }, [userId]);
 
   // Handle favorite/unfavorite course action
-  const toggleFavorite = async (courseId: string, currentlyFavorited: boolean) => {
+  const toggleFavorite = async (
+    courseId: string,
+    currentlyFavorited: boolean
+  ) => {
     if (!userId) return;
-    
+
     try {
       if (currentlyFavorited) {
         await removeFromFavorites(courseId, userId);
       } else {
         await addToFavorites(courseId, userId);
       }
-      
-      setCourses(prevCourses => 
-        prevCourses.map(course => 
-          course.id === courseId 
+
+      setCourses((prevCourses) =>
+        prevCourses.map((course) =>
+          course.id === courseId
             ? { ...course, isFavorited: !currentlyFavorited }
             : course
         )
       );
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error("Error toggling favorite:", error);
     }
   };
 
   // Compute available languages for filtering
   const availableLanguages = useMemo(() => {
     const languages = courses
-      .filter(course => course.isPublic && course.isPublished)
-      .map(course => course.language)
+      .filter((course) => course.isPublic && course.isPublished)
+      .map((course) => course.language)
       .filter(Boolean);
     return [...new Set(languages)].sort();
   }, [courses]);
 
   // Filter courses to only show public and published ones
-  const publicPublishedCourses = courses.filter(course => 
-    course.isPublic && course.isPublished
+  const publicPublishedCourses = courses.filter(
+    (course) => course.isPublic && course.isPublished
   );
 
   // Apply search, level, and language filters
@@ -122,19 +138,25 @@ export default function Courses() {
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    const matchesLevel = selectedLevel === "all" || course.level === selectedLevel
-    const matchesLanguage = selectedLanguage === "all" || course.language === selectedLanguage
+      course.tags.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    const matchesLevel =
+      selectedLevel.toLowerCase() === "all" ||
+      course.level === selectedLevel.toLowerCase();
+    const matchesLanguage =
+      selectedLanguage === "all" ||
+      course.language === selectedLanguage.toLowerCase();
 
-    return matchesSearch && matchesLevel && matchesLanguage
-  })
+    return matchesSearch && matchesLevel && matchesLanguage;
+  });
 
   // Sort courses by recommended status and selected sort criteria
   const sortedCourses = [...filteredCourses].sort((a, b) => {
     // First, sort by recommended status (recommended courses first)
     if (a.isRecommended && !b.isRecommended) return -1;
     if (!a.isRecommended && b.isRecommended) return 1;
-    
+
     // If both are recommended or both are not, use the selected sort criteria
     switch (sortBy) {
       case "rating":
@@ -150,13 +172,7 @@ export default function Courses() {
 
   // Display loading state
   if (loading) {
-    return (
-      <div className="bg-white p-8">
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">Loading courses...</p>
-        </div>
-      </div>
-    )
+    return <Loading />;
   }
 
   // Main render of the courses page
@@ -165,8 +181,12 @@ export default function Courses() {
       <div className="p-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Courses</h1>
-          <p className="text-gray-600">Discover language learning courses from our global community</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Explore Courses
+          </h1>
+          <p className="text-gray-600">
+            Discover language learning courses from our global community
+          </p>
         </div>
 
         {/* Search and Filter Controls */}
@@ -195,7 +215,10 @@ export default function Courses() {
               </SelectContent>
             </Select>
 
-            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+            <Select
+              value={selectedLanguage}
+              onValueChange={setSelectedLanguage}
+            >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Language" />
               </SelectTrigger>
@@ -226,17 +249,24 @@ export default function Courses() {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {searchQuery || selectedLevel !== "all" || selectedLanguage !== "all"
+              {searchQuery ||
+              selectedLevel !== "all" ||
+              selectedLanguage !== "all"
                 ? `Search Results (${sortedCourses.length})`
                 : "All Courses"}
             </h2>
-            <span className="text-sm text-gray-500">{sortedCourses.length} courses found</span>
+            <span className="text-sm text-gray-500">
+              {sortedCourses.length} courses found
+            </span>
           </div>
 
           {/* Course Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedCourses.map((course) => (
-              <Card key={course.id} className="hover:shadow-lg transition-shadow border border-gray-200 flex flex-col h-auto">
+              <Card
+                key={course.id}
+                className="hover:shadow-lg transition-shadow border border-gray-200 flex flex-col h-auto"
+              >
                 <CardContent className="p-0 flex flex-col flex-1">
                   <div className="relative">
                     <img
@@ -246,28 +276,42 @@ export default function Courses() {
                     />
                     {course.isRecommended && (
                       <div className="absolute top-3 right-3">
-                        <Badge className="bg-blue-600 text-white">Recommended</Badge>
+                        <Badge className="bg-blue-600 text-white">
+                          Recommended
+                        </Badge>
                       </div>
                     )}
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-lg text-gray-900">{course.title}</h3>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className={`hover:text-red-500 ${course.isFavorited ? 'text-red-500' : 'text-gray-400'}`}
-                        onClick={() => toggleFavorite(course.id, course.isFavorited || false)}
+                      <h3 className="font-semibold text-lg text-gray-900">
+                        {course.title}
+                      </h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`hover:text-red-500 ${
+                          course.isFavorited ? "text-red-500" : "text-gray-400"
+                        }`}
+                        onClick={() =>
+                          toggleFavorite(course.id, course.isFavorited || false)
+                        }
                         disabled={!userId}
                       >
-                        <Heart className={`h-4 w-4 ${course.isFavorited ? 'fill-current' : ''}`} />
+                        <Heart
+                          className={`h-4 w-4 ${
+                            course.isFavorited ? "fill-current" : ""
+                          }`}
+                        />
                       </Button>
                     </div>
-                    
+
                     {course.description && (
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-3">{course.description}</p>
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                        {course.description}
+                      </p>
                     )}
-                    
+
                     <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -284,17 +328,21 @@ export default function Courses() {
                         </span>
                       </div>
                     </div>
-                    
+
                     {course.tags && course.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-4">
                         {course.tags.map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between mb-4 mt-auto">
                       <Badge
                         variant="secondary"
@@ -302,16 +350,21 @@ export default function Courses() {
                           course.level === "Beginner"
                             ? "bg-green-100 text-green-800"
                             : course.level === "Intermediate"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
                         }
                       >
                         {course.level}
                       </Badge>
-                      <span className="text-sm text-gray-600">by {course.author}</span>
+                      <span className="text-sm text-gray-600">
+                        by {course.author}
+                      </span>
                     </div>
-                    
-                    <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-2">
+
+                    <Button
+                      asChild
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-2"
+                    >
                       <Link href={`/course/${course.id}`}>View Course</Link>
                     </Button>
                   </div>
@@ -324,11 +377,15 @@ export default function Courses() {
         {/* Empty State for No Results */}
         {sortedCourses.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No courses found matching your criteria.</p>
-            <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or search terms.</p>
+            <p className="text-gray-500 text-lg">
+              No courses found matching your criteria.
+            </p>
+            <p className="text-gray-400 text-sm mt-2">
+              Try adjusting your filters or search terms.
+            </p>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
