@@ -1,33 +1,28 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { getUserAchievements, getUserCourses, getUserProgress, getUserStats } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
 import {
-  Bell,
-  Calendar,
-  Heart,
-  Plus,
-  Settings,
-  Star,
-  TrendingUp,
-  Trophy,
+    Heart,
+    Plus,
+    Star,
+    TrendingUp,
+    Trophy
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
-import { getUserAchievements, getUserCourses, getUserStats, getUserProgress } from "@/utils/db/client";
+import { useEffect, useMemo, useState } from "react";
 
 
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>;       // UserCoursesState | null
