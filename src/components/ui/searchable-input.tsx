@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
@@ -13,25 +13,12 @@ type SearchableInputProps<TItem extends { id: string; name: string }> = {
   dbCall: (
     query: string
   ) => Promise<{ data: TItem[]; error: PostgrestError | null }>;
-
-  /** Called when the user selects (or creates) an item */
   onSelect: (item: TItem) => void;
-
-  /** Optional currently selected item to show in the input */
   selected?: TItem | null;
-
-  /** Allow creating a new item if no results match */
   isCreationAllowed?: boolean;
-
-  /** Function to create the item, required if `isCreationAllowed` */
   createSearchType?: (name: string) => Promise<TItem>;
-
-  /** Input placeholder */
   placeholder?: string;
-
-  /** Transform how an item is displayed */
   getLabel?: (item: TItem) => string;
-
   clearOnSelect?: boolean;
 };
 
@@ -46,46 +33,71 @@ function SearchableInput<TItem extends { id: string; name: string }>({
   clearOnSelect = false,
 }: SearchableInputProps<TItem>) {
   const [showPopover, setShowPopover] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // local input text; default to selected name, but allow editing
   const [query, setQuery] = useState(selected ? getLabel(selected) : "");
   const [debouncedQuery] = useDebounce(query, 300);
 
   const [results, setResults] = useState<TItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // keep input in sync if parent changes selected
+  // Keep input in sync if parent changes selected
   useEffect(() => {
-    if (selected) setQuery(getLabel(selected));
-  }, [selected, getLabel]);
-
-  useEffect(() => {
-    if (!debouncedQuery.trim()) {
+    if (selected) {
+      setQuery(getLabel(selected));
       setResults([]);
       setShowPopover(false);
-      return;
     }
+  }, [selected, getLabel]);
+
+  // Fetch results when typing
+  useEffect(() => {
+    let cancelled = false;
+
     const run = async () => {
+      const q = debouncedQuery.trim();
+      if (!q) {
+        setResults([]);
+        setShowPopover(false);
+        return;
+      }
+
       setLoading(true);
-      const { data, error } = await dbCall(debouncedQuery);
-      setResults(!error && data ? data : []);
+      const { data, error } = await dbCall(q);
+      if (cancelled) return;
+
+      const list = !error && data ? data : [];
+      setResults(list);
       setLoading(false);
-      setShowPopover(true);
+
+      // Only open if the input is still focused and there are results
+      setShowPopover(isFocused && list.length > 0);
     };
+
     run();
-  }, [debouncedQuery, dbCall]);
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedQuery, dbCall, isFocused]);
+
+  // Close when query cleared
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setShowPopover(false);
+      setResults([]);
+    }
+  }, [debouncedQuery]);
 
   const choose = (item: TItem) => {
     onSelect(item);
     if (clearOnSelect) {
       setQuery("");
-      setShowPopover(false);
       setResults([]);
     } else {
       setQuery(getLabel(item));
-      setShowPopover(false);
     }
+    setShowPopover(false);
   };
 
   const createAndChoose = async () => {
@@ -97,7 +109,11 @@ function SearchableInput<TItem extends { id: string; name: string }>({
   return (
     <Popover
       open={showPopover}
-      onOpenChange={debouncedQuery ? setShowPopover : () => {}}
+      onOpenChange={(open) => {
+        // Only allow opening if focused AND results exist
+        if (open && isFocused && results.length > 0) setShowPopover(true);
+        else setShowPopover(false);
+      }}
     >
       <PopoverTrigger asChild>
         <Input
@@ -105,14 +121,29 @@ function SearchableInput<TItem extends { id: string; name: string }>({
           type="text"
           placeholder={placeholder}
           value={query}
-          onFocus={() => results.length && setShowPopover(true)}
           onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => {
+            setIsFocused(true);
+            if (results.length > 0) setShowPopover(true);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            // Delay closing slightly so clicks inside the content can register
+            setTimeout(() => setShowPopover(false), 0);
+          }}
+          onKeyDown={(e) => {
+            if (results.length > 0 && isFocused) setShowPopover(true);
+            if (e.key === "Escape") setShowPopover(false);
+          }}
         />
       </PopoverTrigger>
 
       <PopoverContent
         className="p-0 max-w-[260px]"
+        // Prevent the input's blur from immediately closing the popover before click
+        onPointerDownCapture={(e) => e.preventDefault()}
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <span className="text-sidebar-foreground/70 ring-sidebar-ring flex h-8 items-center rounded-md px-2 text-xs font-medium">
           Results
