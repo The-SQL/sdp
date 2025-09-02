@@ -269,7 +269,7 @@ export async function getUserCourses(
     completed_at: c.completed_at,
     overall_progress: c.overall_progress,
     course_title: c.course.title,
-    course_cover: c.course_cover || "",
+    course_cover: c.course.cover_url || "",
   }));
 
   const languageNames = [...new Set(data.map((c) => c.course.language.name))];
