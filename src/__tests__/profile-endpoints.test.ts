@@ -117,7 +117,8 @@ describe("Database Functions - Basic", () => {
             enrolled_at: "2023-01-01",
             completed_at: null,
             overall_progress: 50,
-            course_title: "Spanish for Beginners"
+            course_title: "Spanish for Beginners",
+            course_cover: "",
           }
         ],
         languageNames: ["Spanish"],
