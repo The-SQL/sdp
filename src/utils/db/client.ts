@@ -10,7 +10,10 @@ import {
     UserProfile,
     UserProgress,
     UserStats,
+    LearningGoal,
 } from "../types";
+import { makeSupabaseMock } from "@/__mocks__/supabase";
+import { create } from "domain";
 
 
 interface SupabaseCourseList {
@@ -828,4 +831,56 @@ export async function getUserCourses(userId: string): Promise<UserCoursesState |
     num_completed,
     num_in_progress,
   };
+}
+
+//Adding new learning goal to database
+
+export async function addLearningGoal(description: string, targetDate: Date, user_id: string): Promise<LearningGoal | null>{
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .insert([{ description, target_date: targetDate, user_id }])
+    .select()
+    .single()
+  
+  if(error){
+    console.error('Error adding learning goal:', error.message);
+    return null;
+  }
+
+  return data as LearningGoal;
+}
+
+export async function getLearningGoals(userId: string): Promise<LearningGoal[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  
+    if(error){
+      console.error('Fetch error:', error.message);
+      return [];
+    }
+
+    return data ?? [];
+}
+
+export async function completeLearningGoal(userId: string, description: string){
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .update({completed : true})
+    .eq('user_id', userId)
+    .eq('description', description)
+
+    if(error){
+      console.error('Can not update learning goal:', error.message);
+      throw error;
+    }
+
+    return data;
 }

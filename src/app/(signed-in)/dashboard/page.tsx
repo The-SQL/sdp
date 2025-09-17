@@ -17,9 +17,12 @@ import {
     getUserCourses,
     getUserProgress,
     getUserStats,
+    getLearningGoals,
+    addLearningGoal,
+    completeLearningGoal,
 } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
-import { Heart, Plus, Star, TrendingUp, Trophy } from "lucide-react";
+import { Bell, Calendar, Heart, Plus, Settings, Star, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -28,6 +31,15 @@ type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAch
 type StatsT = Awaited<ReturnType<typeof getUserStats>>; // UserStats | null
 type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>; // UserProgress[] | null
 type UserCourseT = NonNullable<CoursesStateT>["data"][number];
+
+type LearningGoal = {
+  id: string;
+  user_id: string;
+  description: string;
+  target_date: string;
+  created_at: string;
+  completed: boolean;
+};
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
@@ -43,6 +55,8 @@ export default function Dashboard() {
   const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>(
     {}
   );
+ 
+
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -59,11 +73,12 @@ export default function Dashboard() {
     (async () => {
       try {
         setLoading(true);
-        const [courses, ach, st, prog] = await Promise.all([
+        const [courses, ach, st, prog, fetchedGoals] = await Promise.all([
           getUserCourses(user.id),
           getUserAchievements(user.id),
           getUserStats(user.id),
           getUserProgress(user.id),
+          getLearningGoals(user.id),
         ]);
 
         if (isCancelled) return;
@@ -71,6 +86,7 @@ export default function Dashboard() {
         setAchievements(ach);
         setStats(st);
         setProgressRows(prog);
+        setGoals(fetchedGoals);
       } catch (e) {
         console.error("Dashboard data load error:", e);
       } finally {
@@ -121,29 +137,7 @@ export default function Dashboard() {
     { name: "Korean Basics", author: "Kim Min-jun", rating: 4.6 },
   ];
 
-  const [goals] = useState([
-    {
-      id: 1,
-      title: "Complete Spanish course by March",
-      deadline: "2024-03-15",
-      progress: 65,
-      reminder: true,
-    },
-    {
-      id: 2,
-      title: "Practice French speaking 3x per week",
-      deadline: "2024-02-28",
-      progress: 40,
-      reminder: true,
-    },
-    {
-      id: 3,
-      title: "Learn 100 new Japanese Kanji",
-      deadline: "2024-04-01",
-      progress: 75,
-      reminder: false,
-    },
-  ]);
+  
 
   const weeklyActivity = useMemo(() => {
     const now = new Date();
@@ -190,6 +184,29 @@ export default function Dashboard() {
   const streakDays = stats?.current_streak ?? currentStreak; // fallback to weekly calc
   const languagesCount = coursesState?.languageNames.length ?? 0;
   const achievementPoints = stats?.total_points ?? 0;
+
+  const [goals, setGoals] = useState<LearningGoal[]>([]);
+  const [isCompleting, setIsCompleting] = useState<string | null>(null);
+
+
+   useEffect(() => {
+    if(!isLoaded || !user?.id) return;
+
+    let isCancelled = false;
+    (async() => {
+      try {
+        const fetchedGoals = await getLearningGoals(user?.id!);
+        console.log("fetched goals from Supabase:", fetchedGoals);
+        if(!isCancelled) setGoals(fetchedGoals);
+      } catch(e){
+        console.error(e);
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+   }, [isLoaded, user?.id]);
 
   return (
     <div className="bg-white">
@@ -345,14 +362,30 @@ export default function Dashboard() {
                           onChange={(e) => setGoalDeadline(e.target.value)}
                         />
                       </div>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <Button 
+                        onClick={async ()=>{
+                            try {
+                              await addLearningGoal(newGoal, new Date(goalDeadline), user?.id!);
+                              console.log("Goal added:", newGoal);
+
+                              const refreshedGoals = await getLearningGoals(user?.id!);
+                              setGoals(refreshedGoals);
+
+                              setGoalDialogOpen(false);
+                              setNewGoal("");
+                              setGoalDeadline("");
+                            } catch(error){
+                              console.error("Failed to add goal:", error);
+                            }
+                        }}  
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                         Create Goal
                       </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
               </div>
-              {/* <div className="space-y-3">
+              <div className="space-y-3">
                 {(goals?.length ?? 0) === 0 && (
                   <Card className="border border-dashed border-gray-300 bg-gray-50">
                     <CardContent className="p-6 text-center">
@@ -370,36 +403,40 @@ export default function Dashboard() {
                 )}
                 {goals.map((goal) => (
                   <Card key={goal.id} className="border border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">
-                          {goal.title}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                          {goal.reminder && (
-                            <Bell className="h-4 w-4 text-blue-600" />
-                          )}
-                          <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </div>
+                   <CardContent className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{goal.description}</h3>
+                        <p className="text-sm text-gray-600">{goal.target_date}</p>
                       </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <Calendar className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          Due: {new Date(goal.deadline).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Progress value={goal.progress} className="flex-1" />
-                        <span className="text-sm font-medium text-gray-700">
-                          {goal.progress}%
-                        </span>
-                      </div>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            setIsCompleting(goal.description);
+                            await completeLearningGoal(user?.id!, goal.description);
+                            console.log("Goal completed:", goal.description);
+
+                            const refreshedGoals = await getLearningGoals(user?.id!);
+                            setGoals(refreshedGoals);
+                          }catch(error){
+                            console.error("Failed to complete goal:", error);
+                          }finally{
+                            setIsCompleting(null);
+                          }
+                        }}
+                        disabled={isCompleting === goal.description || goal.completed}
+                        className={`text-white ${
+                          goal.completed
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700"
+                        }`}
+                      >
+                        {goal.completed ? "Completed" : "Complete"}
+                      </Button>
                     </CardContent>
+
                   </Card>
                 ))}
-              </div> */}
+              </div>
             </div>
 
             {/* Weekly Progress */}
