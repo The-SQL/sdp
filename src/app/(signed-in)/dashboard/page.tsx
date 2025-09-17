@@ -20,6 +20,7 @@ import {
     getLearningGoals,
     addLearningGoal,
     completeLearningGoal,
+    getFavorites,
 } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
 import { Bell, Calendar, Heart, Plus, Settings, Star, TrendingUp, Trophy } from "lucide-react";
@@ -41,6 +42,12 @@ type LearningGoal = {
   completed: boolean;
 };
 
+type FavCourse = {
+  title: string;
+  difficulty: string;
+  author: string;
+};
+
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
 
@@ -55,6 +62,7 @@ export default function Dashboard() {
   const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>(
     {}
   );
+  const [favCourses, setFavCourses] = useState<FavCourse[]>([]);
  
 
 
@@ -73,12 +81,13 @@ export default function Dashboard() {
     (async () => {
       try {
         setLoading(true);
-        const [courses, ach, st, prog, fetchedGoals] = await Promise.all([
+        const [courses, ach, st, prog, fetchedGoals, favorites] = await Promise.all([
           getUserCourses(user.id),
           getUserAchievements(user.id),
           getUserStats(user.id),
           getUserProgress(user.id),
           getLearningGoals(user.id),
+          getFavorites(user.id),
         ]);
 
         if (isCancelled) return;
@@ -87,6 +96,7 @@ export default function Dashboard() {
         setStats(st);
         setProgressRows(prog);
         setGoals(fetchedGoals);
+        setFavCourses(favorites);
       } catch (e) {
         console.error("Dashboard data load error:", e);
       } finally {
@@ -131,11 +141,7 @@ export default function Dashboard() {
     }));
   }, [coursesState]);
 
-  const starredCourses = [
-    { name: "Advanced German Grammar", author: "Hans Mueller", rating: 4.7 },
-    { name: "Italian Pronunciation", author: "Giuseppe Rossi", rating: 4.8 },
-    { name: "Korean Basics", author: "Kim Min-jun", rating: 4.6 },
-  ];
+ 
 
   
 
@@ -207,6 +213,19 @@ export default function Dashboard() {
       isCancelled = true;
     };
    }, [isLoaded, user?.id]);
+
+   const fetchStarredCourses = async () => {
+      if (!user?.id) return;
+      try {
+        const favorites = await getFavorites(user.id);
+        setFavCourses(favorites);
+        console.log("Starred Courses:", favorites);
+        // console.log("Refetched starred courses");
+      } catch (error) {
+        console.error("Error refreshing favorites:", error);
+      }
+    };
+
 
   return (
     <div className="bg-white">
@@ -533,21 +552,20 @@ export default function Dashboard() {
                 Starred Courses
               </h2>
               <div className="space-y-3">
-                {starredCourses.map((course, index) => (
+                {favCourses.map((course, index) => (
                   <Card key={index} className="border border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <h3 className="font-medium text-sm text-gray-900">
-                            {course.name}
+                            {course.title}
                           </h3>
                           <p className="text-xs text-gray-600">
                             by {course.author}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
-                            <Star className="h-3 w-3 text-yellow-400 fill-current" />
                             <span className="text-xs text-gray-600">
-                              {course.rating}
+                              {course.difficulty}
                             </span>
                           </div>
                         </div>
@@ -565,10 +583,11 @@ export default function Dashboard() {
                 <Button
                   variant="outline"
                   className="w-full bg-transparent"
-                  asChild
+                  onClick={fetchStarredCourses}
                 >
-                  <Link href="/starred">View All Starred</Link>
+                  View Starred
                 </Button>
+
               </div>
             </div>
             {/* Achievements */}

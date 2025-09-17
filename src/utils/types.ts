@@ -124,3 +124,19 @@ export interface LearningGoal {
   created_at: string;
   completed: boolean;
 }
+
+export type FavCourse = {
+  title: string;
+  difficulty: string,
+  author: string;
+}
+
+export type SupabaseFavoriteRow = {
+  courses: {
+    title: string;
+    difficulty: string;
+    author: { name: string };
+  };
+}
+
+

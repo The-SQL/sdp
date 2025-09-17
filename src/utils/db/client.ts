@@ -11,6 +11,8 @@ import {
     UserProgress,
     UserStats,
     LearningGoal,
+    FavCourse,
+    SupabaseFavoriteRow,
 } from "../types";
 import { makeSupabaseMock } from "@/__mocks__/supabase";
 import { create } from "domain";
@@ -680,6 +682,26 @@ export async function removeFromFavorites(courseId: string, userId: string): Pro
     console.error('Error removing from favorites:', error);
     throw error;
   }
+}
+
+export async function getFavorites(userId: string): Promise<FavCourse[]>{
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('user_favorite_courses')
+    .select('courses(title, difficulty, author:author_id(name))')
+    .eq('user_id', userId)
+  if(error){
+    console.error('Error fetching favorites:', error.message);
+    return [];
+  }
+  console.log("Favorite courses raw:", data);
+
+  return (data as unknown as SupabaseFavoriteRow[]).map((row) => ({
+    title: row.courses?.title ?? 'Untitled',
+    difficulty: row.courses?.difficulty ?? 'Unknown',
+    author: row.courses?.author?.name ?? 'Unknown Author',
+  }));
 }
 
 /**
