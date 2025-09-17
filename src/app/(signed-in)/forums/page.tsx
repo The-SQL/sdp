@@ -322,9 +322,11 @@ export default function Forums() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-lg text-gray-900 hover:text-blue-600 cursor-pointer">
-                                {post.title}
-                              </h3>
+                              <Link href={`/forums/${post.id}`}>
+                                <h3 className="font-semibold text-lg text-gray-900 hover:text-blue-600 cursor-pointer transition-colors">
+                                  {post.title}
+                                </h3>
+                              </Link>
                               {post.isHot && (
                                 <Badge className="bg-red-100 text-red-800 text-xs">
                                   <TrendingUp className="h-3 w-3 mr-1" />
@@ -336,7 +338,11 @@ export default function Forums() {
                               {post.language}
                             </Badge>
                           </div>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{post.excerpt}</p>
+                          <Link href={`/forums/${post.id}`}>
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2 hover:text-gray-800 cursor-pointer transition-colors">
+                              {post.excerpt}
+                            </p>
+                          </Link>
                           <div className="flex items-center gap-6 text-sm text-gray-500">
                             <span className="font-medium text-gray-700">by {post.author}</span>
                             <span>in {post.category}</span>
