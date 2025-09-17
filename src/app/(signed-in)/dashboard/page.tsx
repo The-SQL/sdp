@@ -13,23 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    getUserAchievements,
+    // getUserAchievements,
     getUserCourses,
     getUserProgress,
-    getUserStats,
+    // getUserStats,
     getLearningGoals,
     addLearningGoal,
     completeLearningGoal,
     getFavorites,
 } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
-import { Bell, Calendar, Heart, Plus, Settings, Star, TrendingUp, Trophy } from "lucide-react";
+import {Heart, Plus, Star, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+
 
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>; // UserCoursesState | null
-type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
-type StatsT = Awaited<ReturnType<typeof getUserStats>>; // UserStats | null
+// type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
+// type StatsT = Awaited<ReturnType<typeof getUserStats>>; // UserStats | null
 type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>; // UserProgress[] | null
 type UserCourseT = NonNullable<CoursesStateT>["data"][number];
 
@@ -55,16 +57,11 @@ export default function Dashboard() {
   const [newGoal, setNewGoal] = useState("");
   const [goalDeadline, setGoalDeadline] = useState("");
   const [coursesState, setCoursesState] = useState<CoursesStateT>(null);
-  const [achievements, setAchievements] = useState<AchievementsT>(null);
-  const [stats, setStats] = useState<StatsT>(null);
+  // const [achievements, setAchievements] = useState<AchievementsT>(null);
+  // const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
-  const [enrolledCovers, setEnrolledCovers] = useState<Record<string, string>>(
-    {}
-  );
   const [favCourses, setFavCourses] = useState<FavCourse[]>([]);
- 
-
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -81,10 +78,10 @@ export default function Dashboard() {
     (async () => {
       try {
         setLoading(true);
-        const [courses, ach, st, prog, fetchedGoals, favorites] = await Promise.all([
+        const [courses, prog, fetchedGoals, favorites] = await Promise.all([
           getUserCourses(user.id),
-          getUserAchievements(user.id),
-          getUserStats(user.id),
+          // getUserAchievements(user.id),
+          // getUserStats(user.id),
           getUserProgress(user.id),
           getLearningGoals(user.id),
           getFavorites(user.id),
@@ -92,8 +89,8 @@ export default function Dashboard() {
 
         if (isCancelled) return;
         setCoursesState(courses);
-        setAchievements(ach);
-        setStats(st);
+        // setAchievements(ach);
+        // setStats(st);
         setProgressRows(prog);
         setGoals(fetchedGoals);
         setFavCourses(favorites);
@@ -107,21 +104,21 @@ export default function Dashboard() {
     return () => {
       isCancelled = true;
     };
-  }, [isLoaded, user?.id]);
+  }, [isLoaded, user]);
 
-  const Achievements = useMemo(() => {
-    const list = achievements ?? [];
-    return list.slice(0, 6).map((a) => ({
-      name: a.name,
-      description: a.description,
-      earned: a.earned,
-      icon: "🏅", // default icon
-      earnedDate: a.date ?? null,
-      points: 0, // no per-achievement points in your type
-      progress: a.progress ?? 0, // optional
-      total: undefined as number | undefined, // not in your type
-    }));
-  }, [achievements]);
+  // const Achievements = useMemo(() => {
+  //   const list = achievements ?? [];
+  //   return list.slice(0, 6).map((a) => ({
+  //     name: a.name,
+  //     description: a.description,
+  //     earned: a.earned,
+  //     icon: "🏅", // default icon
+  //     earnedDate: a.date ?? null,
+  //     points: 0, // no per-achievement points in your type
+  //     progress: a.progress ?? 0, // optional
+  //     total: undefined as number | undefined, // not in your type
+  //   }));
+  // }, [achievements]);
 
   const currentCourses = useMemo(() => {
     const list: UserCourseT[] = coursesState?.data ?? [];
@@ -185,11 +182,11 @@ export default function Dashboard() {
     0
   );
 
-  const totalTimeStr = "—"; // not present in your schema; show dash for now
-  const lessonsCompleted = stats?.total_lessons ?? 0;
-  const streakDays = stats?.current_streak ?? currentStreak; // fallback to weekly calc
-  const languagesCount = coursesState?.languageNames.length ?? 0;
-  const achievementPoints = stats?.total_points ?? 0;
+  // const totalTimeStr = "—"; // not present in your schema; show dash for now
+  // const lessonsCompleted = stats?.total_lessons ?? 0;
+  // const streakDays = stats?.current_streak ?? currentStreak; // fallback to weekly calc
+  // const languagesCount = coursesState?.languageNames.length ?? 0;
+  // const achievementPoints = stats?.total_points ?? 0;
 
   const [goals, setGoals] = useState<LearningGoal[]>([]);
   const [isCompleting, setIsCompleting] = useState<string | null>(null);
@@ -201,9 +198,11 @@ export default function Dashboard() {
     let isCancelled = false;
     (async() => {
       try {
-        const fetchedGoals = await getLearningGoals(user?.id!);
-        console.log("fetched goals from Supabase:", fetchedGoals);
-        if(!isCancelled) setGoals(fetchedGoals);
+        if(user){
+          const fetchedGoals = await getLearningGoals(user.id);
+          console.log("fetched goals from Supabase:", fetchedGoals);
+          if(!isCancelled) setGoals(fetchedGoals);
+        }
       } catch(e){
         console.error(e);
       }
@@ -212,7 +211,7 @@ export default function Dashboard() {
     return () => {
       isCancelled = true;
     };
-   }, [isLoaded, user?.id]);
+   }, [isLoaded, user]);
 
    const fetchStarredCourses = async () => {
       if (!user?.id) return;
@@ -287,7 +286,7 @@ export default function Dashboard() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={course.image}
                           alt={course.name}
                           width={64} // corresponds to w-16 (16 * 4px)
@@ -384,12 +383,12 @@ export default function Dashboard() {
                       <Button 
                         onClick={async ()=>{
                             try {
-                              await addLearningGoal(newGoal, new Date(goalDeadline), user?.id!);
-                              console.log("Goal added:", newGoal);
-
-                              const refreshedGoals = await getLearningGoals(user?.id!);
-                              setGoals(refreshedGoals);
-
+                              if(user){
+                                await addLearningGoal(newGoal, new Date(goalDeadline), user.id);
+                                console.log("Goal added:", newGoal);
+                                const refreshedGoals = await getLearningGoals(user.id);
+                                setGoals(refreshedGoals);
+                              }
                               setGoalDialogOpen(false);
                               setNewGoal("");
                               setGoalDeadline("");
@@ -430,12 +429,14 @@ export default function Dashboard() {
                       <Button
                         onClick={async () => {
                           try {
-                            setIsCompleting(goal.description);
-                            await completeLearningGoal(user?.id!, goal.description);
-                            console.log("Goal completed:", goal.description);
+                            if(user){
+                              setIsCompleting(goal.description);
+                              await completeLearningGoal(user.id, goal.description);
+                              console.log("Goal completed:", goal.description);
 
-                            const refreshedGoals = await getLearningGoals(user?.id!);
-                            setGoals(refreshedGoals);
+                              const refreshedGoals = await getLearningGoals(user.id);
+                              setGoals(refreshedGoals);
+                            }
                           }catch(error){
                             console.error("Failed to complete goal:", error);
                           }finally{
