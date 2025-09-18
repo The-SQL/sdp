@@ -18,9 +18,9 @@ import { Search, Filter, Star, Clock, Users, Heart } from "lucide-react";
 import {
   getAllCourses,
   getRecommendedCourses,
-  checkIfFavorited,
   addToFavorites,
   removeFromFavorites,
+  getUserFavoriteCourseIds,
 } from "@/utils/db/client";
 import { useAuth } from "@clerk/nextjs";
 import Loading from "@/components/loading";
@@ -35,7 +35,7 @@ interface Course {
   duration: string;
   students: number;
   rating: number;
-  reviews: number;
+  reviews: number | string; // Allow both number and string
   author: string;
   description: string;
   tags: string[];
@@ -59,65 +59,65 @@ export default function Courses() {
 
   // Fetch all courses and recommended courses, and check favorite status
   useEffect(() => {
-    const fetchCourses = async () => {
-      if (!userId) return;
-
-      try {
-        const [allCourses, recommendedCourses] = await Promise.all([
-          getAllCourses(),
-          getRecommendedCourses(),
-        ]);
-
-        const recommendedIds = new Set(recommendedCourses.map((c) => c.id));
-
-        const coursesWithStatus = await Promise.all(
-          allCourses.map(async (course) => {
-            const isFavorited = await checkIfFavorited(course.id, userId);
-            return {
-              ...course,
-              isRecommended: recommendedIds.has(course.id),
-              isFavorited,
-            } as Course;
-          })
-        );
-
-        setCourses(coursesWithStatus);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        setCourses([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [userId]);
-
-  // Handle favorite/unfavorite course action
-  const toggleFavorite = async (
-    courseId: string,
-    currentlyFavorited: boolean
-  ) => {
+  const fetchCourses = async () => {
     if (!userId) return;
 
     try {
-      if (currentlyFavorited) {
-        await removeFromFavorites(courseId, userId);
-      } else {
-        await addToFavorites(courseId, userId);
-      }
+      // Get ALL data in parallel
+      const [allCourses, recommendedCourses, favoriteCourseIds] = await Promise.all([
+        getAllCourses(),
+        getRecommendedCourses(userId),
+        getUserFavoriteCourseIds(userId), // Get ALL favorites at once
+      ]);
 
-      setCourses((prevCourses) =>
-        prevCourses.map((course) =>
-          course.id === courseId
-            ? { ...course, isFavorited: !currentlyFavorited }
-            : course
-        )
-      );
+      const recommendedIds = new Set(recommendedCourses.map((c) => c.id));
+      const favoriteIds = new Set(favoriteCourseIds); // Convert to Set for fast lookup
+
+      // No need for async mapping now - just check against the Set
+      const coursesWithStatus = allCourses.map((course) => ({
+        ...course,
+        isRecommended: recommendedIds.has(course.id),
+        isFavorited: favoriteIds.has(course.id),
+      }));
+
+      setCourses(coursesWithStatus);
     } catch (error) {
-      console.error("Error toggling favorite:", error);
+      console.error("Error fetching courses:", error);
+      setCourses([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  fetchCourses();
+}, [userId]);
+
+  // Handle favorite/unfavorite course action
+  const toggleFavorite = async (
+  courseId: string,
+  currentlyFavorited: boolean
+) => {
+  if (!userId) return;
+
+  try {
+    if (currentlyFavorited) {
+      await removeFromFavorites(courseId, userId);
+    } else {
+      await addToFavorites(courseId, userId);
+    }
+
+    // Update local state
+    setCourses((prevCourses) =>
+      prevCourses.map((course) =>
+        course.id === courseId
+          ? { ...course, isFavorited: !currentlyFavorited }
+          : course
+      )
+    );
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+  }
+};
 
   // Compute available languages for filtering
   const availableLanguages = useMemo(() => {

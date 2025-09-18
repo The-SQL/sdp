@@ -60,6 +60,33 @@ interface CourseFeedback {
   users: { name: string; profile_url: string | null } | null;
 }
 
+interface CourseTagWithTag {
+  tags: { name: string } | null;
+}
+
+interface CourseWithRelations {
+  id: string;
+  title: string;
+  description: string | null;
+  difficulty: string | null;
+  estimated_duration: string | null;
+  profile_url: string | null;
+  is_public: boolean;
+  is_published: boolean;
+  languages: { name: string } | null;
+  users: { name: string } | null;
+  course_feedback: Array<{ rating: number }>;
+  user_courses: Array<{ id: string }>;
+  course_tags: CourseTagWithTag[];
+}
+
+interface EnrolledLanguageData {
+  courses: {
+    language_id: string;
+    languages: { name: string };
+  } | null;
+}
+
 /**
  * Checks if a user exists in the database based on their Clerk ID
  * @param clerk_id - The Clerk user ID to check
@@ -559,7 +586,16 @@ export async function getCourseById(id: string) {
  * Fetches a limited number of recommended courses (public and published)
  * @returns Array of recommended courses with transformed data
  */
-export async function getRecommendedCourses() {
+export async function getRecommendedCourses(userId?: string): Promise<SupabaseCourseList[]> {
+  if (userId) {
+    try {
+      return await getPersonalizedRecommendedCourses(userId);
+    } catch (error) {
+      console.error('Personalized recommendations failed, using fallback:', error);
+      // Continue with general recommendations
+    }
+  }
+  
   const supabase = createClient();
 
   const { data: courses, error } = await supabase
@@ -573,6 +609,9 @@ export async function getRecommendedCourses() {
       ),
       user_courses(
         id
+      ),
+      course_tags(
+        tags(name)
       )
     `)
     .eq('is_public', true)
@@ -585,34 +624,22 @@ export async function getRecommendedCourses() {
     throw new Error('Failed to fetch recommended courses');
   }
 
-  const transformedCourses = (courses as SupabaseCourseList[]).map(course => {
-    const ratings = course.course_feedback?.map(fb => fb.rating) || [];
-    const averageRating = ratings.length > 0 
-      ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length 
-      : 4.5;
-    
-    const reviewCount = ratings.length;
-    const enrolledStudents = course.user_courses?.length || 0;
-
-    return {
-      id: course.id,
-      title: course.title,
-      level: course.difficulty || 'Beginner',
-      language: course.languages?.name || 'Unknown',
-      image: course.profile_url || '/placeholder.svg',
-      duration: course.estimated_duration || '6 weeks',
-      students: enrolledStudents,
-      rating: averageRating,
-      reviews: reviewCount,
-      author: course.users?.name || 'Unknown Author',
-      description: course.description || 'No description available',
-      tags: ['Language'],
-      isRecommended: true,
-      price: "Free",
-      isPublic: course.is_public || false,
-      isPublished: course.is_published || false
-    };
-  });
+  // Transform to match SupabaseCourseList interface
+  const transformedCourses = (courses as unknown as SupabaseCourseList[]).map(course => ({
+    id: course.id,
+    title: course.title,
+    description: course.description,
+    difficulty: course.difficulty,
+    estimated_duration: course.estimated_duration,
+    profile_url: course.profile_url,
+    is_public: course.is_public,
+    is_published: course.is_published,
+    languages: course.languages,
+    users: course.users,
+    course_tags: course.course_tags,
+    course_feedback: course.course_feedback,
+    user_courses: course.user_courses
+  }));
 
   return transformedCourses;
 }
@@ -828,4 +855,147 @@ export async function getUserCourses(userId: string): Promise<UserCoursesState |
     num_completed,
     num_in_progress,
   };
+}
+
+export async function getPersonalizedRecommendedCourses(userId: string): Promise<SupabaseCourseList[]> {
+  const supabase = createClient();
+  
+  try {
+    // Get user's enrolled courses and their tags
+    const { data: userCourses } = await supabase
+      .from('user_courses')
+      .select('course_id')
+      .eq('user_id', userId);
+
+    const { data: favoriteCourses } = await supabase
+      .from('user_favorite_courses')
+      .select('course_id')
+      .eq('user_id', userId);
+
+    // Get tags from user's enrolled courses
+    const enrolledCourseIds = userCourses?.map(uc => uc.course_id) || [];
+    const favoriteCourseIds = favoriteCourses?.map(fc => fc.course_id) || [];
+    
+    let userTags: string[] = [];
+    
+    if (enrolledCourseIds.length > 0) {
+      const { data: enrolledCourseTags } = await supabase
+        .from('course_tags')
+        .select('tags(name)')
+        .in('course_id', enrolledCourseIds);
+      
+      userTags = (enrolledCourseTags as CourseTagWithTag[] | null)
+        ?.map((ct: CourseTagWithTag) => ct.tags?.name)
+        .filter((name: string | undefined): name is string => name != null) || [];
+    }
+
+    // Get all public, published courses that user is NOT enrolled in
+    const { data: allCourses, error } = await supabase
+      .from('courses')
+      .select(`
+        *,
+        languages(name),
+        users(name),
+        course_feedback(rating),
+        user_courses(id),
+        course_tags(tags(name))
+      `)
+      .eq('is_public', true)
+      .eq('is_published', true)
+      .not('id', 'in', `(${enrolledCourseIds.length > 0 ? enrolledCourseIds.join(',') : '00000000-0000-0000-0000-000000000000'})`);
+
+    if (error) throw error;
+
+    // If no courses found (user enrolled in everything), return empty array
+    if (!allCourses || allCourses.length === 0) {
+      return [];
+    }
+
+    // Score courses based on relevance
+    const scoredCourses = await Promise.all((allCourses || []).map(async (course): Promise<{ course: SupabaseCourseList; score: number }> => {
+      const courseData = course as unknown as CourseWithRelations;
+      let score = 0;
+      
+      // Calculate tag similarity (only if user has enrolled courses)
+      if (enrolledCourseIds.length > 0) {
+        const courseTags = courseData.course_tags
+          .map((ct: CourseTagWithTag) => ct.tags?.name)
+          .filter((name: string | undefined): name is string => name != null);
+        
+        const tagMatches = courseTags.filter((tag: string) => 
+          userTags.some((userTag: string) => 
+            userTag.toLowerCase().includes(tag.toLowerCase()) || 
+            tag.toLowerCase().includes(userTag.toLowerCase())
+          )
+        ).length;
+        
+        score += tagMatches * 3;
+      }
+
+      // Boost if similar to favorited courses (but not enrolled)
+      if (favoriteCourseIds.includes(courseData.id)) {
+        score += 5;
+      }
+
+      // Check if user is learning this language (from enrolled courses)
+      if (courseData.languages?.name && enrolledCourseIds.length > 0) {
+        const { data: enrolledLanguages } = await supabase
+          .from('user_courses')
+          .select('courses!inner(language_id, languages!inner(name))')
+          .eq('user_id', userId);
+        
+        const userLanguages = (enrolledLanguages as EnrolledLanguageData[] | null)
+          ?.map((el: EnrolledLanguageData) => el.courses?.languages.name)
+          .filter((name: string | undefined): name is string => name != null) || [];
+        
+        if (userLanguages.includes(courseData.languages.name)) {
+          score += 2;
+        }
+      }
+
+      // Consider course rating and popularity
+      const ratings = courseData.course_feedback.map((fb: { rating: number }) => fb.rating);
+      const averageRating = ratings.length > 0 
+        ? ratings.reduce((sum: number, rating: number) => sum + rating, 0) / ratings.length 
+        : 0;
+      
+      score += averageRating * 0.5;
+      score += (courseData.user_courses?.length || 0) * 0.1;
+
+      return { course: course as unknown as SupabaseCourseList, score };
+    }));
+
+    // Sort by score and return top 3
+    return scoredCourses
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(item => item.course);
+
+  } catch (error) {
+    console.error('Error generating personalized recommendations:', error);
+    // Fallback to general recommended courses (excluding enrolled ones)
+    const fallback = await getRecommendedCourses();
+    return fallback as unknown as SupabaseCourseList[];
+  }
+}
+
+/**
+ * Gets all favorited course IDs for a user
+ * @param userId - The user ID to check
+ * @returns Array of favorited course IDs
+ */
+export async function getUserFavoriteCourseIds(userId: string): Promise<string[]> {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('user_favorite_courses')
+    .select('course_id')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching user favorites:', error);
+    return [];
+  }
+
+  return data.map(item => item.course_id);
 }
