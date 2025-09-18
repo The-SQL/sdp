@@ -72,7 +72,7 @@ function SearchableInput<TItem extends { id: string; name: string }>({
       setLoading(false);
 
       // Only open if the input is still focused and there are results
-      setShowPopover(isFocused && list.length > 0);
+      setShowPopover(isFocused);
     };
 
     run();
@@ -110,8 +110,7 @@ function SearchableInput<TItem extends { id: string; name: string }>({
     <Popover
       open={showPopover}
       onOpenChange={(open) => {
-        // Only allow opening if focused AND results exist
-        if (open && isFocused && results.length > 0) setShowPopover(true);
+        if (open && isFocused) setShowPopover(true);
         else setShowPopover(false);
       }}
     >
