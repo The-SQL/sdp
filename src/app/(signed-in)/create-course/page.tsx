@@ -76,7 +76,7 @@ export default function CreateCourse() {
         id: `temp-${prevLessons.length + 1}`,
         title: `Lesson ${prevLessons.length + 1}`,
         content_type: "text",
-        content: {},
+        content: {body: ""},
         unit_id: unitId,
         order_index: prevLessons.filter((l) => l.unit_id === unitId).length + 1,
       },

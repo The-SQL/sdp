@@ -41,12 +41,18 @@ export type Unit = {
   created_at?: string;
 };
 
+export type LessonContent =
+  | { url?: string; notes?: string }
+  | { body?: string }
+  | { url?: string; transcript?: string }
+  | { prompt?: string; exerciseType?: string };
+
 export type Lesson = {
   id: string;
   unit_id: string;
   title: string;
-  content_type: string;
-  content:object;
+  content_type: "video" | "text" | "audio" | "exercise";
+  content: LessonContent;
   order_index: number;
   created_at?: string;
 };

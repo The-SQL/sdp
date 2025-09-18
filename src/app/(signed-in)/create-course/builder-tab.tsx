@@ -4,23 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Lesson, Unit } from "@/utils/types";
 import {
-    FileText,
-    HelpCircle,
-    Mic,
-    Plus,
-    Trash2,
-    Upload,
-    Video
+  FileText,
+  HelpCircle,
+  Mic,
+  Plus,
+  Trash2,
+  Upload,
+  Video,
 } from "lucide-react";
+import { useState } from "react";
 const lessonTypes = [
   {
     type: "video",
@@ -65,6 +66,7 @@ function BuilderTab({
   addLesson: (unitId: string) => void;
   removeUnit: (unitId: string) => void;
 }) {
+  const [localObjectUrl, setLocalObjectUrl] = useState<string>("");
   return (
     <>
       <div className="flex items-center justify-between">
@@ -142,7 +144,19 @@ function BuilderTab({
                           onValueChange={(value) => {
                             const updatedLesson = lessons.map((l) =>
                               l.id === lesson.id
-                                ? { ...l, content_type: value }
+                                ? {
+                                    ...l,
+                                    content_type:
+                                      value as Lesson["content_type"],
+                                    content:
+                                      value === "text"
+                                        ? { body: "" }
+                                        : value === "video"
+                                        ? { url: "", notes: "" }
+                                        : value === "audio"
+                                        ? { url: "", transcript: "" }
+                                        : { prompt: "", exerciseType: "" },
+                                  }
                                 : l
                             );
                             setLessons(updatedLesson);
@@ -167,14 +181,51 @@ function BuilderTab({
                         {lesson.content_type === "video" && (
                           <div className="space-y-3">
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                              <Video className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-600 mb-2">
-                                Upload video or record directly
-                              </p>
-                              <Button variant="outline" size="sm">
-                                <Upload className="h-4 w-4 mr-2" />
-                                Choose File
-                              </Button>
+                              {"url" in lesson.content &&
+                                !lesson.content.url && (
+                                  <>
+                                    <Video className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                                    <p className="text-sm text-gray-600 mb-2">
+                                      Upload video or record directly
+                                    </p>
+                                  </>
+                                )}
+                              {lesson.content_type === "video" &&
+                                "url" in lesson.content &&
+                                lesson.content.url && (
+                                  <video
+                                    src={lesson.content.url}
+                                    controls
+                                    className="w-full max-h-64 mb-4"
+                                  />
+                                )}
+                              <Input
+                                type="file"
+                                accept="video/*"
+                                className="w-fit mx-auto"
+                                onChange={async (
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const url = URL.createObjectURL(file);
+                                    setLessons(
+                                      lessons.map((l) =>
+                                        l.id === lesson.id
+                                          ? {
+                                              ...l,
+                                              content: {
+                                                ...(l.content || {}),
+                                                url: url,
+                                              },
+                                            }
+                                          : l
+                                      )
+                                    );
+                                    // setCourseImageFile(file);
+                                  }
+                                }}
+                              />
                             </div>
                             <Textarea
                               placeholder="Video description and notes..."
