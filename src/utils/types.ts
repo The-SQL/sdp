@@ -115,3 +115,98 @@ export interface UserProgress {
   progress: number;
   updated_at: string;
 }
+
+export interface ForumCategory {
+  name: string;
+  description: string;
+  posts: number;
+  lastPost: string;
+  icon: string;
+  color: string;
+  participants: number;
+}
+
+export interface ForumPost {
+  id: string;
+  title: string;
+  content: string;
+  author_id: string;
+  category: string;
+  language: string;
+  tags: string[];
+  view_count: number;
+  like_count: number;
+  reply_count: number;
+  is_pinned: boolean;
+  is_locked: boolean;
+  is_hot: boolean;
+  last_reply_at: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ForumPostWithAuthor extends ForumPost {
+  author: {
+    clerk_id: string;
+    name: string;
+    profile_url: string;
+    created_at: Date
+  };
+  replies_count: number;
+  likes_count: number;
+}
+
+export interface ForumReply {
+  id: string;
+  post_id: string;
+  author_id: string;
+  content: string;
+  like_count: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ForumReplyWithAuthor extends ForumReply {
+  author: {
+    clerk_id: string;
+    name: string;
+    profile_url: string;
+  };
+}
+
+export interface ForumPostLike {
+  id: string;
+  post_id: string;
+  user_id: string;
+  created_at: Date;
+}
+
+export interface ForumReplyLike {
+  id: string;
+  reply_id: string;
+  user_id: string;
+  created_at: Date;
+}
+
+export interface User {
+  clerk_id: string;
+  email: string;
+  name: string;
+  profile_url: string;
+  bio: string;
+  created_at: Date;
+}
+
+export interface PaginationInfo {
+  currentPage: number;
+  hasMore: boolean;
+  totalCount?: number;
+}
+
+export interface PostsFilter {
+  searchQuery?: string;
+  category?: string;
+  tags?: string[];
+  page?: number;
+  limit?: number;
+}

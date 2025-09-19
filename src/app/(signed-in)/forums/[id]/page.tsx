@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,171 +19,176 @@ import {
   Calendar,
   Tag,
 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { useUser } from "@clerk/nextjs";
+import {
+  getPost,
+  getPostReplies,
+  createReply,
+  likePost,
+  unlikePost,
+  likeReply,
+  unlikeReply,
+  checkUserLikedPost,
+  checkUserLikedReply,
+  getUserPostLikes,
+  getUserReplyLikes,
+} from "@/utils/db/forum";
 
-const getDiscussionData = (id: string) => {
-  const discussions = {
-    "1": {
-      id: 1,
-      title: "Looking for Spanish conversation partner",
-      author: "Carlos_M",
-      authorAvatar: "/placeholder.svg",
-      authorTitle: "Intermediate Learner",
-      authorReputation: 890,
-      authorJoined: "Jan 2024",
-      category: "Language Exchange",
-      time: "2 hours ago",
-      language: "Spanish",
-      tags: ["spanish", "conversation", "language-exchange", "intermediate"],
-      likes: 8,
-      views: 89,
-      bookmarks: 5,
-      content: `
-        <p>¡Hola a todos!</p>
-        <p>I'm looking for someone to practice Spanish conversation with. I'm at an intermediate level and would love to help with English in return.</p>
-        <br/>
-        <p>I'm particularly interested in:</p>
-        <ul>
-          <li>Casual conversation practice</li>
-          <li>Discussing current events in Spanish</li>
-          <li>Learning about different Spanish-speaking cultures</li>
-        </ul>
-        <br/>
-        <p>I'm available most evenings EST and weekends. Please let me know if you're interested!</p>
-      `,
-      replies: [
-        {
-          id: "r1",
-          author: "Maria_Rodriguez",
-          authorAvatar: "/placeholder.svg",
-          authorTitle: "Native Spanish Speaker",
-          authorReputation: 1200,
-          time: "1 hour ago",
-          content:
-            "¡Hola Carlos! I'd be happy to practice with you. I'm a native Spanish speaker from Mexico and I'm looking to improve my English. Send me a message!",
-          likes: 3,
-        },
-      ],
-    },
-    "2": {
-      id: 2,
-      title: "Best resources for Japanese Kanji practice?",
-      author: "SakuraLearner",
-      authorAvatar: "/placeholder.svg",
-      authorTitle: "Beginner",
-      authorReputation: 340,
-      authorJoined: "Feb 2024",
-      category: "Course Help",
-      time: "3 hours ago",
-      language: "Japanese",
-      tags: ["japanese", "kanji", "study-resources", "beginner"],
-      likes: 15,
-      views: 156,
-      bookmarks: 8,
-      content: `
-        <p>こんにちは everyone!</p>
-        <p>I'm struggling with Kanji memorization and would love to hear about your favorite resources.</p>
-        <br/>
-        <h4 class="font-semibold">What I've tried so far:</h4>
-        <ul>
-          <li>Anki flashcards</li>
-          <li>WaniKani (but it's quite expensive)</li>
-          <li>Writing practice sheets</li>
-        </ul>
-        <br/>
-        <p>What apps, books, or methods have worked best for you? Any free alternatives to WaniKani?</p>
-      `,
-      replies: [
-        {
-          id: "r1",
-          author: "YukiTanaka",
-          authorAvatar: "/placeholder.svg",
-          authorTitle: "Advanced Learner",
-          authorReputation: 890,
-          time: "2 hours ago",
-          content:
-            "I highly recommend Kanji Study app for Android. It's free and has great stroke order practice. Also, try writing stories with the kanji you learn!",
-          likes: 5,
-        },
-      ],
-    },
-    "3": {
-      id: 3,
-      title: "French pronunciation tips for beginners",
-      author: "Marie_Paris",
-      authorAvatar: "/placeholder.svg",
-      authorTitle: "Native French Speaker",
-      authorReputation: 1250,
-      authorJoined: "Mar 2023",
-      category: "General Discussion",
-      time: "4 hours ago",
-      language: "French",
-      tags: ["pronunciation", "french", "beginner-tips", "speaking"],
-      likes: 23,
-      views: 234,
-      bookmarks: 12,
-      content: `
-        <p>Bonjour tout le monde!</p>
-        <p>As a native French speaker, I've noticed many beginners struggle with the same pronunciation challenges. I'd like to share some tips that have helped my students improve quickly. I hope they can help you too!</p>
-        <br/>
-        <h4 class="font-semibold">1. The French 'R' sound</h4>
-        <p>This is probably the most famous one! It's not rolled like in Spanish or guttural like in German. It's a soft sound made in the back of your throat. Try gargling with water to feel where the sound comes from, then try to make the sound without water.</p>
-        <br/>
-        <h4 class="font-semibold">2. Nasal Vowels (on, en, in, un)</h4>
-        <p>In French, when a vowel is followed by 'n' or 'm', it often becomes a nasal sound. The key is to let the air pass through both your mouth and your nose. A good trick is to try saying the vowel while lightly pinching your nose – you should feel the vibration.</p>
-        <br/>
-        <h4 class="font-semibold">3. The Silent 'H' and final consonants</h4>
-        <p>The 'h' is almost always silent in French ('homme' is pronounced 'omm'). Also, many final consonants are silent (e.g., in 'petit', 'grand', 'trop'). There are exceptions, of course, but this is a good general rule.</p>
-        <br/>
-        <p>What are some other pronunciation challenges you've faced? Let's discuss them below!</p>
-      `,
-      replies: [
-        {
-          id: "r1",
-          author: "PierreDubois",
-          authorAvatar: "/placeholder.svg",
-          authorTitle: "Advanced Learner",
-          authorReputation: 890,
-          time: "3 hours ago",
-          content:
-            "This is fantastic, Marie! The tip about gargling for the 'R' sound is brilliant. I've been struggling with that for months. The nasal vowels are my other big challenge. It's hard to know when to pronounce the 'n' and when not to.",
-          likes: 5,
-        },
-        {
-          id: "r2",
-          author: "JaneDoeLearns",
-          authorAvatar: "/placeholder.svg",
-          authorTitle: "Beginner",
-          authorReputation: 120,
-          time: "3 hours ago",
-          content:
-            "Thank you so much! I'm always confused about liaisons (linking words together). For example, when do you pronounce the 's' in 'les amis'? It feels so random sometimes.",
-          likes: 8,
-        },
-        {
-          id: "r3",
-          author: "Marie_Paris",
-          authorAvatar: "/placeholder.svg",
-          authorTitle: "Native French Speaker",
-          authorReputation: 1250,
-          time: "2 hours ago",
-          isOP: true,
-          content:
-            "Great question, Jane! That's an excellent topic for another post. The short answer is that liaisons are mandatory in some cases (like after determiners 'les', 'des', 'mes'), optional in others, and forbidden in some. I'll gather some resources for you!",
-          likes: 10,
-        },
-      ],
-    },
-  };
-
-  return discussions[id as keyof typeof discussions] || discussions["3"]; // Default to discussion 3 if ID not found
-};
+import {
+  ForumPostWithAuthor,
+  ForumReplyWithAuthor,} from "@/utils/types"
 
 export default function DiscussionPage() {
   const [newReply, setNewReply] = useState("");
-  const params = useParams();
-  const discussionId = params.id as string;
+  const [post, setPost] = useState<ForumPostWithAuthor | null>(null);
+  const [replies, setReplies] = useState<ForumReplyWithAuthor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
+  const [userLikedReplies, setUserLikedReplies] = useState<Set<string>>(new Set());
 
-  const discussionData = getDiscussionData(discussionId);
+  const params = useParams();
+  const postId = params.id as string;
+  const { user } = useUser();
+
+  // Fetch post, replies, and user likes
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [postData, repliesData] = await Promise.all([
+          getPost(postId),
+          getPostReplies(postId, 1, 50)
+        ]);
+
+        setPost(postData);
+        setReplies(repliesData.replies || []);
+        
+        // Fetch user likes if user is logged in
+        if (user) {
+          const [postLikes, replyLikes] = await Promise.all([
+            getUserPostLikes(user.id),
+            getUserReplyLikes(user.id)
+          ]);
+          
+          setUserLikedPosts(new Set(postLikes));
+          setUserLikedReplies(new Set(replyLikes));
+        }
+      } catch (error) {
+        console.error("Error fetching discussion data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (postId) {
+      fetchData();
+    }
+  }, [postId, user]);
+
+  // Handle reply submission
+  const handleSubmitReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !postId || !newReply.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await createReply({
+        post_id: postId,
+        author_id: user.id,
+        content: newReply.trim(),
+      });
+
+      // Refresh replies
+      const updatedReplies = await getPostReplies(postId, 1, 50);
+      setReplies(updatedReplies.replies || []);
+      setNewReply("");
+    } catch (error) {
+      console.error("Error submitting reply:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle post like
+  const handlePostLike = async () => {
+    if (!user || !post) return;
+
+    try {
+      const hasLiked = userLikedPosts.has(post.id);
+      
+      if (hasLiked) {
+        await unlikePost(post.id, user.id);
+        setUserLikedPosts(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(post.id);
+          return newSet;
+        });
+        setPost(prev => prev ? {...prev, like_count: prev.like_count - 1} : null);
+      } else {
+        await likePost(post.id, user.id);
+        setUserLikedPosts(prev => new Set(prev).add(post.id));
+        setPost(prev => prev ? {...prev, like_count: prev.like_count + 1} : null);
+      }
+    } catch (error) {
+      console.error("Error toggling post like:", error);
+    }
+  };
+
+  // Handle reply like
+  const handleReplyLike = async (replyId: string) => {
+    if (!user) return;
+
+    try {
+      const hasLiked = userLikedReplies.has(replyId);
+      
+      if (hasLiked) {
+        await unlikeReply(replyId, user.id);
+        setUserLikedReplies(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(replyId);
+          return newSet;
+        });
+        setReplies(prev => prev.map(reply => 
+          reply.id === replyId ? {...reply, like_count: reply.like_count - 1} : reply
+        ));
+      } else {
+        await likeReply(replyId, user.id);
+        setUserLikedReplies(prev => new Set(prev).add(replyId));
+        setReplies(prev => prev.map(reply => 
+          reply.id === replyId ? {...reply, like_count: reply.like_count + 1} : reply
+        ));
+      }
+    } catch (error) {
+      console.error("Error toggling reply like:", error);
+    }
+  };
+
+  // Rest of the component remains the same...
+  // Only the like handling logic has been updated
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Discussion Not Found</h1>
+          <p className="text-gray-600 mb-6">The discussion you&apos;re looking for doesn&apos;t exist.</p>
+          <Link href="/forums">
+            <Button>Back to Forums</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -195,10 +200,10 @@ export default function DiscussionPage() {
           </Link>
           <ChevronRight className="h-4 w-4 mx-1" />
           <Link href="/forums" className="hover:text-blue-600">
-            {discussionData.category}
+            {post.category}
           </Link>
           <ChevronRight className="h-4 w-4 mx-1" />
-          <span className="text-gray-700 truncate">{discussionData.title}</span>
+          <span className="text-gray-700 truncate">{post.title}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -209,41 +214,45 @@ export default function DiscussionPage() {
               <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-2xl font-bold text-gray-900">
-                    {discussionData.title}
+                    {post.title}
                   </CardTitle>
-                  <Badge variant="outline">{discussionData.language}</Badge>
+                  <Badge variant="outline">{post.language}</Badge>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500 pt-2">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={discussionData.authorAvatar || "/placeholder.svg"}
+                        src={post.author.profile_url || "/placeholder.svg"}
                       />
                       <AvatarFallback>
-                        {discussionData.author.charAt(0)}
+                        {post.author.name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                     <span className="font-semibold text-gray-800">
-                      {discussionData.author}
+                      {post.author.name || "Unknown"}
                     </span>
                   </div>
-                  <span>Posted {discussionData.time}</span>
+                  <span>Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <div
-                  className="prose max-w-none text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: discussionData.content }}
-                />
+                <div className="prose max-w-none text-gray-700">
+                  {post.content.split('\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
                 <div className="mt-6 pt-4 border-t flex items-center justify-between text-gray-500">
                   <div className="flex items-center gap-4">
                     <Button
                       variant="ghost"
                       size="sm"
                       className="flex items-center gap-1"
+                      onClick={handlePostLike}
                     >
-                      <Heart className="h-4 w-4" />
-                      {discussionData.likes} Likes
+                      <Heart 
+                        className={`h-4 w-4 ${userLikedPosts.has(post.id) ? "fill-red-500 text-red-500" : ""}`} 
+                      />
+                      {post.like_count} Likes
                     </Button>
                     <Button
                       variant="ghost"
@@ -251,7 +260,7 @@ export default function DiscussionPage() {
                       className="flex items-center gap-1"
                     >
                       <MessageSquare className="h-4 w-4" />
-                      {discussionData.replies.length} Replies
+                      {replies.length} Replies
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
@@ -269,9 +278,9 @@ export default function DiscussionPage() {
             {/* Replies Section */}
             <div className="space-y-4">
               <h2 className="text-xl font-bold text-gray-900">
-                {discussionData.replies.length} Replies
+                {replies.length} Replies
               </h2>
-              {discussionData.replies.map((reply) => (
+              {replies.map((reply) => (
                 <Card
                   key={reply.id}
                   className="border border-gray-200 bg-gray-50/50"
@@ -280,26 +289,26 @@ export default function DiscussionPage() {
                     <div className="flex items-start gap-4">
                       <Avatar className="h-10 w-10">
                         <AvatarImage
-                          src={reply.authorAvatar || "/placeholder.svg"}
+                          src={reply.author?.profile_url || "/placeholder.svg"}
                         />
                         <AvatarFallback>
-                          {reply.author.charAt(0)}
+                          {reply.author?.name?.charAt(0) || "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-gray-800">
-                              {reply.author}
+                              {reply.author?.name || "Unknown"}
                             </span>
-                            {"isOP" in reply && reply.isOP && (
+                            {reply.author_id === post.author_id && (
                               <Badge className="text-xs bg-blue-100 text-blue-800">
-                                OP
+                                Admin
                               </Badge>
                             )}
                           </div>
                           <span className="text-xs text-gray-500">
-                            {reply.time}
+                            {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true })}
                           </span>
                         </div>
                         <p className="text-gray-700 text-sm">{reply.content}</p>
@@ -308,8 +317,12 @@ export default function DiscussionPage() {
                             variant="ghost"
                             size="sm"
                             className="text-xs text-gray-500 flex items-center gap-1"
+                            onClick={() => handleReplyLike(reply.id)}
                           >
-                            <Heart className="h-3 w-3" /> {reply.likes}
+                            <Heart 
+                              className={`h-3 w-3 ${userLikedReplies.has(reply.id) ? "fill-red-500 text-red-500" : ""}`} 
+                            /> 
+                            {reply.like_count}
                           </Button>
                           <Button
                             variant="ghost"
@@ -327,76 +340,45 @@ export default function DiscussionPage() {
             </div>
 
             {/* Reply Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Leave a Reply</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <Textarea
-                    placeholder="Share your thoughts..."
-                    rows={5}
-                    value={newReply}
-                    onChange={(e) => setNewReply(e.target.value)}
-                  />
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Send className="h-4 w-4 mr-2" />
-                    Post Reply
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {user ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Leave a Reply</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmitReply} className="space-y-4">
+                    <Textarea
+                      placeholder="Share your thoughts..."
+                      rows={5}
+                      value={newReply}
+                      onChange={(e) => setNewReply(e.target.value)}
+                      required
+                    />
+                    <Button 
+                      type="submit" 
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={isSubmitting || !newReply.trim()}
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      {isSubmitting ? "Posting..." : "Post Reply"}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-gray-600 mb-4">You need to be logged in to reply to this discussion.</p>
+                  <Link href="/sign-in">
+                    <Button>Sign In</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Post Author Card */}
-            <Card className="border border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-lg">About the Author</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4 mb-4">
-                  <Avatar className="h-14 w-14">
-                    <AvatarImage
-                      src={discussionData.authorAvatar || "/placeholder.svg"}
-                    />
-                    <AvatarFallback>
-                      {discussionData.author.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
-                      {discussionData.author}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {discussionData.authorTitle}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Reputation</span>
-                    <span className="font-semibold text-blue-600">
-                      {discussionData.authorReputation}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Joined</span>
-                    <span className="font-semibold text-gray-900">
-                      {discussionData.authorJoined}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full mt-4 bg-transparent"
-                >
-                  View Profile
-                </Button>
-              </CardContent>
-            </Card>
-
             {/* About Discussion */}
             <Card className="border border-gray-200">
               <CardHeader>
@@ -409,7 +391,7 @@ export default function DiscussionPage() {
                       <Heart className="h-4 w-4" /> Likes
                     </span>
                     <span className="font-semibold text-gray-900">
-                      {discussionData.likes}
+                      {post.like_count}
                     </span>
                   </div>
                   <div className="flex items-start justify-between">
@@ -417,15 +399,7 @@ export default function DiscussionPage() {
                       <MessageSquare className="h-4 w-4" /> Replies
                     </span>
                     <span className="font-semibold text-gray-900">
-                      {discussionData.replies.length}
-                    </span>
-                  </div>
-                  <div className="flex items-start justify-between">
-                    <span className="text-gray-600 flex items-center gap-2">
-                      <Bookmark className="h-4 w-4" /> Bookmarks
-                    </span>
-                    <span className="font-semibold text-gray-900">
-                      {discussionData.bookmarks}
+                      {replies.length}
                     </span>
                   </div>
                   <div className="flex items-start justify-between">
@@ -433,7 +407,7 @@ export default function DiscussionPage() {
                       <Calendar className="h-4 w-4" /> Created
                     </span>
                     <span className="font-semibold text-gray-900">
-                      {discussionData.time}
+                      {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                     </span>
                   </div>
                   <div className="flex items-start">
@@ -441,7 +415,7 @@ export default function DiscussionPage() {
                       <Tag className="h-4 w-4" /> Tags
                     </span>
                     <div className="flex flex-wrap gap-1 justify-end ml-4">
-                      {discussionData.tags.map((tag) => (
+                      {post.tags.map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
@@ -456,7 +430,7 @@ export default function DiscussionPage() {
               </CardContent>
             </Card>
 
-            {/* Quick Links (Reused from previous page for consistency) */}
+            {/* Quick Links */}
             <Card className="border border-gray-200">
               <CardHeader>
                 <CardTitle className="text-lg">Quick Links</CardTitle>
