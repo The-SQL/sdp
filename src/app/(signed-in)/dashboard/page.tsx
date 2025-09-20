@@ -523,10 +523,6 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Total Study Time</span>
-                  <span className="font-semibold text-gray-900">47h 30m</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-gray-600">Lessons Completed</span>
                   <span className="font-semibold text-gray-900">156</span>
                 </div>
@@ -537,12 +533,12 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Languages Learning</span>
+                  <span className="text-gray-600">Languages Completed</span>
                   <span className="font-semibold text-gray-900">3</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Achievement Points</span>
-                  <span className="font-semibold text-yellow-600">425</span>
+                  <span className="text-gray-600">Courses Completed</span>
+                  <span className="font-semibold text-gray-900">3</span>
                 </div>
               </CardContent>
             </Card>
