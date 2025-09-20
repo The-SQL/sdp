@@ -18,6 +18,7 @@ import {
   Send,
   Calendar,
   Tag,
+  Loader2, // Import loader for loading state
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@clerk/nextjs";
@@ -29,12 +30,11 @@ import {
   unlikePost,
   likeReply,
   unlikeReply,
-  checkUserLikedPost,
-  checkUserLikedReply,
   getUserPostLikes,
   getUserReplyLikes,
 } from "@/utils/db/forum";
-
+import { checkProfanity } from "@/utils/moderation"; // Import profanity check
+import { useToast } from "@/components/ui/toast"; // Import toast
 import { ForumPostWithAuthor, ForumReplyWithAuthor } from "@/utils/types";
 
 export default function DiscussionPage() {
@@ -52,24 +52,25 @@ export default function DiscussionPage() {
     username: string;
   } | null>(null);
 
-  const handleStartReply = (replyId: string, username: string) => {
-  setReplyingTo({ id: replyId, username });
-  
-  // Scroll to the reply form
-  setTimeout(() => {
-    const formElement = document.getElementById('reply-form');
-    if (formElement) {
-      formElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'nearest'
-      });
-    }
-  }, 100);
-};
-
   const params = useParams();
   const postId = params.id as string;
   const { user } = useUser();
+  const toast = useToast(); // Initialize toast
+
+  const handleStartReply = (replyId: string, username: string) => {
+    setReplyingTo({ id: replyId, username });
+    
+    // Scroll to the reply form
+    setTimeout(() => {
+      const formElement = document.getElementById('reply-form');
+      if (formElement) {
+        formElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    }, 100);
+  };
 
   // Fetch post, replies, and user likes
   useEffect(() => {
@@ -120,11 +121,23 @@ export default function DiscussionPage() {
         content = `@${replyingTo.username} ${content}`;
       }
 
+      // Check for profanity
+      const result = await checkProfanity(content);
+      
+      if (result.contains_profanity) {
+        toast({
+          title: "Profanity Detected",
+          description: "Your reply contains inappropriate language. Please revise it before posting.",
+          duration: 5000,
+        });
+        return; // Stop submission
+      }
+
       await createReply({
         post_id: postId,
         author_id: user.id,
         content: content.trim(),
-        parent_reply_id: replyingTo?.id, // Add this field to track nested replies
+        parent_reply_id: replyingTo?.id,
       });
 
       // Reset form
@@ -134,8 +147,20 @@ export default function DiscussionPage() {
       // Refresh replies
       const updatedReplies = await getPostReplies(postId, 1, 50);
       setReplies(updatedReplies.replies || []);
+      
+      // Show success toast
+      toast({
+        title: "Reply Posted",
+        description: "Your reply has been successfully posted!",
+        duration: 3000,
+      });
     } catch (error) {
       console.error("Error submitting reply:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        duration: 3000,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -206,9 +231,6 @@ export default function DiscussionPage() {
       console.error("Error toggling reply like:", error);
     }
   };
-
-  // Rest of the component remains the same...
-  // Only the like handling logic has been updated
 
   if (isLoading) {
     return (
@@ -454,8 +476,17 @@ export default function DiscussionPage() {
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                       disabled={isSubmitting || !newReply.trim()}
                     >
-                      <Send className="h-4 w-4 mr-2" />
-                      {isSubmitting ? "Posting..." : "Post Reply"}
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Posting...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4 mr-2" />
+                          Post Reply
+                        </>
+                      )}
                     </Button>
                   </form>
                 </CardContent>
@@ -530,7 +561,7 @@ export default function DiscussionPage() {
             </Card>
 
             {/* Quick Links */}
-            <Card className="border border-gray-200">
+            {/* <Card className="border border-gray-200">
               <CardHeader>
                 <CardTitle className="text-lg">Quick Links</CardTitle>
               </CardHeader>
@@ -562,7 +593,7 @@ export default function DiscussionPage() {
                   </Link>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   PaginationInfo,
   Notification
 } from "../types";
+import { checkProfanity } from "../moderation";
 
 const POSTS_PER_PAGE = 10;
 
@@ -157,6 +158,12 @@ export const createPost = async (postData: {
 }): Promise<ForumPost> => {
   try {
     const supabase = createClient();
+
+    const { contains_profanity, censored_text } = await checkProfanity(postData.content);
+    if (contains_profanity) {
+      postData.content = censored_text; // replace with censored version
+    }
+
     const { data: post, error } = await supabase
       .from("forum_posts")
       .insert([
@@ -275,6 +282,12 @@ export const createReply = async (replyData: {
 }): Promise<ForumReply> => {
   try {
     const supabase = createClient();
+
+    const { contains_profanity, censored_text } = await checkProfanity(replyData.content);
+    if (contains_profanity) {
+      replyData.content = censored_text; // replace with censored version
+    }
+
     const { data: reply, error } = await supabase
       .from('forum_replies')
       .insert([replyData])

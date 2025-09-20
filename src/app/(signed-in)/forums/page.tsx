@@ -28,9 +28,9 @@ import {
   MessageSquare,
   Users,
   TrendingUp,
-  Clock,
   Heart,
   Reply,
+  Loader2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -45,10 +45,12 @@ import {
   PostsFilter,
 } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
+import { useToast } from "@/components/ui/toast";
+import { checkProfanity } from "@/utils/moderation";
 
 export default function Forums() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-
   const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [isActivityLoading, setIsActivityLoading] = useState(true);
@@ -70,6 +72,8 @@ export default function Forums() {
   });
 
   const { user, isLoaded: isUserLoaded } = useUser();
+
+  const toast = useToast();
 
   const forumCategories = [
     {
@@ -206,11 +210,37 @@ export default function Forums() {
     e.preventDefault();
     if (!user) return;
 
+    setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     const title = formData.get("title") as string;
     const category = formData.get("category") as string;
     const language = formData.get("language") as string;
     const content = formData.get("content") as string;
+
+    // Combine all text to check
+    const allTextToCheck = [title, content, ...tags].join(" ");
+
+    let contains_profanity = false;
+    let censored_text = allTextToCheck;
+
+    try {
+      const result = await checkProfanity(allTextToCheck);
+      contains_profanity = result.contains_profanity;
+      censored_text = result.censored_text;
+    } catch (err) {
+      console.error("Profanity check failed:", err);
+    }
+
+    if (contains_profanity) {
+      toast({
+        title: "Profanity Detected",
+        description:
+          "Your post contains inappropriate language in the title, content, or tags. Please revise it before posting.",
+        duration: 5000,
+      });
+      setIsSubmitting(false); // Reset loading state
+      return; // Stop submission
+    }
 
     try {
       await createPost({
@@ -219,14 +249,25 @@ export default function Forums() {
         author_id: user.id,
         category,
         language,
-        tags: [language.toLowerCase()],
+        tags: [language.toLowerCase(), ...tags.map((tag) => tag.toLowerCase())],
       });
 
       setNewPostOpen(false);
       loadPosts(1, true); // Reload posts to show the new one
+      toast({
+        title: "Post Created",
+        description: "Your discussion has been successfully posted!",
+        duration: 3000,
+      });
     } catch (error) {
       console.error("Error creating post:", error);
-      // Here you could add error state to show a message to the user
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        duration: 3000,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -389,13 +430,22 @@ export default function Forums() {
                       <Button
                         type="submit"
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        disabled={isSubmitting} // Disable button when loading
                       >
-                        Post Discussion
+                        {isSubmitting ? ( // Show loader when submitting
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Posting...
+                          </>
+                        ) : (
+                          "Post Discussion"
+                        )}
                       </Button>
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => setNewPostOpen(false)}
+                        disabled={isSubmitting} // Also disable cancel button when submitting
                       >
                         Cancel
                       </Button>
@@ -686,7 +736,7 @@ export default function Forums() {
             </Card>
 
             {/* Quick Links */}
-            <Card className="border border-gray-200">
+            {/* <Card className="border border-gray-200">
               <CardHeader>
                 <CardTitle className="text-lg">Quick Links</CardTitle>
               </CardHeader>
@@ -718,7 +768,7 @@ export default function Forums() {
                   </Link>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>
