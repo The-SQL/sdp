@@ -14,6 +14,15 @@ export type Course = {
   updated_at?: string;
 };
 
+ export type Notification = {
+  id: string;
+  user_id: string;
+  message: string;
+  metadata?: Record<string,string>;
+  is_read: boolean;
+  created_at: string;
+}
+
 export type Language = {
   id: string;
   name: string;

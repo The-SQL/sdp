@@ -35,9 +35,7 @@ import {
   getUserReplyLikes,
 } from "@/utils/db/forum";
 
-import {
-  ForumPostWithAuthor,
-  ForumReplyWithAuthor,} from "@/utils/types"
+import { ForumPostWithAuthor, ForumReplyWithAuthor } from "@/utils/types";
 
 export default function DiscussionPage() {
   const [newReply, setNewReply] = useState("");
@@ -46,7 +44,28 @@ export default function DiscussionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
-  const [userLikedReplies, setUserLikedReplies] = useState<Set<string>>(new Set());
+  const [userLikedReplies, setUserLikedReplies] = useState<Set<string>>(
+    new Set()
+  );
+  const [replyingTo, setReplyingTo] = useState<{
+    id: string;
+    username: string;
+  } | null>(null);
+
+  const handleStartReply = (replyId: string, username: string) => {
+  setReplyingTo({ id: replyId, username });
+  
+  // Scroll to the reply form
+  setTimeout(() => {
+    const formElement = document.getElementById('reply-form');
+    if (formElement) {
+      formElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'nearest'
+      });
+    }
+  }, 100);
+};
 
   const params = useParams();
   const postId = params.id as string;
@@ -59,19 +78,19 @@ export default function DiscussionPage() {
       try {
         const [postData, repliesData] = await Promise.all([
           getPost(postId),
-          getPostReplies(postId, 1, 50)
+          getPostReplies(postId, 1, 50),
         ]);
 
         setPost(postData);
         setReplies(repliesData.replies || []);
-        
+
         // Fetch user likes if user is logged in
         if (user) {
           const [postLikes, replyLikes] = await Promise.all([
             getUserPostLikes(user.id),
-            getUserReplyLikes(user.id)
+            getUserReplyLikes(user.id),
           ]);
-          
+
           setUserLikedPosts(new Set(postLikes));
           setUserLikedReplies(new Set(replyLikes));
         }
@@ -94,16 +113,27 @@ export default function DiscussionPage() {
 
     setIsSubmitting(true);
     try {
+      let content = newReply;
+
+      // If replying to a specific reply, mention the user
+      if (replyingTo) {
+        content = `@${replyingTo.username} ${content}`;
+      }
+
       await createReply({
         post_id: postId,
         author_id: user.id,
-        content: newReply.trim(),
+        content: content.trim(),
+        parent_reply_id: replyingTo?.id, // Add this field to track nested replies
       });
+
+      // Reset form
+      setNewReply("");
+      setReplyingTo(null);
 
       // Refresh replies
       const updatedReplies = await getPostReplies(postId, 1, 50);
       setReplies(updatedReplies.replies || []);
-      setNewReply("");
     } catch (error) {
       console.error("Error submitting reply:", error);
     } finally {
@@ -117,19 +147,23 @@ export default function DiscussionPage() {
 
     try {
       const hasLiked = userLikedPosts.has(post.id);
-      
+
       if (hasLiked) {
         await unlikePost(post.id, user.id);
-        setUserLikedPosts(prev => {
+        setUserLikedPosts((prev) => {
           const newSet = new Set(prev);
           newSet.delete(post.id);
           return newSet;
         });
-        setPost(prev => prev ? {...prev, like_count: prev.like_count - 1} : null);
+        setPost((prev) =>
+          prev ? { ...prev, like_count: prev.like_count - 1 } : null
+        );
       } else {
         await likePost(post.id, user.id);
-        setUserLikedPosts(prev => new Set(prev).add(post.id));
-        setPost(prev => prev ? {...prev, like_count: prev.like_count + 1} : null);
+        setUserLikedPosts((prev) => new Set(prev).add(post.id));
+        setPost((prev) =>
+          prev ? { ...prev, like_count: prev.like_count + 1 } : null
+        );
       }
     } catch (error) {
       console.error("Error toggling post like:", error);
@@ -142,23 +176,31 @@ export default function DiscussionPage() {
 
     try {
       const hasLiked = userLikedReplies.has(replyId);
-      
+
       if (hasLiked) {
         await unlikeReply(replyId, user.id);
-        setUserLikedReplies(prev => {
+        setUserLikedReplies((prev) => {
           const newSet = new Set(prev);
           newSet.delete(replyId);
           return newSet;
         });
-        setReplies(prev => prev.map(reply => 
-          reply.id === replyId ? {...reply, like_count: reply.like_count - 1} : reply
-        ));
+        setReplies((prev) =>
+          prev.map((reply) =>
+            reply.id === replyId
+              ? { ...reply, like_count: reply.like_count - 1 }
+              : reply
+          )
+        );
       } else {
         await likeReply(replyId, user.id);
-        setUserLikedReplies(prev => new Set(prev).add(replyId));
-        setReplies(prev => prev.map(reply => 
-          reply.id === replyId ? {...reply, like_count: reply.like_count + 1} : reply
-        ));
+        setUserLikedReplies((prev) => new Set(prev).add(replyId));
+        setReplies((prev) =>
+          prev.map((reply) =>
+            reply.id === replyId
+              ? { ...reply, like_count: reply.like_count + 1 }
+              : reply
+          )
+        );
       }
     } catch (error) {
       console.error("Error toggling reply like:", error);
@@ -180,8 +222,12 @@ export default function DiscussionPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Discussion Not Found</h1>
-          <p className="text-gray-600 mb-6">The discussion you&apos;re looking for doesn&apos;t exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Discussion Not Found
+          </h1>
+          <p className="text-gray-600 mb-6">
+            The discussion you&apos;re looking for doesn&apos;t exist.
+          </p>
           <Link href="/forums">
             <Button>Back to Forums</Button>
           </Link>
@@ -232,12 +278,17 @@ export default function DiscussionPage() {
                       {post.author.name || "Unknown"}
                     </span>
                   </div>
-                  <span>Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
+                  <span>
+                    Posted{" "}
+                    {formatDistanceToNow(new Date(post.created_at), {
+                      addSuffix: true,
+                    })}
+                  </span>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="prose max-w-none text-gray-700">
-                  {post.content.split('\n').map((paragraph, index) => (
+                  {post.content.split("\n").map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
@@ -249,8 +300,12 @@ export default function DiscussionPage() {
                       className="flex items-center gap-1"
                       onClick={handlePostLike}
                     >
-                      <Heart 
-                        className={`h-4 w-4 ${userLikedPosts.has(post.id) ? "fill-red-500 text-red-500" : ""}`} 
+                      <Heart
+                        className={`h-4 w-4 ${
+                          userLikedPosts.has(post.id)
+                            ? "fill-red-500 text-red-500"
+                            : ""
+                        }`}
                       />
                       {post.like_count} Likes
                     </Button>
@@ -276,76 +331,110 @@ export default function DiscussionPage() {
             </Card>
 
             {/* Replies Section */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-gray-900">
+            <div className="flex flex-col h-[60vh]">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
                 {replies.length} Replies
               </h2>
-              {replies.map((reply) => (
-                <Card
-                  key={reply.id}
-                  className="border border-gray-200 bg-gray-50/50"
-                >
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={reply.author?.profile_url || "/placeholder.svg"}
-                        />
-                        <AvatarFallback>
-                          {reply.author?.name?.charAt(0) || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-gray-800">
-                              {reply.author?.name || "Unknown"}
+
+              <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                {replies.map((reply) => (
+                  <Card
+                    key={reply.id}
+                    className="border border-gray-200 bg-gray-50/50"
+                  >
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={
+                              reply.author?.profile_url || "/placeholder.svg"
+                            }
+                          />
+                          <AvatarFallback>
+                            {reply.author?.name?.charAt(0) || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-gray-800">
+                                {reply.author?.name || "Unknown"}
+                              </span>
+                              {reply.author_id === post.author_id && (
+                                <Badge className="text-xs bg-blue-100 text-blue-800">
+                                  Admin
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {formatDistanceToNow(new Date(reply.created_at), {
+                                addSuffix: true,
+                              })}
                             </span>
-                            {reply.author_id === post.author_id && (
-                              <Badge className="text-xs bg-blue-100 text-blue-800">
-                                Admin
-                              </Badge>
-                            )}
                           </div>
-                          <span className="text-xs text-gray-500">
-                            {formatDistanceToNow(new Date(reply.created_at), { addSuffix: true })}
-                          </span>
-                        </div>
-                        <p className="text-gray-700 text-sm">{reply.content}</p>
-                        <div className="flex items-center gap-2 mt-3">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs text-gray-500 flex items-center gap-1"
-                            onClick={() => handleReplyLike(reply.id)}
-                          >
-                            <Heart 
-                              className={`h-3 w-3 ${userLikedReplies.has(reply.id) ? "fill-red-500 text-red-500" : ""}`} 
-                            /> 
-                            {reply.like_count}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs text-gray-500 flex items-center gap-1"
-                          >
-                            <Reply className="h-3 w-3" /> Reply
-                          </Button>
+                          <p className="text-gray-700 text-sm">
+                            {reply.content}
+                          </p>
+                          <div className="flex items-center gap-2 mt-3">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs text-gray-500 flex items-center gap-1"
+                              onClick={() => handleReplyLike(reply.id)}
+                            >
+                              <Heart
+                                className={`h-3 w-3 ${
+                                  userLikedReplies.has(reply.id)
+                                    ? "fill-red-500 text-red-500"
+                                    : ""
+                                }`}
+                              />
+                              {reply.like_count}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs text-gray-500 flex items-center gap-1"
+                              onClick={() =>
+                                handleStartReply(
+                                  reply.id,
+                                  reply.author?.name || "Unknown"
+                                )
+                              }
+                            >
+                              <Reply className="h-3 w-3" /> Reply
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             {/* Reply Form */}
             {user ? (
-              <Card>
+              <Card id="reply-form">
                 <CardHeader>
                   <CardTitle className="text-lg">Leave a Reply</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* Add the replyingTo indicator here */}
+                  {replyingTo && (
+                    <div className="flex items-center justify-between text-sm text-blue-600 mb-4 p-3 bg-blue-50 rounded-md">
+                      <span>Replying to @{replyingTo.username}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2"
+                        onClick={() => setReplyingTo(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+
                   <form onSubmit={handleSubmitReply} className="space-y-4">
                     <Textarea
                       placeholder="Share your thoughts..."
@@ -353,9 +442,15 @@ export default function DiscussionPage() {
                       value={newReply}
                       onChange={(e) => setNewReply(e.target.value)}
                       required
+                      ref={(el) => {
+                        // Auto-focus the textarea when replying to someone
+                        if (replyingTo && el) {
+                          setTimeout(() => el.focus(), 100);
+                        }
+                      }}
                     />
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                       disabled={isSubmitting || !newReply.trim()}
                     >
@@ -368,7 +463,9 @@ export default function DiscussionPage() {
             ) : (
               <Card>
                 <CardContent className="p-6 text-center">
-                  <p className="text-gray-600 mb-4">You need to be logged in to reply to this discussion.</p>
+                  <p className="text-gray-600 mb-4">
+                    You need to be logged in to reply to this discussion.
+                  </p>
                   <Link href="/sign-in">
                     <Button>Sign In</Button>
                   </Link>
@@ -407,7 +504,9 @@ export default function DiscussionPage() {
                       <Calendar className="h-4 w-4" /> Created
                     </span>
                     <span className="font-semibold text-gray-900">
-                      {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(post.created_at), {
+                        addSuffix: true,
+                      })}
                     </span>
                   </div>
                   <div className="flex items-start">

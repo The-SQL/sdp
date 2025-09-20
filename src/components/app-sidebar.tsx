@@ -10,7 +10,10 @@ import {
   User,
 } from "lucide-react";
 
+import NotificationBell from "./notificationBell";
+
 import { usePathname } from "next/navigation";
+
 
 import {
   Sidebar,
@@ -32,6 +35,7 @@ const NAV_LINKS = [
   { name: "Discussion Forums", href: "/forums", icon: MessageSquare },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
+  {name: "Notifications", href:"/notifications",icon: NotificationBell}
 ];
 
 function AppSideBar() {
@@ -67,6 +71,7 @@ function AppSideBar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
     </Sidebar>
   );
 }

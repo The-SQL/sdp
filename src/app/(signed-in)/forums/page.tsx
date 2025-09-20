@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/components/loading";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,12 @@ import {
   Reply,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { fetchPosts, getUserActivity, createPost } from "@/utils/db/forum";
+import {
+  fetchPosts,
+  getUserActivity,
+  createPost,
+  getTrendingTopics,
+} from "@/utils/db/forum";
 import {
   ForumPostWithAuthor,
   PaginationInfo,
@@ -44,6 +48,8 @@ import { useUser } from "@clerk/nextjs";
 
 export default function Forums() {
   const [tags, setTags] = useState<string[]>([]);
+
+  const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [isActivityLoading, setIsActivityLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,58 +75,48 @@ export default function Forums() {
     {
       name: "General Discussion",
       description: "General language learning topics and discussions",
-      posts: 1247,
-      lastPost: "2 hours ago",
       icon: "💬",
-      color: "bg-blue-50 border-blue-200",
-      participants: 234,
     },
     {
       name: "Language Exchange",
       description: "Find conversation partners and practice together",
-      posts: 892,
-      lastPost: "1 hour ago",
       icon: "🌍",
-      color: "bg-green-50 border-green-200",
-      participants: 156,
     },
     {
       name: "Study Groups",
       description: "Join or create study groups with fellow learners",
-      posts: 634,
-      lastPost: "3 hours ago",
       icon: "👥",
-      color: "bg-purple-50 border-purple-200",
-      participants: 89,
     },
     {
       name: "Course Help",
       description: "Get help with specific courses and lessons",
-      posts: 1156,
-      lastPost: "30 minutes ago",
       icon: "❓",
-      color: "bg-yellow-50 border-yellow-200",
-      participants: 198,
     },
     {
       name: "Cultural Exchange",
       description: "Share and learn about different cultures",
-      posts: 445,
-      lastPost: "4 hours ago",
       icon: "🎭",
-      color: "bg-pink-50 border-pink-200",
-      participants: 67,
     },
     {
       name: "Success Stories",
       description: "Celebrate achievements and inspire others",
-      posts: 289,
-      lastPost: "1 day ago",
       icon: "🎉",
-      color: "bg-orange-50 border-orange-200",
-      participants: 45,
     },
   ];
+
+  // Add this useEffect to fetch trending topics
+  useEffect(() => {
+    const fetchTrendingTopics = async () => {
+      try {
+        const topics = await getTrendingTopics(10);
+        setTrendingTopics(topics);
+      } catch (error) {
+        console.error("Error fetching trending topics:", error);
+      }
+    };
+
+    fetchTrendingTopics();
+  }, []);
 
   // Fetch posts based on current filters
   const loadPosts = useCallback(
@@ -409,53 +405,8 @@ export default function Forums() {
               </Dialog>
             </div>
 
-            {/* Forum Categories Grid */}
-            {searchQuery === "" && selectedCategory === "all" && (
-              <div className="mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Forum Categories
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {forumCategories.map((category, index) => (
-                    <Card
-                      key={index}
-                      className={`border hover:shadow-md transition-shadow cursor-pointer ${category.color}`}
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="text-3xl">{category.icon}</div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-1">
-                              {category.name}
-                            </h3>
-                            <p className="text-sm text-gray-600 mb-3">
-                              {category.description}
-                            </p>
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <div className="flex items-center gap-1">
-                                <MessageSquare className="h-3 w-3" />
-                                <span>{category.posts} posts</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Users className="h-3 w-3" />
-                                <span>{category.participants} members</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                <span>{category.lastPost}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Recent Discussions */}
-            <div>
+            <div className="flex flex-col h-[70vh]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900">
                   {searchQuery || selectedCategory !== "all"
@@ -467,28 +418,28 @@ export default function Forums() {
                 </span>
               </div>
 
-              {isLoading && posts.length === 0 ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : (
-                <>
-                  {posts.length === 0 && !isLoading ? (
-                    <Card className="border border-gray-200 shadow-sm">
-                      <CardContent className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
-                        <MessageSquare className="h-10 w-10 text-gray-400 mb-3" />
-                        <h3 className="text-lg font-semibold text-gray-700">
-                          No discussions found
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Try adjusting your search or explore different
-                          categories.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <div className="space-y-4">
-                      {posts.map((post) => (
+              <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                {isLoading && posts.length === 0 ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <>
+                    {posts.length === 0 && !isLoading ? (
+                      <Card className="border border-gray-200 shadow-sm">
+                        <CardContent className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
+                          <MessageSquare className="h-10 w-10 text-gray-400 mb-3" />
+                          <h3 className="text-lg font-semibold text-gray-700">
+                            No discussions found
+                          </h3>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Try adjusting your search or explore different
+                            categories.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      posts.map((post) => (
                         <Link
                           key={post.id}
                           href={`/forums/${post.id}`}
@@ -563,25 +514,46 @@ export default function Forums() {
                             </CardContent>
                           </Card>
                         </Link>
-                      ))}
-                    </div>
-                  )}
+                      ))
+                    )}
+                  </>
+                )}
+              </div>
 
-                  {pagination.hasMore && (
-                    <div className="mt-6 flex justify-center">
-                      <Button
-                        onClick={loadMore}
-                        disabled={isLoading}
-                        variant="outline"
-                        className="mt-4"
-                      >
-                        {isLoading ? "Loading..." : "Load More"}
-                      </Button>
-                    </div>
-                  )}
-                </>
+              {pagination.hasMore && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    onClick={loadMore}
+                    disabled={isLoading}
+                    variant="outline"
+                  >
+                    {isLoading ? "Loading..." : "Load More"}
+                  </Button>
+                </div>
               )}
             </div>
+
+            {/* Forum Categories (Sidebar version) */}
+            <Card className="border border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-lg">Forum Categories</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {forumCategories.map((category, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="text-xl">{category.icon}</div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">
+                        {category.name}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {category.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
@@ -646,54 +618,69 @@ export default function Forums() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #spanish-grammar
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #conversation-practice
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #japanese-kanji
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #french-pronunciation
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #study-tips
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #language-exchange
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #beginner-help
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-blue-100"
-                  >
-                    #cultural-insights
-                  </Badge>
+                  {trendingTopics.length > 0 ? (
+                    trendingTopics.map((topic) => (
+                      <Badge
+                        key={topic}
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #{topic}
+                      </Badge>
+                    ))
+                  ) : (
+                    // Fallback to hardcoded tags if no trending topics are available
+                    <>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #spanish-grammar
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #conversation-practice
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #japanese-kanji
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #french-pronunciation
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #study-tips
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #language-exchange
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #beginner-help
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-blue-100"
+                      >
+                        #cultural-insights
+                      </Badge>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

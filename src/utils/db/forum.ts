@@ -4,10 +4,9 @@ import {
   ForumPostWithAuthor,
   ForumReply,
   ForumReplyWithAuthor,
-  ForumPostLike,
-  ForumReplyLike,
   PostsFilter,
   PaginationInfo,
+  Notification
 } from "../types";
 
 const POSTS_PER_PAGE = 10;
@@ -272,23 +271,73 @@ export const createReply = async (replyData: {
   post_id: string;
   author_id: string;
   content: string;
+  parent_reply_id?: string; // For nested replies
 }): Promise<ForumReply> => {
   try {
     const supabase = createClient();
     const { data: reply, error } = await supabase
-      .from("forum_replies")
+      .from('forum_replies')
       .insert([replyData])
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating reply:", error);
+      console.error('Error creating reply:', error);
       throw error;
+    }
+
+    // Get the post to notify the author
+    const { data: post } = await supabase
+      .from('forum_posts')
+      .select('*')
+      .eq('id', replyData.post_id)
+      .single();
+
+    if (post && post.author_id !== replyData.author_id) {
+      // Notify the post author about the reply
+      await createNotification({
+        user_id: post.author_id,
+        type: 'reply',
+        source_id: reply.id,
+        source_type: 'reply',
+        message: `Someone replied to your post "${post.title}"`,
+        metadata: {
+          post_id: post.id,
+          post_title: post.title,
+          reply_excerpt: replyData.content.substring(0, 100),
+          reply_author: replyData.author_id
+        }
+      });
+    }
+
+    // If this is a reply to another reply, notify that reply's author
+    if (replyData.parent_reply_id) {
+      const { data: parentReply } = await supabase
+        .from('forum_replies')
+        .select('*')
+        .eq('id', replyData.parent_reply_id)
+        .single();
+
+      if (parentReply && parentReply.author_id !== replyData.author_id) {
+        await createNotification({
+          user_id: parentReply.author_id,
+          type: 'reply',
+          source_id: reply.id,
+          source_type: 'reply',
+          message: `Someone replied to your comment on "${post.title}"`,
+          metadata: {
+            post_id: post.id,
+            post_title: post.title,
+            reply_excerpt: replyData.content.substring(0, 100),
+            reply_author: replyData.author_id
+          }
+        });
+      }
     }
 
     return reply;
   } catch (error) {
-    console.error("Error in createReply:", error);
+    console.error('Error in createReply:', error);
     throw error;
   }
 };
@@ -473,7 +522,6 @@ export const getUserActivity = async (
 
     const likesReceived = postLikes + replyLikes;
 
-    // Calculate reputation (simplified: 1 point per post, 0.5 per reply, 0.1 per like received)
     const reputation =
       (postsCreated || 0) + (replies || 0) * 0.5 + likesReceived * 0.1;
 
@@ -558,5 +606,158 @@ export const getUserReplyLikes = async (userId: string): Promise<string[]> => {
   } catch (error) {
     console.error('Error getting user reply likes:', error);
     return [];
+  }
+};
+
+// get trending tags
+export const getTrendingTopics = async (limit = 10): Promise<string[]> => {
+  try {
+    const supabase = createClient();
+    const { data: allPosts, error } = await supabase
+      .from('forum_posts')
+      .select('tags');
+    
+    if (error) {
+      console.error('Error fetching posts for trending topics:', error);
+      return [];
+    }
+    
+    // Count tag occurrences
+    const tagCount: Record<string, number> = {};
+    
+    allPosts?.forEach(post => {
+      post.tags?.forEach((tag: string) => {
+        if (tag) {
+          tagCount[tag] = (tagCount[tag] || 0) + 1;
+        }
+      });
+    });
+    
+    // Sort tags by count and get top ones
+    const trendingTags = Object.entries(tagCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([tag]) => tag);
+    
+    return trendingTags;
+  } catch (error) {
+    console.error('Error in getTrendingTopics:', error);
+    return [];
+  }
+};
+
+// Create a notification
+export const createNotification = async (notificationData: {
+  user_id: string;
+  type: string;
+  source_id: string;
+  source_type: string;
+  message: string;
+  metadata?: Record<string, string>;
+}): Promise<void> => {
+  try {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('notifications')
+      .insert([notificationData]);
+
+    if (error) {
+      console.error('Error creating notification:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in createNotification:', error);
+    throw error;
+  }
+};
+
+// Get user notifications
+export const getUserNotifications = async (userId: string, limit = 20, page = 1): Promise<{ notifications: Notification[]; pagination: PaginationInfo }> => {
+  try {
+    const supabase = createClient();
+    const { data: notifications, error, count } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (error) {
+      console.error('Error fetching notifications:', error);
+      throw error;
+    }
+
+    return {
+      notifications: notifications || [],
+      pagination: {
+        currentPage: page,
+        hasMore: (notifications?.length || 0) === limit,
+        totalCount: count || 0
+      }
+    };
+  } catch (error) {
+    console.error('Error in getUserNotifications:', error);
+    throw error;
+  }
+};
+
+// Mark notification as read
+export const markNotificationAsRead = async (notificationId: string): Promise<void> => {
+  try {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('id', notificationId);
+
+    if (error) {
+      console.error('Error marking notification as read:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in markNotificationAsRead:', error);
+    throw error;
+  }
+};
+
+// Mark all notifications as read
+export const markAllNotificationsAsRead = async (userId: string): Promise<void> => {
+  try {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', userId)
+      .eq('is_read', false);
+
+    if (error) {
+      console.error('Error marking all notifications as read:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in markAllNotificationsAsRead:', error);
+    throw error;
+  }
+};
+
+// Get unread notification count
+export const getUnreadNotificationCount = async (userId: string): Promise<number> => {
+  try {
+    const supabase = createClient();
+    const { count, error } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .eq('is_read', false);
+
+    if (error) {
+      console.error('Error fetching unread notification count:', error);
+      throw error;
+    }
+
+    return count || 0;
+  } catch (error) {
+    console.error('Error in getUnreadNotificationCount:', error);
+    throw error;
   }
 };
