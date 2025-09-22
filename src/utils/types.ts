@@ -33,10 +33,20 @@ export type Unit = {
 };
 
 export type LessonContent =
-  | { url?: string; notes?: string }
+  | { url?: string; notes?: string; fileName?: string }
   | { body?: string }
-  | { url?: string; transcript?: string }
-  | { prompt?: string; exerciseType?: string };
+  | { url?: string; transcript?: string; fileName?: string }
+  | {
+      exerciseType: "quiz";
+      question: string;
+      options: string[];
+      correct: number;
+    }
+  | {
+      exerciseType: "fill-blank";
+      sentence: string;
+      blankIndex: number | null;
+    };
 
 export type Lesson = {
   id: string;
