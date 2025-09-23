@@ -13,6 +13,7 @@ export type Course = {
   created_at?: string;
   updated_at?: string;
   open_to_collab: boolean
+  language_name?: string; // optional, for easier access to language name
 };
 
 export type Language = {

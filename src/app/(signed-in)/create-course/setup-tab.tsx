@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/utils/supabase/client";
@@ -29,13 +29,13 @@ function SetupTab({
   courseData: Course;
   setCourseData: Dispatch<SetStateAction<Course>>;
   setCourseImageFile: Dispatch<SetStateAction<File | null>>;
-  tags: Tag[];
-  setTags: Dispatch<SetStateAction<Tag[]>>;
+  tags?: Tag[];
+  setTags?: Dispatch<SetStateAction<Tag[]>>;
 }) {
   const [localImageUrl, setLocalImageUrl] = useState<string>("");
 
   const removeTag = (id: string) => {
-    setTags((prev) => prev.filter((tag) => tag.id !== id));
+    setTags?.((prev) => prev.filter((tag) => tag.id !== id));
   };
 
   const searchLanguages = async (
@@ -107,8 +107,20 @@ function SetupTab({
                 </Label>
                 <SearchableInput<Language>
                   dbCall={searchLanguages}
+                  selected={
+                    courseData.language_id && courseData.language_name
+                      ? {
+                          id: courseData.language_id,
+                          name: courseData.language_name,
+                        }
+                      : null
+                  }
                   onSelect={(lang) => {
-                    setCourseData((p) => ({ ...p, language_id: lang.id })); // your actual state update
+                    setCourseData((p) => ({
+                      ...p,
+                      language_id: lang.id,
+                      language_name: lang.name,
+                    })); // your actual state update
                   }}
                   isCreationAllowed
                   createSearchType={createLanguage}
@@ -184,35 +196,37 @@ function SetupTab({
               />
             </div>
 
-            <div>
-              <Label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </Label>
-              <SearchableInput<Tag>
-                dbCall={searchTags}
-                onSelect={(tag) => {
-                  if (tags.find((t) => t.id === tag.id)) return;
-                  setTags((prev) => [...prev, tag]);
-                }}
-                isCreationAllowed
-                clearOnSelect
-                createSearchType={createTag}
-                placeholder="Enter tag..."
-              />
-              <div className="mt-2 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <Badge key={tag.id} className="cursor-pointer">
-                    {tag.name}{" "}
-                    <span
-                      className="text-gray-400"
-                      onClick={() => removeTag(tag.id)}
-                    >
-                      <XIcon className="w-4 h-4" />
-                    </span>
-                  </Badge>
-                ))}
+            {tags && setTags && (
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags
+                </Label>
+                <SearchableInput<Tag>
+                  dbCall={searchTags}
+                  onSelect={(tag) => {
+                    if (tags.find((t) => t.id === tag.id)) return;
+                    setTags((prev) => [...prev, tag]);
+                  }}
+                  isCreationAllowed
+                  clearOnSelect
+                  createSearchType={createTag}
+                  placeholder="Enter tag..."
+                />
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <Badge key={tag.id} className="cursor-pointer">
+                      {tag.name}{" "}
+                      <span
+                        className="text-gray-400"
+                        onClick={() => removeTag(tag.id)}
+                      >
+                        <XIcon className="w-4 h-4" />
+                      </span>
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>

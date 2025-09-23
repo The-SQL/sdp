@@ -2,39 +2,40 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  insertCourse,
-  insertCourseTags,
-  insertLessons,
-  insertUnits,
-  updateCourse,
-  uploadImageToSupabase,
+    insertCourse,
+    insertLessons,
+    insertUnits,
+    updateCourse,
+    uploadImageToSupabase
 } from "@/utils/db/client";
-import { Course, Lesson, Tag, Unit } from "@/utils/types";
+import { Course, Lesson, Unit } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import BuilderTab from "./builder-tab";
-import CollaborationTab from "./collaboration-tab";
-import PublishTab from "./publish-tab";
-import SetupTab from "./setup-tab";
+import BuilderTab from "../../create-course/builder-tab";
+import CollaborationTab from "../../create-course/collaboration-tab";
+import PublishTab from "../../create-course/publish-tab";
+import SetupTab from "../../create-course/setup-tab";
 
-export default function CreateCourse() {
+function CourseTabs({course}: {course: Course}) {
   const { user } = useUser();
 
   const [courseData, setCourseData] = useState<Course>({
-    author_id: "",
-    language_id: "",
-    title: "",
-    description: "",
-    difficulty: "",
-    estimated_duration: "",
-    learning_objectives: "",
-    profile_url: "",
-    is_public: true,
-    is_published: false,
-    open_to_collab: true,
+    id: course.id,
+    author_id: course.author_id,
+    language_id: course.language_id,
+    title: course.title,
+    description: course.description,
+    difficulty: course.difficulty,
+    estimated_duration: course.estimated_duration,
+    learning_objectives: course.learning_objectives,
+    profile_url: course.profile_url,
+    is_public: course.is_public,
+    is_published: course.is_published,
+    open_to_collab: course.open_to_collab,
+    created_at: course.created_at,
+    updated_at: course.updated_at,
   });
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
-  const [tags, setTags] = useState<Tag[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [uploadStep, setUploadStep] = useState<string>("");
@@ -81,7 +82,6 @@ export default function CreateCourse() {
         is_public: state === "public",
       };
       console.log("Course data to save:", courseToPublish);
-      console.log("Tags to save:", tags);
       console.log("Units to save:", units);
       console.log("Lessons to save:", lessons);
       setUploadStep("Uploading course...");
@@ -139,11 +139,6 @@ export default function CreateCourse() {
           })
         );
 
-        setUploadStep("Uploading tags...");
-        await insertCourseTags(
-          result.id!,
-          tags.map((tag) => tag.id)
-        );
 
         setUploadStep("Uploading units...");
         await insertUnits(result.id!, units);
@@ -168,60 +163,46 @@ export default function CreateCourse() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Create a New Course
-          </h1>
-          <p className="text-gray-600">
-            Share your language expertise with the global community
-          </p>
-        </div>
+    <Tabs defaultValue="setup" className="space-y-6">
+      <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsTrigger value="setup">Course Setup</TabsTrigger>
+        <TabsTrigger value="content">Content Builder</TabsTrigger>
+        <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
+        <TabsTrigger value="publish">Publish</TabsTrigger>
+      </TabsList>
 
-        <Tabs defaultValue="setup" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
-            <TabsTrigger value="setup">Course Setup</TabsTrigger>
-            <TabsTrigger value="content">Content Builder</TabsTrigger>
-            <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
-            <TabsTrigger value="publish">Publish</TabsTrigger>
-          </TabsList>
+      <TabsContent value="setup" className="space-y-6">
+        <SetupTab
+          courseData={courseData}
+          setCourseData={setCourseData}
+          setCourseImageFile={setCourseImageFile}
+        />
+      </TabsContent>
 
-          <TabsContent value="setup" className="space-y-6">
-            <SetupTab
-              courseData={courseData}
-              setCourseData={setCourseData}
-              setCourseImageFile={setCourseImageFile}
-              tags={tags}
-              setTags={setTags}
-            />
-          </TabsContent>
+      <TabsContent value="content" className="space-y-6">
+        <BuilderTab
+          units={units}
+          addUnit={addUnit}
+          removeUnit={removeUnit}
+          addLesson={addLesson}
+          lessons={lessons}
+          setUnits={setUnits}
+          setLessons={setLessons}
+        />
+      </TabsContent>
 
-          <TabsContent value="content" className="space-y-6">
-            <BuilderTab
-              units={units}
-              addUnit={addUnit}
-              removeUnit={removeUnit}
-              addLesson={addLesson}
-              lessons={lessons}
-              setUnits={setUnits}
-              setLessons={setLessons}
-            />
-          </TabsContent>
+      <TabsContent value="collaboration" className="space-y-6">
+        <CollaborationTab
+          courseData={courseData}
+          setCourseData={setCourseData}
+        />
+      </TabsContent>
 
-          <TabsContent value="collaboration" className="space-y-6">
-            <CollaborationTab
-              courseData={courseData}
-              setCourseData={setCourseData}
-            />
-          </TabsContent>
-
-          <TabsContent value="publish" className="space-y-6">
-            <PublishTab publishCourse={publishCourse} uploadStep={uploadStep} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+      <TabsContent value="publish" className="space-y-6">
+        <PublishTab publishCourse={publishCourse} uploadStep={uploadStep} />
+      </TabsContent>
+    </Tabs>
   );
 }
+
+export default CourseTabs;

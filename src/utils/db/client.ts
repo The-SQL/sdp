@@ -13,7 +13,7 @@ import {
 } from "../types";
 
 
-interface SupabaseCourseList {
+export interface SupabaseCourseList {
   id: string;
   title: string;
   description: string | null;
@@ -828,4 +828,19 @@ export async function getUserCourses(userId: string): Promise<UserCoursesState |
     num_completed,
     num_in_progress,
   };
+}
+
+export async function getCoursesByAuthor(authorId: string): Promise<Course[] | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+        .from("courses")
+        .select("*")
+        .eq("author_id", authorId);
+
+    if (error) {
+        console.error("Error fetching courses by author:", error.message);
+        return null;
+    }
+
+    return data;
 }
