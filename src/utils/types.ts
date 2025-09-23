@@ -12,6 +12,7 @@ export type Course = {
   is_published: boolean;
   created_at?: string;
   updated_at?: string;
+  open_to_collab: boolean
 };
 
 export type Language = {

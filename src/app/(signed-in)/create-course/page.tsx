@@ -31,27 +31,28 @@ export default function CreateCourse() {
     profile_url: "",
     is_public: true,
     is_published: false,
+    open_to_collab: true,
   });
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [uploadStep, setUploadStep] = useState<string>("");
-  const [collaborators] = useState([]);
-  const [pendingRequests] = useState([
-    {
-      id: "1",
-      user: "Alex Chen",
-      message: "I'd love to help with pronunciation sections",
-      date: "2 days ago",
-    },
-    {
-      id: "2",
-      user: "Sarah Johnson",
-      message: "Can I contribute cultural context lessons?",
-      date: "1 week ago",
-    },
-  ]);
+
+//   const [pendingRequests] = useState([
+//     {
+//       id: "1",
+//       user: "Alex Chen",
+//       message: "I'd love to help with pronunciation sections",
+//       date: "2 days ago",
+//     },
+//     {
+//       id: "2",
+//       user: "Sarah Johnson",
+//       message: "Can I contribute cultural context lessons?",
+//       date: "1 week ago",
+//     },
+//   ]);
 
   const addUnit = () => {
     const newUnit = {
@@ -226,8 +227,8 @@ export default function CreateCourse() {
 
           <TabsContent value="collaboration" className="space-y-6">
             <CollaborationTab
-              collaborators={collaborators}
-              pendingRequests={pendingRequests}
+              courseData={courseData}
+              setCourseData={setCourseData}
             />
           </TabsContent>
 

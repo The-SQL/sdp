@@ -1,45 +1,21 @@
 "use client";
 
-import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { useUser } from "@clerk/nextjs";
-import { Plus, Users } from "lucide-react";
-
-type Collaborator = {
-  id: string;
-  name: string;
-  role: "editor" | "reviewer" | "contributor";
-};
-
-type PendingRequests = {
-  id: string;
-  user: string;
-  message: string;
-  date: string;
-};
+import { Course } from "@/utils/types";
+import { Dispatch, SetStateAction } from "react";
 
 function CollaborationTab({
-  collaborators,
-  pendingRequests,
+  courseData,
+  setCourseData,
 }: {
-  collaborators: Collaborator[];
-  pendingRequests: PendingRequests[];
+  courseData: Course;
+  setCourseData: Dispatch<SetStateAction<Course>>;
 }) {
-  const { user } = useUser();
-  const displayName =
-    (user?.firstName && user?.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user?.firstName) ??
-    user?.username ??
-    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
-    "there";
+    
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="space-y-6">
+    <div className="grid grid-cols-1 gap-8">
+      <div className="space-y-6 w-full max-w-2xl mx-auto">
         <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Collaboration Settings</CardTitle>
@@ -54,22 +30,19 @@ function CollaborationTab({
                   Allow others to request to contribute to your course
                 </p>
               </div>
-              <Switch defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-sm font-medium text-gray-700">
-                  Auto-approve Trusted Contributors
-                </label>
-                <p className="text-xs text-gray-500">
-                  Automatically approve requests from verified educators
-                </p>
-              </div>
-              <Switch />
+              <Switch
+                checked={courseData.open_to_collab}
+                onCheckedChange={(checked) =>
+                  setCourseData((prev) => ({
+                    ...prev,
+                    open_to_collab: checked,
+                  }))
+                }
+              />
             </div>
           </CardContent>
         </Card>
-
+        {/* 
         <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Invite Collaborators</CardTitle>
@@ -78,19 +51,58 @@ function CollaborationTab({
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <Input placeholder="Enter username or email" className="flex-1" />
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                <Plus className="h-4 w-4 mr-2" />
-                Invite
+            <form
+              className="flex gap-2"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!inviteEmail) return;
+                setIsInviteSending(true);
+                await fetch("/api/send-email", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    data: {
+                      to: inviteEmail,
+                      senderName: displayName,
+                      courseTitle: courseData.title,
+                      courseUrl: `${window.location.origin}/courses/${courseData.id}`,
+                    },
+                  }),
+                });
+                setIsInviteSending(false);
+                setInviteEmail("");
+              }}
+            >
+              <Input
+                placeholder="Enter username or email"
+                type="email"
+                className="flex-1"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={!inviteEmail || isInviteSending}
+                type="submit"
+              >
+                {isInviteSending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Invite
+                  </>
+                )}
               </Button>
-            </div>
+            </form>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       <div className="space-y-6">
-        <Card className="border border-gray-200">
+        {/* <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Current Collaborators</CardTitle>
           </CardHeader>
@@ -98,11 +110,11 @@ function CollaborationTab({
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
-                 <Avatar>
+                  <Avatar>
                     <span className="bg-gradient-to-br from-blue-500 to-blue-600 w-8 h-8 rounded-full flex items-center justify-center text-white">
                       {displayName.charAt(0).toUpperCase()}
                     </span>
-                 </Avatar>
+                  </Avatar>
                   <div>
                     <p className="font-medium text-gray-900">{displayName}</p>
                     <p className="text-sm text-gray-600">Course Creator</p>
@@ -110,15 +122,10 @@ function CollaborationTab({
                 </div>
                 <Badge className="bg-blue-100 text-blue-800">Owner</Badge>
               </div>
-              {collaborators.length === 0 && (
-                <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">No collaborators yet</p>
-                </div>
-              )}
             </div>
           </CardContent>
-        </Card>
-        <Card className="border border-gray-200">
+        </Card> */}
+        {/* <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Collaboration Requests</CardTitle>
             <p className="text-sm text-gray-600">
@@ -174,7 +181,7 @@ function CollaborationTab({
               )}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
