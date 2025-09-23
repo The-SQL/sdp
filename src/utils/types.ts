@@ -133,3 +133,11 @@ export interface UserProgress {
   progress: number;
   updated_at: string;
 }
+
+export type Collaborators = {
+    id?: string;
+    course_id: string;
+    user_id: string;
+    status: "pending" | "active";
+    created_at?: string;
+}

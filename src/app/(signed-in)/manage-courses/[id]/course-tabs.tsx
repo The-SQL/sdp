@@ -2,11 +2,11 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    insertCourse,
-    insertLessons,
-    insertUnits,
-    updateCourse,
-    uploadImageToSupabase
+  insertCourse,
+  insertLessons,
+  insertUnits,
+  updateCourse,
+  uploadImageToSupabase,
 } from "@/utils/db/client";
 import { Course, Lesson, Unit } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
@@ -16,7 +16,15 @@ import CollaborationTab from "../../create-course/collaboration-tab";
 import PublishTab from "../../create-course/publish-tab";
 import SetupTab from "../../create-course/setup-tab";
 
-function CourseTabs({course}: {course: Course}) {
+function CourseTabs({
+  course,
+  fetchedUnits,
+  fetchedLessons,
+}: {
+  course: Course;
+  fetchedUnits: Unit[];
+  fetchedLessons: Lesson[];
+}) {
   const { user } = useUser();
 
   const [courseData, setCourseData] = useState<Course>({
@@ -36,8 +44,8 @@ function CourseTabs({course}: {course: Course}) {
     updated_at: course.updated_at,
   });
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [units, setUnits] = useState<Unit[]>(fetchedUnits);
+  const [lessons, setLessons] = useState<Lesson[]>(fetchedLessons);
   const [uploadStep, setUploadStep] = useState<string>("");
 
   const addUnit = () => {
@@ -139,7 +147,6 @@ function CourseTabs({course}: {course: Course}) {
           })
         );
 
-
         setUploadStep("Uploading units...");
         await insertUnits(result.id!, units);
 
@@ -195,11 +202,12 @@ function CourseTabs({course}: {course: Course}) {
         <CollaborationTab
           courseData={courseData}
           setCourseData={setCourseData}
+          isEditing={true}
         />
       </TabsContent>
 
       <TabsContent value="publish" className="space-y-6">
-        <PublishTab publishCourse={publishCourse} uploadStep={uploadStep} />
+        <PublishTab publishCourse={publishCourse} uploadStep={uploadStep}      isEditing={true} />
       </TabsContent>
     </Tabs>
   );

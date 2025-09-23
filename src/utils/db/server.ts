@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseCourseList } from "./client";
 import { ensureUserInitialized, updateUserStreak } from "./profile";
-import { Course } from "../types";
+import { Course, Lesson, Unit } from "../types";
 
 export interface CourseWithStats {
   id: string;
@@ -61,7 +61,9 @@ export async function checkUserExists(clerk_id: string) {
   return data ? data.length > 0 : false;
 }
 
-export async function getCoursesByAuthor(authorId: string): Promise<CourseWithStats[]> {
+export async function getCoursesByAuthor(
+  authorId: string
+): Promise<CourseWithStats[]> {
   const supabase = await createClient();
 
   const { data: courses, error } = await supabase
@@ -126,7 +128,9 @@ export async function getCoursesByAuthor(authorId: string): Promise<CourseWithSt
   return transformedCourses;
 }
 
-export async function getStandardCourseById(courseId: string): Promise<Course | null> {
+export async function getStandardCourseById(
+  courseId: string
+): Promise<Course | null> {
   const supabase = await createClient();
 
   const { data: course, error } = await supabase
@@ -143,7 +147,7 @@ export async function getStandardCourseById(courseId: string): Promise<Course | 
   return course;
 }
 
-export async function getLessonsByUnitId(unitId: string) {
+export async function getLessonsByUnitId(unitId: string): Promise<Lesson[]> {
   const supabase = await createClient();
 
   const { data: lessons, error } = await supabase
@@ -158,9 +162,9 @@ export async function getLessonsByUnitId(unitId: string) {
   }
 
   return lessons;
-}   
+}
 
-export async function getUnitsByCourseId(courseId: string) {
+export async function getUnitsByCourseId(courseId: string): Promise<Unit[]> {
   const supabase = await createClient();
 
   const { data: units, error } = await supabase
@@ -180,10 +184,7 @@ export async function getUnitsByCourseId(courseId: string) {
 export async function deleteCourseById(courseId: string) {
   const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("courses")
-    .delete()
-    .eq("id", courseId);
+  const { error } = await supabase.from("courses").delete().eq("id", courseId);
 
   if (error) {
     console.error("Supabase error:", error);

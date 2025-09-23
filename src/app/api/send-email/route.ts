@@ -28,11 +28,13 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
+        console.log("Error sending email:", error);
       return Response.json({ error }, { status: 500 });
     }
 
     return Response.json(data);
   } catch (error) {
+       console.log("Error sending email2:", error);
     return Response.json({ error }, { status: 500 });
   }
 }

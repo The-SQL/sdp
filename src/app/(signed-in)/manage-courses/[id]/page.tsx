@@ -1,9 +1,21 @@
-import { getStandardCourseById } from "@/utils/db/server";
+import {
+  getLessonsByUnitId,
+  getStandardCourseById,
+  getUnitsByCourseId,
+} from "@/utils/db/server";
 import CourseTabs from "./course-tabs";
 
 async function Page({ params }: { params: { id: string } }) {
-  const course = await getStandardCourseById(params.id);
-   
+  const { id } = await params;
+  const course = await getStandardCourseById(id);
+  const units = await getUnitsByCourseId(id);
+
+  const lessons = await Promise.all(
+    units.map((unit) => getLessonsByUnitId(unit.id))
+  ).then((res) => {
+    return res.flat();
+  });
+
   if (!course) {
     return (
       <div>
@@ -22,7 +34,11 @@ async function Page({ params }: { params: { id: string } }) {
           </h1>
           <p className="text-gray-600">Edit and update your course details</p>
         </div>
-        <CourseTabs course={course} />
+        <CourseTabs
+          course={course}
+          fetchedUnits={units}
+          fetchedLessons={lessons}
+        />
       </div>
     </div>
   );

@@ -4,22 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Lesson, Unit } from "@/utils/types";
-import {
-    FileText,
-    HelpCircle,
-    Mic,
-    Plus,
-    Trash2,
-    Video
-} from "lucide-react";
+import { FileText, HelpCircle, Mic, Plus, Trash2, Video } from "lucide-react";
 const lessonTypes = [
   {
     type: "video",
@@ -228,6 +221,12 @@ function BuilderTab({
                             <Textarea
                               placeholder="Video description and notes..."
                               rows={2}
+                              value={
+                                lesson.content_type === "video" &&
+                                "notes" in lesson.content
+                                  ? lesson.content.notes ?? ""
+                                  : ""
+                              }
                               onChange={(e) => {
                                 setLessons(
                                   lessons.map((l) =>
@@ -250,6 +249,12 @@ function BuilderTab({
                           <Textarea
                             placeholder="Write your lesson content here..."
                             rows={4}
+                            value={
+                              lesson.content_type === "text" &&
+                              "body" in lesson.content
+                                ? lesson.content.body ?? ""
+                                : ""
+                            }
                             onChange={(e) => {
                               setLessons(
                                 lessons.map((l) =>
@@ -318,6 +323,12 @@ function BuilderTab({
                             <Textarea
                               placeholder="Audio transcript and pronunciation notes..."
                               rows={2}
+                              value={
+                                lesson.content_type === "audio" &&
+                                "transcript" in lesson.content
+                                  ? lesson.content.transcript ?? ""
+                                  : ""
+                              }
                               onChange={(e) => {
                                 setLessons(
                                   lessons.map((l) =>
