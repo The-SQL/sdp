@@ -17,6 +17,7 @@ const customJestConfig = {
   collectCoverageFrom: [
     'src/utils/db/client.ts',
     'src/utils/db/server.ts',
+    'src/utils/db/forum.ts',
     '!src/utils/types/**',
     '!src/utils/supabase/**',
     '!src/utils/**/__mocks__/**',
