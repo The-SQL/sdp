@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/client";
 import {
   Collaborators,
+  CollaboratorStatus,
   Course,
   Language,
   Lesson,
@@ -152,12 +153,19 @@ export const uploadImageToSupabase = async (
 ): Promise<string> => {
   const supabase = createClient();
 
-  const { error } = await supabase.storage.from(bucket).upload(fileName, file);
-  if (error) {
-    console.error("Error uploading image:", error.message);
-    throw error;
+  // Upload with upsert true to replace existing file if present
+  const { error: uploadError } = await supabase.storage
+    .from(bucket)
+    .upload(fileName, file, { upsert: true });
+
+  if (uploadError) {
+    console.error("Error uploading image:", uploadError.message || uploadError);
+    throw uploadError;
   }
+
+  // getPublicUrl does not return an error object — only data with publicUrl
   const { data } = supabase.storage.from(bucket).getPublicUrl(fileName);
+
   return data.publicUrl;
 };
 
@@ -259,6 +267,26 @@ export async function insertUnits(courseId: string, units: Unit[]) {
   if (error) throw error;
 }
 
+export async function updateUnit(
+  unitId: string,
+  updates: Partial<Unit>
+): Promise<Unit> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("units")
+    .update(updates)
+    .eq("id", unitId)
+    .select();
+
+  if (error) {
+    console.error("Error updating unit:", error);
+    throw error;
+  }
+
+  return data[0];
+}
+
 export async function insertLesson(
   unitId: string,
   title: string,
@@ -302,6 +330,26 @@ export async function insertLessons(courseId: string, lessons: Lesson[]) {
   const { error } = await supabase.from("lessons").insert(payload);
 
   if (error) throw error;
+}
+
+export async function updateLesson(
+  lessonId: string,
+  updates: Partial<Lesson>
+): Promise<Lesson> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("lessons")
+    .update(updates)
+    .eq("id", lessonId)
+    .select();
+
+  if (error) {
+    console.error("Error updating lesson:", error);
+    throw error;
+  }
+
+  return data[0];
 }
 
 /**
@@ -386,16 +434,7 @@ export async function getCourseById(id: string) {
     .from("courses")
     .select(
       `
-      id,
-      title,
-      description,
-      difficulty,
-      estimated_duration,
-      learning_objectives,
-      profile_url,
-      is_public,
-      is_published,
-      updated_at,
+      *,
       languages(name),
       users!courses_author_id_fkey(
         clerk_id,
@@ -440,13 +479,15 @@ export async function getCourseById(id: string) {
     throw new Error("Failed to fetch course");
   }
 
-  const supabaseCourse = course as unknown as {
+  const supabaseCourse = course as {
     id: string;
     title: string;
     description: string | null;
     difficulty: string | null;
     estimated_duration: string | null;
     learning_objectives: string | null;
+    open_to_collab: boolean | null;
+    author_id: string | null;
     profile_url: string | null;
     is_public: boolean;
     is_published: boolean;
@@ -556,6 +597,8 @@ export async function getCourseById(id: string) {
   const transformedCourse = {
     id: supabaseCourse.id,
     title: supabaseCourse.title,
+    author_id: supabaseCourse.author_id || "Unknown",
+    open_to_collab: supabaseCourse.open_to_collab || false,
     subtitle: `Master the fundamentals of ${supabaseCourse.languages?.name || "the"} language`,
     description: supabaseCourse.description || "No description available",
     image: supabaseCourse.profile_url || "/placeholder.svg",
@@ -916,7 +959,9 @@ export async function getCoursesByAuthor(
   return data;
 }
 
-export async function getCourseCollaborators(courseId: string): Promise<CollaboratorWithUser[] | null> {
+export async function getCourseCollaborators(
+  courseId: string
+): Promise<CollaboratorWithUser[] | null> {
   const supabase = createClient();
 
   // Get collaborator records along with user details using an embedded select
@@ -941,4 +986,56 @@ export async function getCourseCollaborators(courseId: string): Promise<Collabor
   }
 
   return data as CollaboratorWithUser[] | null;
+}
+
+export async function addCollaborator(
+  courseId: string,
+  userId: string,
+  status: CollaboratorStatus
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("collaborators")
+    .insert([{ course_id: courseId, user_id: userId, status }]);
+
+  if (error) {
+    console.error("Error adding collaborator:", error);
+    throw error;
+  }
+}
+
+export async function removeCollaborator(
+  courseId: string,
+  userId: string
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("collaborators")
+    .delete()
+    .eq("course_id", courseId)
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error removing collaborator:", error);
+    throw error;
+  }
+}
+
+export async function updateCollaboratorStatus(
+  collaboratorId: string,
+  status: CollaboratorStatus
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("collaborators")
+    .update({ status })
+    .eq("id", collaboratorId);
+
+  if (error) {
+    console.error("Error updating collaborator status:", error);
+    throw error;
+  }
 }

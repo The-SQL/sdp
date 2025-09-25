@@ -45,11 +45,13 @@ function SearchableInput<TItem extends { id: string; name: string }>({
   // Keep input in sync if parent changes selected
   useEffect(() => {
     if (selected) {
-      setQuery(getLabel(selected));
+      const label = getLabel(selected);
+      // Only update state if the label actually changed to avoid rerenders
+      setQuery((prev) => (prev === label ? prev : label));
       setResults([]);
       setShowPopover(false);
     }
-  }, [selected, getLabel]);
+  }, [selected]);
 
   // Fetch results when typing
   useEffect(() => {

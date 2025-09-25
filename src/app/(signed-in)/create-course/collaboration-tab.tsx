@@ -9,11 +9,13 @@ import { Switch } from "@/components/ui/switch";
 import {
   CollaboratorWithUser,
   getCourseCollaborators,
+  updateCollaboratorStatus,
 } from "@/utils/db/client";
 import { Collaborators, Course } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import { Loader2, Plus, Users } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { format } from "date-fns";
 
 function CollaborationTab({
   courseData,
@@ -168,7 +170,10 @@ function CollaborationTab({
                           </h4>
                         </div>
                         <span className="text-xs text-gray-500">
-                          {request.created_at}
+                          {format(
+                            new Date(request.created_at as string),
+                            "dd MMM yyyy"
+                          )}
                         </span>
                       </div>
                       <div className="flex gap-2 mt-3">
@@ -216,18 +221,32 @@ function CollaborationTab({
                           </h4>
                         </div>
                         <span className="text-xs text-gray-500">
-                          {request.created_at}
+                          {format(
+                            new Date(request.created_at as string),
+                            "dd MMM yyyy"
+                          )}
                         </span>
                       </div>
                       <div className="flex gap-2 mt-3">
                         <Button
                           size="sm"
                           className="bg-green-600 hover:bg-green-700 text-white"
+                          onClick={async () => {
+                            await updateCollaboratorStatus(
+                              request.id as string,
+                              "active"
+                            );
+                            // Update local state
+                            setCollaborators((prev) =>
+                              prev.map((collab) =>
+                                collab.id === request.id
+                                  ? { ...collab, status: "active" }
+                                  : collab
+                              )
+                            );
+                          }}
                         >
                           Accept
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Message
                         </Button>
                         <Button
                           variant="outline"

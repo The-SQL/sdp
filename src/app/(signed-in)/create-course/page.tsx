@@ -29,7 +29,7 @@ export default function CreateCourse() {
     estimated_duration: "",
     learning_objectives: "",
     profile_url: "",
-    is_public: true,
+    is_public: false,
     is_published: false,
     open_to_collab: true,
   });
@@ -70,15 +70,13 @@ export default function CreateCourse() {
     ]);
   };
 
-  const publishCourse = async (
-    state: string
-  ): Promise<{ success: boolean; data: Course | null }> => {
+  const publishCourse = async (): Promise<{
+    success: boolean;
+    data: Course | null;
+  }> => {
     try {
       const courseToPublish = {
         ...courseData,
-        is_published:
-          state === "public" || state === "unlisted" || state === "draft",
-        is_public: state === "public",
       };
       console.log("Course data to save:", courseToPublish);
       console.log("Tags to save:", tags);
@@ -218,7 +216,12 @@ export default function CreateCourse() {
           </TabsContent>
 
           <TabsContent value="publish" className="space-y-6">
-            <PublishTab publishCourse={publishCourse} uploadStep={uploadStep} />
+            <PublishTab
+              publishCourse={publishCourse}
+              uploadStep={uploadStep}
+              courseData={courseData}
+              setCourseData={setCourseData}
+            />
           </TabsContent>
         </Tabs>
       </div>

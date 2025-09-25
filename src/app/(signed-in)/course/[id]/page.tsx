@@ -1,37 +1,39 @@
 "use client";
 
 // Import necessary React hooks and components
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import {
-  Star,
-  Clock,
-  Users,
-  BookOpen,
-  Play,
-  Heart,
-  Share2,
-  MessageSquare,
-  ChevronRight,
-  Ear,
-} from "lucide-react";
-import { useParams } from "next/navigation";
-import {
-  getCourseById,
-  checkIfFavorited,
-  addToFavorites,
-  removeFromFavorites,
-  enrollInCourse,
-  checkIfEnrolled,
-} from "@/utils/db/client";
-import { useAuth } from "@clerk/nextjs";
 import Loading from "@/components/loading";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  addCollaborator,
+  addToFavorites,
+  checkIfEnrolled,
+  checkIfFavorited,
+  enrollInCourse,
+  getCourseById,
+  removeFromFavorites,
+} from "@/utils/db/client";
+import { useUser } from "@clerk/nextjs";
+import {
+  BookOpen,
+  ChevronRight,
+  Clock,
+  Ear,
+  Heart,
+  MessageSquare,
+  Play,
+  Share2,
+  Star,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import CollaborateButton from "./collaborate-button";
 
 // Define the Course interface for type safety
 interface Course {
@@ -58,6 +60,8 @@ interface Course {
   lastUpdated: string;
   tags: string[];
   price: string;
+  open_to_collab: boolean;
+  author_id: string;
   whatYouWillLearn: string[];
   requirements: string[];
   chapters: Array<{
@@ -90,41 +94,17 @@ export default function CourseOverview() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const params = useParams();
-  const { userId } = useAuth();
-
-  // Fetch course data and check user enrollment/favorite status
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const courseData = await getCourseById(params.id as string);
-        setCourse(courseData as Course);
-
-        if (userId) {
-          const favorited = await checkIfFavorited(params.id as string, userId);
-          setIsStarred(favorited);
-
-          const enrolled = await checkIfEnrolled(params.id as string, userId);
-          setIsEnrolled(enrolled);
-        }
-      } catch (error) {
-        console.error("Error fetching course:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourse();
-  }, [params.id, userId]);
-
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
   // Handle favorite/unfavorite course action
   const toggleFavorite = async () => {
-    if (!userId || !course) return;
+    if (!user || !course) return;
 
     try {
       if (isStarred) {
-        await removeFromFavorites(course.id, userId);
+        await removeFromFavorites(course.id, user.id);
       } else {
-        await addToFavorites(course.id, userId);
+        await addToFavorites(course.id, user.id);
       }
 
       setIsStarred(!isStarred);
@@ -135,10 +115,10 @@ export default function CourseOverview() {
 
   // Handle course enrollment
   const handleEnroll = async () => {
-    if (!userId || !course) return;
+    if (!user || !course) return;
 
     try {
-      await enrollInCourse(course.id, userId);
+      await enrollInCourse(course.id, user.id);
       setIsEnrolled(true);
     } catch (error) {
       console.error("Error enrolling in course:", error);
@@ -158,8 +138,41 @@ export default function CourseOverview() {
       });
   };
 
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, user]);
+
+  // Fetch course data and check user enrollment/favorite status
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const courseData = await getCourseById(params.id as string);
+        setCourse(courseData as Course);
+
+        if (user) {
+          const favorited = await checkIfFavorited(
+            params.id as string,
+            user.id
+          );
+          setIsStarred(favorited);
+
+          const enrolled = await checkIfEnrolled(params.id as string, user.id);
+          setIsEnrolled(enrolled);
+        }
+      } catch (error) {
+        console.error("Error fetching course:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [params.id, user]);
+
   // Display loading state
-  if (loading || !course) {
+  if (loading || !course || !isLoaded) {
     return <Loading />;
   }
 
@@ -169,6 +182,10 @@ export default function CourseOverview() {
   // Main render of the course overview page
   return (
     <div className="min-h-screen">
+        {course.author_id !== user?.id && course.open_to_collab && (
+          <CollaborateButton courseId={course.id} />
+        )}
+
       <div className="p-8">
         {/* Course Header Section */}
         <div className="max-w-6xl mx-auto">
@@ -199,8 +216,8 @@ export default function CourseOverview() {
                     {course.reviews === 0
                       ? " (no reviews yet)"
                       : course.reviews === 1
-                      ? " (1 review)"
-                      : ` (${course.reviews} reviews)`}
+                        ? " (1 review)"
+                        : ` (${course.reviews} reviews)`}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -313,7 +330,7 @@ export default function CourseOverview() {
                           variant="outline"
                           className="flex-1 bg-transparent"
                           onClick={toggleFavorite}
-                          disabled={!userId}
+                          disabled={!(user && !user.id)}
                         >
                           <Heart
                             className={`h-4 w-4 mr-2 ${
@@ -464,8 +481,8 @@ export default function CourseOverview() {
                       {course.reviews === 0
                         ? "No reviews yet"
                         : course.reviews === 1
-                        ? "Based on 1 review"
-                        : `Based on ${course.reviews} reviews`}
+                          ? "Based on 1 review"
+                          : `Based on ${course.reviews} reviews`}
                     </div>
                   </div>
                 </CardHeader>

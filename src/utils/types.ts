@@ -12,7 +12,7 @@ export type Course = {
   is_published: boolean;
   created_at?: string;
   updated_at?: string;
-  open_to_collab: boolean
+  open_to_collab: boolean;
   language_name?: string; // optional, for easier access to language name
 };
 
@@ -134,10 +134,12 @@ export interface UserProgress {
   updated_at: string;
 }
 
+export type CollaboratorStatus = "pending" | "active";
+
 export type Collaborators = {
-    id?: string;
-    course_id: string;
-    user_id: string;
-    status: "pending" | "active";
-    created_at?: string;
-}
+  id?: string;
+  course_id: string;
+  user_id: string;
+  status: CollaboratorStatus;
+  created_at?: string;
+};

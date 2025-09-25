@@ -32,7 +32,6 @@ function SetupTab({
   tags?: Tag[];
   setTags?: Dispatch<SetStateAction<Tag[]>>;
 }) {
-  const [localImageUrl, setLocalImageUrl] = useState<string>("");
 
   const removeTag = (id: string) => {
     setTags?.((prev) => prev.filter((tag) => tag.id !== id));
@@ -93,7 +92,7 @@ function SetupTab({
                   const file = e.target.files?.[0];
                   if (file) {
                     const url = URL.createObjectURL(file);
-                    setLocalImageUrl(url);
+                    setCourseData((p) => ({ ...p, profile_url: url }));
                     setCourseImageFile(file);
                   }
                 }}
@@ -120,7 +119,7 @@ function SetupTab({
                       ...p,
                       language_id: lang.id,
                       language_name: lang.name,
-                    })); // your actual state update
+                    }));
                   }}
                   isCreationAllowed
                   createSearchType={createLanguage}
@@ -240,9 +239,9 @@ function SetupTab({
           <CardContent>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
-                {localImageUrl || courseData.profile_url ? (
+                {courseData.profile_url ? (
                   <img
-                    src={localImageUrl || courseData.profile_url}
+                    src={courseData.profile_url}
                     alt="Course Preview"
                     className="w-16 h-16 object-cover rounded-lg border"
                   />

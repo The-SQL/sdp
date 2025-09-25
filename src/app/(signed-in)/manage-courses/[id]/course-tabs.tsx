@@ -6,6 +6,8 @@ import {
   insertLessons,
   insertUnits,
   updateCourse,
+  updateLesson,
+  updateUnit,
   uploadImageToSupabase,
 } from "@/utils/db/client";
 import { Course, Lesson, Unit } from "@/utils/types";
@@ -31,6 +33,7 @@ function CourseTabs({
     id: course.id,
     author_id: course.author_id,
     language_id: course.language_id,
+    language_name: course.language_name,
     title: course.title,
     description: course.description,
     difficulty: course.difficulty,
@@ -79,21 +82,23 @@ function CourseTabs({
     ]);
   };
 
-  const publishCourse = async (
-    state: string
-  ): Promise<{ success: boolean; data: Course | null }> => {
+  const editCourse = async (): Promise<{
+    success: boolean;
+    data: Course | null;
+  }> => {
     try {
       const courseToPublish = {
         ...courseData,
-        is_published:
-          state === "public" || state === "unlisted" || state === "draft",
-        is_public: state === "public",
       };
+
       console.log("Course data to save:", courseToPublish);
       console.log("Units to save:", units);
       console.log("Lessons to save:", lessons);
       setUploadStep("Uploading course...");
-      const result = await insertCourse(courseToPublish);
+
+      if (!courseToPublish.id) return { success: false, data: null };
+
+      const result = await updateCourse(courseToPublish.id, courseToPublish);
 
       let updatedLessons = [...lessons];
       if (result) {
@@ -148,10 +153,38 @@ function CourseTabs({
         );
 
         setUploadStep("Uploading units...");
-        await insertUnits(result.id!, units);
+        // Insert units
+        // If unit.id starts with "temp-", it means it's a new unit and needs to be inserted
+        // Otherwise, it's an existing unit and needs to be updated
+        const unitsToInsert = units.filter((unit) => unit.course_id === "temp");
+        const unitsToUpdate = units.filter((unit) => unit.course_id !== "temp");
 
+        await insertUnits(result.id!, unitsToInsert);
+        await Promise.all(
+          unitsToUpdate.map(async (unit) => {
+            if (!unit.id) return;
+            await updateUnit(unit.id, unit);
+          })
+        );
         setUploadStep("Uploading lessons...");
-        await insertLessons(result.id!, updatedLessons);
+
+        // Insert lessons
+        // If lesson.id starts with "temp-", it means it's a new lesson and needs to be inserted
+        // Otherwise, it's an existing lesson and needs to be updated
+        const lessonsToInsert = updatedLessons.filter((lesson) =>
+          lesson.id.startsWith("temp-")
+        );
+        const lessonsToUpdate = updatedLessons.filter(
+          (lesson) => !lesson.id.startsWith("temp-")
+        );
+
+        await insertLessons(result.id!, lessonsToInsert);
+        await Promise.all(
+          lessonsToUpdate.map(async (lesson) => {
+            if (!lesson.id) return;
+            await updateLesson(lesson.id, lesson);
+          })
+        );
       }
 
       console.log("Done");
@@ -207,7 +240,13 @@ function CourseTabs({
       </TabsContent>
 
       <TabsContent value="publish" className="space-y-6">
-        <PublishTab publishCourse={publishCourse} uploadStep={uploadStep}      isEditing={true} />
+        <PublishTab
+          publishCourse={editCourse}
+          uploadStep={uploadStep}
+          isEditing={true}
+          courseData={courseData}
+          setCourseData={setCourseData}
+        />
       </TabsContent>
     </Tabs>
   );

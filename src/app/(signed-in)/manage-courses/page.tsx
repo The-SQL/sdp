@@ -6,7 +6,7 @@ import CoursesGrid, { CoursesGridSkeleton } from "./courses-grid";
 async function Page() {
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className=" bg-white">
       <div className="p-8">
         {/* Header */}
         <div className="mb-8 flex ">

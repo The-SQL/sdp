@@ -16,6 +16,8 @@ async function Page({ params }: { params: { id: string } }) {
     return res.flat();
   });
 
+
+  console.log("Course fetched:", course);
   if (!course) {
     return (
       <div>
