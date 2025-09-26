@@ -1,9 +1,14 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CourseWithStats } from "@/utils/db/server";
+import { useUser } from "@clerk/nextjs";
 import { Clock, Star, Users } from "lucide-react";
 
-function CourseCard({course}: {course: CourseWithStats}) {
+function CourseCard({ course }: { course: CourseWithStats }) {
+  const { user } = useUser();
+
   return (
     <Card
       key={course.id}
@@ -71,7 +76,9 @@ function CourseCard({course}: {course: CourseWithStats}) {
             >
               {course.level}
             </Badge>
-            <span className="text-sm text-gray-500 ml-auto">by You</span>
+            <span className="text-sm text-gray-500 ml-auto">
+              by {user && course.author_id === user.id ? "You" : course.author}
+            </span>
           </div>
         </div>
       </CardContent>

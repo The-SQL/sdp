@@ -5,6 +5,8 @@ import {
   Course,
   Language,
   Lesson,
+  SuggestedChange,
+  SuggestedChangeStatus,
   Unit,
   UserAchievement,
   UserCourse,
@@ -17,6 +19,7 @@ import {
 export interface SupabaseCourseList {
   id: string;
   title: string;
+  author_id: string;
   description: string | null;
   difficulty: string | null;
   estimated_duration: string | null;
@@ -988,6 +991,25 @@ export async function getCourseCollaborators(
   return data as CollaboratorWithUser[] | null;
 }
 
+export async function updateCollaborationStatus(
+  courseId: string,
+  userId: string,
+  status: CollaboratorStatus
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("collaborators")
+    .update({ status })
+    .eq("course_id", courseId)
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error updating collaboration status:", error);
+    throw error;
+  }
+}
+
 export async function addCollaborator(
   courseId: string,
   userId: string,
@@ -999,7 +1021,9 @@ export async function addCollaborator(
     .from("collaborators")
     .insert([{ course_id: courseId, user_id: userId, status }]);
 
-  if (error) {
+  if (error && error.code === "23505") {
+    await updateCollaborationStatus(courseId, userId, status);
+  } else if (error) {
     console.error("Error adding collaborator:", error);
     throw error;
   }
@@ -1036,6 +1060,94 @@ export async function updateCollaboratorStatus(
 
   if (error) {
     console.error("Error updating collaborator status:", error);
+    throw error;
+  }
+}
+
+export async function getCourseCollaborator(
+  courseId: string,
+  userId: string
+): Promise<Collaborators | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("collaborators")
+    .select("*")
+    .eq("course_id", courseId)
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching course collaborator:", error.message);
+    return null;
+  }
+
+  return data[0];
+}
+
+export async function cancelCollaboration(
+  courseId: string,
+  userId: string
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("collaborators")
+    .update({ status: "cancelled" })
+    .eq("course_id", courseId)
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Error cancelling collaboration:", error);
+    throw error;
+  }
+}
+
+export async function insertSuggestedEdit(
+  suggestedChanges: SuggestedChange
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("suggested_edits")
+    .insert([suggestedChanges]);
+
+  if (error) {
+    console.error("Error inserting suggested edit:", error);
+    throw error;
+  }
+}
+
+export async function getCourseSuggestedEdits(courseId: string): Promise<SuggestedChange[] | null> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("suggested_edits")
+    .select("*")
+    .eq("course_id", courseId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching suggested edits:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+export async function updateSuggestedEditStatus(
+  editId: string,
+  status: SuggestedChangeStatus,
+  reviewedBy: string
+): Promise<void> {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("suggested_edits")
+    .update({ status, reviewed_by: reviewedBy, reviewed_at: new Date().toISOString() })
+    .eq("id", editId);
+
+  if (error) {
+    console.error("Error updating suggested edit status:", error);
     throw error;
   }
 }

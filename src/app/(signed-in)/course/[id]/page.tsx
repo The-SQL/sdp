@@ -182,9 +182,11 @@ export default function CourseOverview() {
   // Main render of the course overview page
   return (
     <div className="min-h-screen">
-        {course.author_id !== user?.id && course.open_to_collab && (
-          <CollaborateButton courseId={course.id} />
-        )}
+      <CollaborateButton
+        courseId={course.id}
+        authorId={course.author_id}
+        openToCollab={course.open_to_collab}
+      />
 
       <div className="p-8">
         {/* Course Header Section */}

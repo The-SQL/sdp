@@ -1,7 +1,7 @@
 import CourseCard from "@/components/courses/course-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCoursesByAuthor } from "@/utils/db/server";
+import { CourseWithStats, getCoursesByAuthor } from "@/utils/db/server";
 import { auth } from "@clerk/nextjs/server";
 import { BookDashed } from "lucide-react";
 import Link from "next/link";
@@ -25,8 +25,8 @@ async function CoursesGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {courses.length > 0 ? (
-        courses.map((course) => (
-          <Link href={`/manage-courses/${course.id}`}>
+        courses.map((course: CourseWithStats) => (
+          <Link href={`/manage-courses/${course.id}`} key={course.id}>
             <CourseCard course={course} />
           </Link>
         ))

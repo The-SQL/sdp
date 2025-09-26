@@ -181,6 +181,20 @@ function CollaborationTab({
                           variant="outline"
                           size="sm"
                           className="text-red-600 bg-transparent"
+                          onClick={async () => {
+                            await updateCollaboratorStatus(
+                              request.id as string,
+                              "cancelled"
+                            );
+                            // Update local state
+                            setCollaborators((prev) =>
+                              prev.map((collab) =>
+                                collab.id === request.id
+                                  ? { ...collab, status: "cancelled" }
+                                  : collab
+                              )
+                            );
+                          }}
                         >
                           Remove
                         </Button>
@@ -252,6 +266,20 @@ function CollaborationTab({
                           variant="outline"
                           size="sm"
                           className="text-red-600 bg-transparent"
+                          onClick={async () => {
+                            await updateCollaboratorStatus(
+                              request.id as string,
+                              "rejected"
+                            );
+                            // Update local state
+                            setCollaborators((prev) =>
+                              prev.map((collab) =>
+                                collab.id === request.id
+                                  ? { ...collab, status: "rejected" }
+                                  : collab
+                              )
+                            );
+                          }}
                         >
                           Decline
                         </Button>

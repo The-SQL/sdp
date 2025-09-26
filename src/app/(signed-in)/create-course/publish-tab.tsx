@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { Course } from "@/utils/types";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -13,15 +14,24 @@ function PublishTab({
   isEditing = false,
   courseData,
   setCourseData,
+  isAuthor,
+  summaryOfChanges,
+  setSummaryOfChanges,
+  courseVersion = "main",
 }: {
   publishCourse: () => Promise<{ success: boolean; data: Course | null }>;
   uploadStep: string;
   courseData: Course;
   setCourseData: Dispatch<React.SetStateAction<Course>>;
   isEditing?: boolean;
+  isAuthor: boolean;
+  summaryOfChanges?: string;
+  setSummaryOfChanges?: Dispatch<React.SetStateAction<string>>;
+  courseVersion?: string;
 }) {
   const [isPublishing, setIsPublishing] = useState(false);
   const router = useRouter();
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <Card className="border border-gray-200">
@@ -32,120 +42,207 @@ function PublishTab({
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="border-t pt-6">
-            <h4 className="font-medium text-gray-900 mb-4">
-              Publishing Options
-            </h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="publish"
-                  id="draft"
-                  className="text-blue-600"
-                  checked={!courseData.is_published && !courseData.is_public}
-                  onChange={() =>
-                    setCourseData({
-                      ...courseData,
-                      is_published: false,
-                      is_public: false,
-                    })
-                  }
+          {!isAuthor && setSummaryOfChanges && (
+            <div className="border-t pt-6">
+              <h4 className="font-medium text-gray-900 mb-4">
+                Summary of Changes
+              </h4>
+              <div>
+                <Textarea
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  rows={4}
+                  placeholder="Describe the changes you are proposing..."
+                  value={summaryOfChanges || ""}
+                  onChange={(e) => setSummaryOfChanges(e.target.value)}
                 />
-                <label htmlFor="draft" className="flex-1">
-                  <div className="font-medium text-gray-900">Save as Draft</div>
-                  <div className="text-sm text-gray-600">
-                    Continue working on your course privately
-                  </div>
-                </label>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="publish"
-                  id="unlisted"
-                  className="text-blue-600"
-                  checked={courseData.is_published && !courseData.is_public}
-                  onChange={() =>
-                    setCourseData({
-                      ...courseData,
-                      is_published: true,
-                      is_public: false,
-                    })
-                  }
-                />
-                <label htmlFor="unlisted" className="flex-1">
-                  <div className="font-medium text-gray-900">
-                    Publish as Unlisted
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Only accessible via direct link
-                  </div>
-                </label>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="publish"
-                  id="public"
-                  className="text-blue-600"
-                  checked={courseData.is_public && courseData.is_published}
-                  onChange={() => {
-                    setCourseData({
-                      ...courseData,
-                      is_published: true,
-                      is_public: true,
-                    });
-                  }}
-                />
-                <label htmlFor="public" className="flex-1">
-                  <div className="font-medium text-gray-900">
-                    Publish Publicly
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Make discoverable to all users
-                  </div>
-                </label>
               </div>
             </div>
-          </div>
+          )}
+          {isAuthor && courseVersion === "main" && (
+            <div className="border-t pt-6">
+              <h4 className="font-medium text-gray-900 mb-4">
+                Publishing Options
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="publish"
+                    id="draft"
+                    className="text-blue-600"
+                    checked={!courseData.is_published && !courseData.is_public}
+                    onChange={() =>
+                      setCourseData({
+                        ...courseData,
+                        is_published: false,
+                        is_public: false,
+                      })
+                    }
+                  />
+                  <label htmlFor="draft" className="flex-1">
+                    <div className="font-medium text-gray-900">
+                      Save as Draft
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Continue working on your course privately
+                    </div>
+                  </label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="publish"
+                    id="unlisted"
+                    className="text-blue-600"
+                    checked={courseData.is_published && !courseData.is_public}
+                    onChange={() =>
+                      setCourseData({
+                        ...courseData,
+                        is_published: true,
+                        is_public: false,
+                      })
+                    }
+                  />
+                  <label htmlFor="unlisted" className="flex-1">
+                    <div className="font-medium text-gray-900">
+                      Publish as Unlisted
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Only accessible via direct link
+                    </div>
+                  </label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="publish"
+                    id="public"
+                    className="text-blue-600"
+                    checked={courseData.is_public && courseData.is_published}
+                    onChange={() => {
+                      setCourseData({
+                        ...courseData,
+                        is_published: true,
+                        is_public: true,
+                      });
+                    }}
+                  />
+                  <label htmlFor="public" className="flex-1">
+                    <div className="font-medium text-gray-900">
+                      Publish Publicly
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Make discoverable to all users
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-col items-center gap-4">
-            <Button
-              className="flex-1 w-full bg-green-600 hover:bg-green-700 text-white"
-              disabled={isPublishing}
-              onClick={async () => {
-                setIsPublishing(true);
+            {isAuthor && courseVersion === "main" && (
+              <>
+                <Button
+                  className="flex-1 w-full bg-green-600 hover:bg-green-700 text-white"
+                  disabled={isPublishing}
+                  onClick={async () => {
+                    setIsPublishing(true);
 
-                const { success, data } = await publishCourse();
+                    const { success, data } = await publishCourse();
 
-                if (success) {
-                  alert(
-                    !courseData.is_public && !courseData.is_published
-                      ? "Course saved as draft."
-                      : !courseData.is_public && courseData.is_published
-                        ? "Course published as unlisted."
-                        : courseData.is_public && courseData.is_published
-                          ? "Course published publicly."
-                          : "Not sure what happened."
-                  );
-                  router.push(`/course/${data?.id}`);
-                } else {
-                  alert("There was an error publishing your course.");
-                }
+                    if (success) {
+                      alert(
+                        !courseData.is_public && !courseData.is_published
+                          ? "Course saved as draft."
+                          : !courseData.is_public && courseData.is_published
+                            ? "Course published as unlisted."
+                            : courseData.is_public && courseData.is_published
+                              ? "Course published publicly."
+                              : "Not sure what happened."
+                      );
+                      router.push(`/course/${data?.id}`);
+                    } else {
+                      alert("There was an error publishing your course.");
+                    }
 
-                setIsPublishing(false);
-              }}
-            >
-              {isPublishing ? (
-                <LoaderCircle className="animate-spin" />
-              ) : isEditing ? (
-                "Update Course"
-              ) : (
-                "Publish Course"
-              )}
-            </Button>
-            <span className="text-sm text-muted-foreground">{uploadStep}</span>
+                    setIsPublishing(false);
+                  }}
+                >
+                  {isPublishing ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : isEditing ? (
+                    "Update Course"
+                  ) : (
+                    "Publish Course"
+                  )}
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {uploadStep}
+                </span>
+              </>
+            )}
+            {isAuthor && courseVersion !== "main" && (
+              <>
+                <Button
+                  className="flex-1 w-full bg-green-600 hover:bg-green-700 text-white"
+                  disabled={isPublishing}
+                  onClick={async () => {
+                    setIsPublishing(true);
+
+                    const { success } = await publishCourse();
+
+                    if (success) {
+                      alert("Course changes published to main successfully.");
+                      router.push(`/course/${courseData.id}`);
+                    } else {
+                      alert("There was an error publishing your changes.");
+                    }
+
+                    setIsPublishing(false);
+                  }}
+                >
+                  {isPublishing ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Publish changes to main"
+                  )}
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {uploadStep}
+                </span>
+              </>
+            )}
+            {!isAuthor && (
+              <>
+                <Button
+                  className="flex-1 w-full bg-green-600 hover:bg-green-700 text-white"
+                  disabled={isPublishing}
+                  onClick={async () => {
+                    setIsPublishing(true);
+
+                    const { success } = await publishCourse();
+
+                    if (success) {
+                      alert("Course change request proposed successfully.");
+                    } else {
+                      alert("There was an error making the request.");
+                    }
+
+                    setIsPublishing(false);
+                  }}
+                >
+                  {isPublishing ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Propose changes"
+                  )}
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {uploadStep}
+                </span>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

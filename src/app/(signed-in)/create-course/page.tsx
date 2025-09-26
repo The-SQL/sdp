@@ -221,6 +221,7 @@ export default function CreateCourse() {
               uploadStep={uploadStep}
               courseData={courseData}
               setCourseData={setCourseData}
+              isAuthor={true}
             />
           </TabsContent>
         </Tabs>

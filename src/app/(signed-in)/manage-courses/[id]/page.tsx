@@ -1,14 +1,16 @@
+import { getCourseSuggestedEdits } from "@/utils/db/client";
 import {
   getLessonsByUnitId,
   getStandardCourseById,
   getUnitsByCourseId,
 } from "@/utils/db/server";
-import CourseTabs from "./course-tabs";
+import CourseDataView from "./course-data-view";
 
-async function Page({ params }: { params: { id: string } }) {
+async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const course = await getStandardCourseById(id);
   const units = await getUnitsByCourseId(id);
+  const suggestedEdits = await getCourseSuggestedEdits(id);
 
   const lessons = await Promise.all(
     units.map((unit) => getLessonsByUnitId(unit.id))
@@ -16,8 +18,8 @@ async function Page({ params }: { params: { id: string } }) {
     return res.flat();
   });
 
-
   console.log("Course fetched:", course);
+  console.log("Suggested edits fetched:", suggestedEdits);
   if (!course) {
     return (
       <div>
@@ -36,7 +38,8 @@ async function Page({ params }: { params: { id: string } }) {
           </h1>
           <p className="text-gray-600">Edit and update your course details</p>
         </div>
-        <CourseTabs
+        <CourseDataView
+          suggestedEdits={suggestedEdits || []}
           course={course}
           fetchedUnits={units}
           fetchedLessons={lessons}

@@ -134,7 +134,11 @@ export interface UserProgress {
   updated_at: string;
 }
 
-export type CollaboratorStatus = "pending" | "active";
+export type CollaboratorStatus =
+  | "pending"
+  | "active"
+  | "rejected"
+  | "cancelled";
 
 export type Collaborators = {
   id?: string;
@@ -142,4 +146,22 @@ export type Collaborators = {
   user_id: string;
   status: CollaboratorStatus;
   created_at?: string;
+};
+
+export type SuggestedChangeStatus = "pending" | "approved" | "rejected";
+export type SuggestedChangePayload = {
+  course: Course;
+  units: Unit[];
+  lessons: Lesson[];
+};
+export type SuggestedChange = {
+  id?: string;
+  collaborator_id: string;
+  course_id: string;
+  summary: string;
+  payload: SuggestedChangePayload;
+  status: SuggestedChangeStatus;
+  created_at?: string;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
 };

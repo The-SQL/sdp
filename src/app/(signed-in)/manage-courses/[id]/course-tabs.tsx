@@ -2,15 +2,16 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  insertCourse,
   insertLessons,
+  insertSuggestedEdit,
   insertUnits,
   updateCourse,
   updateLesson,
+  updateSuggestedEditStatus,
   updateUnit,
   uploadImageToSupabase,
 } from "@/utils/db/client";
-import { Course, Lesson, Unit } from "@/utils/types";
+import { Course, Lesson, SuggestedChange, Unit } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import BuilderTab from "../../create-course/builder-tab";
@@ -22,10 +23,18 @@ function CourseTabs({
   course,
   fetchedUnits,
   fetchedLessons,
+  courseVersion = "main",
+  originalCourse,
+  originalUnits,
+  originalLessons,
 }: {
   course: Course;
   fetchedUnits: Unit[];
   fetchedLessons: Lesson[];
+  courseVersion?: string;
+  originalCourse?: Course;
+  originalUnits?: Unit[];
+  originalLessons?: Lesson[];
 }) {
   const { user } = useUser();
 
@@ -50,7 +59,8 @@ function CourseTabs({
   const [units, setUnits] = useState<Unit[]>(fetchedUnits);
   const [lessons, setLessons] = useState<Lesson[]>(fetchedLessons);
   const [uploadStep, setUploadStep] = useState<string>("");
-
+  const [isAuthor, setIsAuthor] = useState<boolean>(false);
+  const [summaryOfChanges, setSummaryOfChanges] = useState<string>("");
   const addUnit = () => {
     const newUnit = {
       id: `${crypto.randomUUID()}`,
@@ -82,6 +92,36 @@ function CourseTabs({
     ]);
   };
 
+  const transformLesson = async (lesson: Lesson, courseId: string) => {
+    if (
+      (lesson.content_type === "video" || lesson.content_type === "audio") &&
+      typeof lesson.content === "object" &&
+      "url" in lesson.content &&
+      lesson.content.url &&
+      typeof lesson.content.url === "string" &&
+      lesson.content.url.startsWith("blob:") &&
+      lesson.content.fileName // fileName should be set in builder-tab.tsx
+    ) {
+      const fileType = lesson.content_type === "video" ? "videos" : "audios";
+      const file = await fetch(lesson.content.url).then((r) => r.blob());
+      const ext = lesson.content.fileName.split(".").pop();
+      const publicUrl = await uploadImageToSupabase(
+        new File([file], `${lesson.id}.${ext}`),
+        isAuthor ? `course-${fileType}` : `pending-course-${fileType}`,
+        `${courseId}-${lesson.id}.${ext}`
+      );
+      return {
+        ...lesson,
+        content: {
+          ...lesson.content,
+          url: publicUrl,
+        },
+      };
+    } else {
+      return lesson;
+    }
+  };
+
   const editCourse = async (): Promise<{
     success: boolean;
     data: Course | null;
@@ -91,105 +131,166 @@ function CourseTabs({
         ...courseData,
       };
 
-      console.log("Course data to save:", courseToPublish);
-      console.log("Units to save:", units);
-      console.log("Lessons to save:", lessons);
-      setUploadStep("Uploading course...");
+      if (!courseToPublish.id || !user) return { success: false, data: null };
 
-      if (!courseToPublish.id) return { success: false, data: null };
+      if (!isAuthor) {
+        setUploadStep("Creating course change request...");
+        const updatedLessons = await Promise.all(
+          lessons.map(async (lesson) => {
+            return await transformLesson(lesson, courseData.id!);
+          })
+        );
 
-      const result = await updateCourse(courseToPublish.id, courseToPublish);
-
-      let updatedLessons = [...lessons];
-      if (result) {
-        setUploadStep("Uploading assets...");
         if (courseImageFile) {
           const publicUrl = await uploadImageToSupabase(
             courseImageFile,
-            "course-covers",
-            `${result.id}`
+            "pending-course-covers",
+            `${courseData.id}`
           );
 
-          const updatedResult = await updateCourse(result.id!, {
-            profile_url: publicUrl,
-          });
-          console.log("Updated course: ", updatedResult);
+          courseData.profile_url = publicUrl;
         }
 
-        // Upload audio/video files for lessons
-        updatedLessons = await Promise.all(
+        const suggestedChanges: SuggestedChange = {
+          collaborator_id: user.id,
+          course_id: courseData.id!,
+          summary: summaryOfChanges,
+          payload: {
+            course: courseToPublish,
+            units,
+            lessons: updatedLessons,
+          },
+          status: "pending",
+        };
+
+        console.log("Suggested changes: ", suggestedChanges);
+
+        await insertSuggestedEdit(suggestedChanges);
+        setUploadStep("Course change request created successfully!");
+        return { success: true, data: null };
+      } else if (isAuthor && courseVersion !== "main") {
+        setUploadStep("Publishing changes...");
+        const updatedLessons = await Promise.all(
           lessons.map(async (lesson) => {
-            if (
-              (lesson.content_type === "video" ||
-                lesson.content_type === "audio") &&
-              typeof lesson.content === "object" &&
-              "url" in lesson.content &&
-              lesson.content.url &&
-              typeof lesson.content.url === "string" &&
-              lesson.content.url.startsWith("blob:") &&
-              lesson.content.fileName // fileName should be set in builder-tab.tsx
-            ) {
-              const fileType =
-                lesson.content_type === "video" ? "videos" : "audios";
-              const file = await fetch(lesson.content.url).then((r) =>
-                r.blob()
-              );
-              const ext = lesson.content.fileName.split(".").pop();
-              const publicUrl = await uploadImageToSupabase(
-                new File([file], `${lesson.id}.${ext}`),
-                `course-${fileType}`,
-                `${result.id}-${lesson.id}.${ext}`
-              );
-              return {
-                ...lesson,
-                content: {
-                  ...lesson.content,
-                  url: publicUrl,
-                },
-              };
-            }
-            return lesson;
+            return await transformLesson(lesson, courseData.id!);
           })
         );
 
-        setUploadStep("Uploading units...");
-        // Insert units
-        // If unit.id starts with "temp-", it means it's a new unit and needs to be inserted
-        // Otherwise, it's an existing unit and needs to be updated
-        const unitsToInsert = units.filter((unit) => unit.course_id === "temp");
-        const unitsToUpdate = units.filter((unit) => unit.course_id !== "temp");
+        const result = await updateCourse(courseToPublish.id, courseToPublish);
 
-        await insertUnits(result.id!, unitsToInsert);
-        await Promise.all(
-          unitsToUpdate.map(async (unit) => {
-            if (!unit.id) return;
-            await updateUnit(unit.id, unit);
-          })
-        );
-        setUploadStep("Uploading lessons...");
+        if (result) {
+          setUploadStep("Uploading units...");
 
-        // Insert lessons
-        // If lesson.id starts with "temp-", it means it's a new lesson and needs to be inserted
-        // Otherwise, it's an existing lesson and needs to be updated
-        const lessonsToInsert = updatedLessons.filter((lesson) =>
-          lesson.id.startsWith("temp-")
-        );
-        const lessonsToUpdate = updatedLessons.filter(
-          (lesson) => !lesson.id.startsWith("temp-")
-        );
+          const unitsToInsert = units.filter(
+            (unit) => unit.course_id === "temp"
+          );
+          const unitsToUpdate = units.filter(
+            (unit) => unit.course_id !== "temp"
+          );
 
-        await insertLessons(result.id!, lessonsToInsert);
-        await Promise.all(
-          lessonsToUpdate.map(async (lesson) => {
-            if (!lesson.id) return;
-            await updateLesson(lesson.id, lesson);
-          })
-        );
+          await insertUnits(result.id!, unitsToInsert);
+          await Promise.all(
+            unitsToUpdate.map(async (unit) => {
+              if (!unit.id) return;
+              await updateUnit(unit.id, unit);
+            })
+          );
+          setUploadStep("Uploading lessons...");
+
+          const lessonsToInsert = updatedLessons.filter((lesson) =>
+            lesson.id.startsWith("temp-")
+          );
+          const lessonsToUpdate = updatedLessons.filter(
+            (lesson) => !lesson.id.startsWith("temp-")
+          );
+
+          await insertLessons(result.id!, lessonsToInsert);
+          await Promise.all(
+            lessonsToUpdate.map(async (lesson) => {
+              if (!lesson.id) return;
+              await updateLesson(lesson.id, lesson);
+            })
+          );
+
+          await updateSuggestedEditStatus(courseVersion, "approved", user.id);
+          setUploadStep("Changes published successfully!");
+          return { success: true, data: null };
+        } else {
+          setUploadStep("Error publishing changes.");
+          return { success: false, data: null };
+        }
+      } else if (isAuthor && courseVersion === "main") {
+        setUploadStep("Updating course...");
+        const result = await updateCourse(courseToPublish.id, courseToPublish);
+
+        let updatedLessons = [...lessons];
+        if (result) {
+          setUploadStep("Uploading assets...");
+          if (courseImageFile) {
+            const publicUrl = await uploadImageToSupabase(
+              courseImageFile,
+              "course-covers",
+              `${result.id}`
+            );
+
+            const updatedResult = await updateCourse(result.id!, {
+              profile_url: publicUrl,
+            });
+            console.log("Updated course: ", updatedResult);
+          }
+
+          // Upload audio/video files for lessons
+          updatedLessons = await Promise.all(
+            lessons.map(async (lesson) => {
+              return await transformLesson(lesson, courseData.id!);
+            })
+          );
+
+          setUploadStep("Uploading units...");
+          // Insert units
+          // If unit.id starts with "temp-", it means it's a new unit and needs to be inserted
+          // Otherwise, it's an existing unit and needs to be updated
+          const unitsToInsert = units.filter(
+            (unit) => unit.course_id === "temp"
+          );
+          const unitsToUpdate = units.filter(
+            (unit) => unit.course_id !== "temp"
+          );
+
+          await insertUnits(result.id!, unitsToInsert);
+          await Promise.all(
+            unitsToUpdate.map(async (unit) => {
+              if (!unit.id) return;
+              await updateUnit(unit.id, unit);
+            })
+          );
+          setUploadStep("Uploading lessons...");
+
+          // Insert lessons
+          // If lesson.id starts with "temp-", it means it's a new lesson and needs to be inserted
+          // Otherwise, it's an existing lesson and needs to be updated
+          const lessonsToInsert = updatedLessons.filter((lesson) =>
+            lesson.id.startsWith("temp-")
+          );
+          const lessonsToUpdate = updatedLessons.filter(
+            (lesson) => !lesson.id.startsWith("temp-")
+          );
+
+          await insertLessons(result.id!, lessonsToInsert);
+          await Promise.all(
+            lessonsToUpdate.map(async (lesson) => {
+              if (!lesson.id) return;
+              await updateLesson(lesson.id, lesson);
+            })
+          );
+        }
+
+        console.log("Done");
+        setUploadStep("Course published successfully!");
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: null };
       }
-
-      console.log("Done");
-      setUploadStep("Course published successfully!");
-      return { success: true, data: result };
     } catch (error) {
       console.error("Error saving draft: ", error);
       return { success: false, data: null };
@@ -197,17 +298,30 @@ function CourseTabs({
   };
 
   useEffect(() => {
+    setCourseData(course);
+    setUnits(fetchedUnits);
+    setLessons(fetchedLessons);
+  }, [course]);
+
+  useEffect(() => {
     if (user) {
-      setCourseData((prev) => ({ ...prev, author_id: user.id }));
+      if (!courseData.author_id) {
+        setCourseData((prev) => ({ ...prev, author_id: user.id }));
+      }
+
+      setIsAuthor(user.id === courseData.author_id);
     }
   }, [user]);
 
   return (
     <Tabs defaultValue="setup" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+      <TabsList className="w-2xl">
         <TabsTrigger value="setup">Course Setup</TabsTrigger>
         <TabsTrigger value="content">Content Builder</TabsTrigger>
-        <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
+        {isAuthor && (
+          <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
+        )}
+
         <TabsTrigger value="publish">Publish</TabsTrigger>
       </TabsList>
 
@@ -216,6 +330,9 @@ function CourseTabs({
           courseData={courseData}
           setCourseData={setCourseData}
           setCourseImageFile={setCourseImageFile}
+          courseVersion={courseVersion}
+          originalCourse={originalCourse}
+
         />
       </TabsContent>
 
@@ -228,6 +345,9 @@ function CourseTabs({
           lessons={lessons}
           setUnits={setUnits}
           setLessons={setLessons}
+          courseVersion={courseVersion}
+          originalUnits={originalUnits}
+          originalLessons={originalLessons}
         />
       </TabsContent>
 
@@ -246,6 +366,10 @@ function CourseTabs({
           isEditing={true}
           courseData={courseData}
           setCourseData={setCourseData}
+          isAuthor={isAuthor}
+          summaryOfChanges={summaryOfChanges}
+          setSummaryOfChanges={setSummaryOfChanges}
+          courseVersion={courseVersion}
         />
       </TabsContent>
     </Tabs>
