@@ -301,14 +301,21 @@ export default function Forums() {
               <Select
                 value={selectedCategory}
                 onValueChange={setSelectedCategory}
+                data-testid="category-select"
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-48" data-testid="category-trigger">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent data-testid="category-content">
                   <SelectItem value="all">All Categories</SelectItem>
                   {forumCategories.map((category) => (
-                    <SelectItem key={category.name} value={category.name}>
+                    <SelectItem
+                      key={category.name}
+                      value={category.name}
+                      data-testid={`category-${category.name
+                        .toLowerCase()
+                        .replace(" ", "-")}`}
+                    >
                       {category.name}
                     </SelectItem>
                   ))}
@@ -341,7 +348,7 @@ export default function Forums() {
                         Category
                       </label>
                       <Select name="category" required>
-                        <SelectTrigger>
+                        <SelectTrigger data-testid="modal-category-trigger">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
@@ -349,6 +356,9 @@ export default function Forums() {
                             <SelectItem
                               key={category.name}
                               value={category.name}
+                              data-testid={`modal-category-${category.name
+                                .toLowerCase()
+                                .replace(" ", "-")}`}
                             >
                               {category.icon} {category.name}
                             </SelectItem>
@@ -361,16 +371,46 @@ export default function Forums() {
                         Language
                       </label>
                       <Select name="language" required>
-                        <SelectTrigger>
+                        <SelectTrigger data-testid="modal-language-trigger">
                           <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="spanish">Spanish</SelectItem>
-                          <SelectItem value="french">French</SelectItem>
-                          <SelectItem value="japanese">Japanese</SelectItem>
-                          <SelectItem value="german">German</SelectItem>
-                          <SelectItem value="mandarin">Mandarin</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem
+                            value="spanish"
+                            data-testid="modal-language-spanish"
+                          >
+                            Spanish
+                          </SelectItem>
+                          <SelectItem
+                            value="french"
+                            data-testid="modal-language-french"
+                          >
+                            French
+                          </SelectItem>
+                          <SelectItem
+                            value="japanese"
+                            data-testid="modal-language-japanese"
+                          >
+                            Japanese
+                          </SelectItem>
+                          <SelectItem
+                            value="german"
+                            data-testid="modal-language-german"
+                          >
+                            German
+                          </SelectItem>
+                          <SelectItem
+                            value="mandarin"
+                            data-testid="modal-language-mandarin"
+                          >
+                            Mandarin
+                          </SelectItem>
+                          <SelectItem
+                            value="other"
+                            data-testid="modal-language-other"
+                          >
+                            Other
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

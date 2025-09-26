@@ -11,6 +11,9 @@ const customJestConfig = {
    moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1', // 👈 maps @/... to your src folder
   },
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+  },
 
   // Tell Jest where to collect coverage from
   collectCoverage: true,
@@ -18,6 +21,7 @@ const customJestConfig = {
     'src/utils/db/client.ts',
     'src/utils/db/server.ts',
     'src/utils/db/forum.ts',
+    'src/app/\\(signed-in\\)/forums/page.tsx',
     '!src/utils/types/**',
     '!src/utils/supabase/**',
     '!src/utils/**/__mocks__/**',
