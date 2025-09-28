@@ -132,6 +132,7 @@ export interface UserCoursesState {
   num_in_progress: number;
 }
 
+/*
 // --- Progress (from `user_progress`) ---
 export interface UserProgress {
   id: string;
@@ -139,6 +140,14 @@ export interface UserProgress {
   course_id: string;
   progress: number;
   updated_at: string;
+}
+  */
+
+export interface UserProgress {
+  lesson_id: string;
+  status: "not_started" | "in_progress" | "completed";
+  last_accessed?: string;
+  score?: number;
 }
 
 export interface ForumCategory {
