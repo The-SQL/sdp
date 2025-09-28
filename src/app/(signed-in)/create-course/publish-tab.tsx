@@ -9,10 +9,12 @@ import { useState } from "react";
 
 function PublishTab({
   publishCourse,
+  uploadStep,
 }: {
   publishCourse: (
     state: string
   ) => Promise<{ success: boolean; data: Course | null }>;
+  uploadStep: string;
 }) {
   const [state, setState] = useState("draft");
   const [isPublishing, setIsPublishing] = useState(false);
@@ -87,9 +89,9 @@ function PublishTab({
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col items-center gap-4">
             <Button
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              className="flex-1 w-full bg-green-600 hover:bg-green-700 text-white"
               disabled={isPublishing}
               onClick={async () => {
                 setIsPublishing(true);
@@ -116,6 +118,7 @@ function PublishTab({
                 "Publish Course"
               )}
             </Button>
+            <span className="text-sm text-muted-foreground">{uploadStep}</span>
           </div>
         </CardContent>
       </Card>
