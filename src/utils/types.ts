@@ -41,12 +41,28 @@ export type Unit = {
   created_at?: string;
 };
 
+export type LessonContent =
+  | { url?: string; notes?: string; fileName?: string }
+  | { body?: string }
+  | { url?: string; transcript?: string; fileName?: string }
+  | {
+      exerciseType: "quiz";
+      question: string;
+      options: string[];
+      correct: number;
+    }
+  | {
+      exerciseType: "fill-blank";
+      sentence: string;
+      blankIndex: number | null;
+    };
+
 export type Lesson = {
   id: string;
   unit_id: string;
   title: string;
-  content_type: string;
-  content:object;
+  content_type: "video" | "text" | "audio" | "exercise";
+  content: LessonContent;
   order_index: number;
   created_at?: string;
 };
@@ -116,6 +132,7 @@ export interface UserCoursesState {
   num_in_progress: number;
 }
 
+/*
 // --- Progress (from `user_progress`) ---
 export interface UserProgress {
   id: string;
@@ -123,6 +140,14 @@ export interface UserProgress {
   course_id: string;
   progress: number;
   updated_at: string;
+}*/
+
+
+export interface UserProgress {
+  lesson_id: string;
+  status: "not_started" | "in_progress" | "completed";
+  last_accessed?: string;
+  score?: number;
 }
 
 export interface ForumCategory {
