@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Acceptance Tests &mdash; OSLearn  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Feedback" href="user_feedback.html" />
+    <link rel="prev" title="Third-Party Code Documentation" href="third_party_docs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#what-is-oslearn">What is OSLearn?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methodology and Planning</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="management_methodology.html">Management Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#key-scrum-practices-we-follow">Key Scrum Practices We Follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#tools-supporting-our-scrum-process">Tools Supporting Our Scrum Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="git_methodology.html">Git Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#branching-strategy">Branching Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#commit-message-conventions">Commit Message Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#code-style-naming-conventions">Code Style &amp; Naming Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#general-principles">General Principles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#naming-conventions-by-type">Naming Conventions by Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="game_plan.html">Game Plan</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#primary-role-responsibilities">Primary Role Responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#sprint-by-sprint-workload-distribution">Sprint-by-Sprint Workload Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#how-this-distribution-is-fair">How This Distribution is Fair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#api-integration">API Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wireframes.html">Wireframes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#overall-design-philosophy">Overall Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#pages-overview">Pages Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#course-explorer">1. Course Explorer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#lesson-player">2. Lesson Player</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#course-builder">3. Course Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#review-dashboard">4. Review Dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#user-profile">5. User Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#key-user-flows-to-prototype">Key User Flows to Prototype</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#id1">Wireframes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mockups.html">Mockups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#layout">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#our-chosen-design-philosophy-clean-sleek">Our Chosen Design Philosophy: “Clean &amp; Sleek”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#id1">Mockups</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#endpoint">Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#request-body">Request Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#example-request">Example Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#responses">Responses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#success">Success</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#error-cases">Error Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database_documentation.html">Database Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#db-schema">DB Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guides.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-database-setup">1. Development Database Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-api-setup">2. Development API Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#id2">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-site-setup">3. Development Site Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#id3">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#testing">4. Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tech_stack.html">Tech Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#tech-stack-motivation">Tech Stack Motivation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#frontend-react-next-js-tailwind-css-shadcn-ui">Frontend: React (Next.js) + Tailwind CSS + ShadCN UI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#backend-node-js-express-js">Backend: Node.js + Express.js</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#authentication-database-supabase">Authentication &amp; Database: Supabase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#ai-integration-openai-api">AI Integration: OpenAI API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#testing-jest">Testing: Jest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="third_party_docs.html">Third-Party Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#next-js">1. Next.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#react">2. React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#clerk">3. Clerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#lucide-react">4. Lucide React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#shadcn-ui">5. Shadcn UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#jest">6. Jest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#eslint">7. ESLint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#postcss">8. PostCSS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#typescript">9. TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#supabase">10. Supabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#other-notable-libraries">11. Other Notable Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#openai">12. OpenAI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#justification-summary">Justification Summary</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Testing</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Acceptance Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sprint-1">Sprint 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sprint-2">Sprint 2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#course-overview-page">Course Overview Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#explore-courses-page">Explore Courses Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-course-page">Create Course Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard-page">Dashboard Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profile-page">Profile Page</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_feedback.html">User Feedback</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#testing-script-tasks">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OSLearn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">User Acceptance Tests</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_acceptance_tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-acceptance-tests">
+<h1>User Acceptance Tests<a class="headerlink" href="#user-acceptance-tests" title="Link to this heading"></a></h1>
+<section id="sprint-1">
+<h2>Sprint 1<a class="headerlink" href="#sprint-1" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has an existing account with valid Google credentials
+<strong>When</strong>: They sign in successfully with Google
+<strong>Then</strong>: They are redirected to their personal dashboard where they can view and interact with available courses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is filling out the sign-up form
+<strong>When</strong>: They complete the authentication process with Google
+<strong>Then</strong>: A new account is created using their Google credentials, and they are automatically logged in and directed to their dashboard.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sprint-2">
+<h2>Sprint 2<a class="headerlink" href="#sprint-2" title="Link to this heading"></a></h2>
+<section id="course-overview-page">
+<h3>Course Overview Page<a class="headerlink" href="#course-overview-page" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is viewing a course overview page
+<strong>When</strong>: The page loads successfully
+<strong>Then</strong>: The course title, description, author information, and statistics (rating, students, duration) should be displayed accurately.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A logged-in user is viewing a course they haven’t favorited
+<strong>When</strong>: They click the “Add to Favorites” button
+<strong>Then</strong>: The course should be added to their favorites, and the button should update to show “Added to Favorites” with a filled heart icon.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A logged-in user is viewing a course they haven’t enrolled in
+<strong>When</strong>: They click the “Enrol Now” button
+<strong>Then</strong>: They should be successfully enrolled, and the button should change to “Continue Learning” that links to the learning page.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is viewing any course
+<strong>When</strong>: They click the “Share” button
+<strong>Then</strong>: The course URL should be copied to the clipboard, and a confirmation alert should appear.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is viewing the curriculum tab
+<strong>When</strong>: They click on any chapter
+<strong>Then</strong>: They should be redirected to the learning page for that specific chapter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A course has reviews
+<strong>When</strong>: The user navigates to the Reviews tab
+<strong>Then</strong>: All reviews should be displayed with user information, ratings, and comments.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A non-enrolled user views the Discussions tab
+<strong>When</strong>: They try to access discussions
+<strong>Then</strong>: They should see a prompt to enroll first with an enrollment button.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="explore-courses-page">
+<h3>Explore Courses Page<a class="headerlink" href="#explore-courses-page" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is on the courses page with multiple courses
+<strong>When</strong>: They enter a search term in the search box
+<strong>Then</strong>: Only courses matching the search term (in title, language, or tags) should be displayed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to see only beginner-level courses
+<strong>When</strong>: They select “Beginner” from the level filter
+<strong>Then</strong>: Only courses with beginner level should be displayed in the results.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to see courses for a specific language
+<strong>When</strong>: They select a language from the language filter
+<strong>Then</strong>: Only courses for that language should be displayed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Multiple courses are displayed
+<strong>When</strong>: The user selects “Highest Rated” sorting
+<strong>Then</strong>: Courses should be ordered from highest to lowest rating, with recommended courses appearing first.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A logged-in user is browsing courses
+<strong>When</strong>: They click the heart icon on any course card
+<strong>Then</strong>: The course should be added/removed from favorites, and the heart icon should update its visual state accordingly.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Some courses are marked as recommended
+<strong>When</strong>: The page loads
+<strong>Then</strong>: Recommended courses should display a “Recommended” badge and appear first in the list when no other sorting/filtering is applied.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: No courses match the current search/filter criteria
+<strong>When</strong>: The user applies restrictive filters
+<strong>Then</strong>: An appropriate empty state message should be displayed suggesting to adjust filters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Any course is displayed in the list
+<strong>When</strong>: The user views a course card
+<strong>Then</strong>: It should display the course image, title, description, duration, student count, rating, tags, level, author, and a view course button.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A non-logged-in user is browsing courses
+<strong>When</strong>: They try to favorite a course
+<strong>Then</strong>: The favorite button should be disabled or prompt them to log in (implementation-dependent).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="create-course-page">
+<h3>Create Course Page<a class="headerlink" href="#create-course-page" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is creating a new course
+<strong>When</strong>: They fill in the course title, description, and learning objectives
+<strong>Then</strong>: All information should be properly saved and displayed in the preview section.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user needs to specify the course language
+<strong>When</strong>: They search for a language that doesn’t exist and create a new one
+<strong>Then</strong>: The new language should be created and selected for the course.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to add tags to their course
+<strong>When</strong>: They search for existing tags and create new ones
+<strong>Then</strong>: All selected tags should appear and be removable with the X icon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to add a course image
+<strong>When</strong>: They upload an image file
+<strong>Then</strong>: The image should appear in the preview section immediately.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is building course content
+<strong>When</strong>: They add a new unit and give it a title
+<strong>Then</strong>: The unit should appear in the content builder with the specified title.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to add lessons to a unit
+<strong>When</strong>: They add a lesson and select a content type (video, text, audio, exercise)
+<strong>Then</strong>: The appropriate content input fields should appear based on the selected type.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user selects “Video Lesson” type
+<strong>When</strong>: They add video content and description
+<strong>Then</strong>: The video upload interface and notes field should be available.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user selects “Text Content” type
+<strong>When</strong>: They enter text content
+<strong>Then</strong>: A textarea should be provided for writing the lesson content.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user selects “Audio Lesson” type
+<strong>When</strong>: They work with audio content
+<strong>Then</strong>: Record/upload options and transcript field should be available.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user selects “Interactive Exercise” type
+<strong>When</strong>: They create an exercise
+<strong>Then</strong>: Exercise type selection and instructions field should be provided.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to remove a unit
+<strong>When</strong>: They click the delete icon on a unit
+<strong>Then</strong>: The unit and all its lessons should be removed from the course structure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is configuring collaboration options
+<strong>When</strong>: They toggle collaboration request and auto-approve settings
+<strong>Then</strong>: The settings should be saved and reflected in the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to invite collaborators
+<strong>When</strong>: They enter a username/email and click invite
+<strong>Then</strong>: The invitation should be sent, and pending requests should be visible.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user receives collaboration requests
+<strong>When</strong>: They accept, message, or decline requests
+<strong>Then</strong>: The appropriate actions should be processed for each request.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is ready to publish their course
+<strong>When</strong>: They select between draft, unlisted, or public publishing options
+<strong>Then</strong>: The selected publishing state should be clearly indicated and saved.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user completes course creation
+<strong>When</strong>: They click “Publish Course” with their preferred visibility setting
+<strong>Then</strong>: The course should be saved/published and redirect to the course page.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user tries to publish a course with missing required fields
+<strong>When</strong>: They attempt to publish without completing mandatory information
+<strong>Then</strong>: Appropriate validation messages should guide them to complete the form.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is editing course details
+<strong>When</strong>: They make changes to title, description, or other fields
+<strong>Then</strong>: The preview section should update in real-time to reflect changes.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user is working through the course creation process
+<strong>When</strong>: They navigate between Setup, Content Builder, Collaboration, and Publish tabs
+<strong>Then</strong>: Each tab should load the appropriate content without data loss.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Network issues or server errors occur during course creation
+<strong>When</strong>: The user attempts to save or publish
+<strong>Then</strong>: Appropriate error messages should be displayed with options to retry.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dashboard-page">
+<h3>Dashboard Page<a class="headerlink" href="#dashboard-page" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user logs into the application
+<strong>When</strong>: The dashboard page loads
+<strong>Then</strong>: The user should see a personalized welcome message with their name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has enrolled in courses
+<strong>When</strong>: They view the “Your Courses” section
+<strong>Then</strong>: All enrolled courses should be displayed with progress indicators and continue buttons.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user hasn’t enrolled in any courses
+<strong>When</strong>: They view the dashboard
+<strong>Then</strong>: They should see a prompt to browse courses with a link to the courses page.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is progressing through courses
+<strong>When</strong>: They view their course cards
+<strong>Then</strong>: Progress percentages should accurately reflect their completion status.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to set learning goals
+<strong>When</strong>: They click “Add Goal” and fill in the form
+<strong>Then</strong>: The new goal should appear in their goals list with progress tracking.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has studied during the week
+<strong>When</strong>: They view the weekly activity chart
+<strong>Then</strong>: Studied days should be highlighted with lesson counts and minutes.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has consecutive study days
+<strong>When</strong>: The dashboard loads
+<strong>Then</strong>: The current streak should be accurately calculated and displayed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has been using the platform
+<strong>When</strong>: They view the quick stats sidebar
+<strong>Then</strong>: Total study time, lessons completed, streak, languages, and achievement points should be displayed.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has earned achievements
+<strong>When</strong>: They view the achievements section
+<strong>Then</strong>: Earned achievements should be highlighted with descriptions, and unearned ones should show progress.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has favorited courses
+<strong>When</strong>: They view the starred courses section
+<strong>Then</strong>: Their favorited courses should be displayed with ratings and quick access.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to find new courses
+<strong>When</strong>: They click “Browse More” in the courses section
+<strong>Then</strong>: They should be redirected to the courses catalog page.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to continue a course
+<strong>When</strong>: They click “Continue” on a course card
+<strong>Then</strong>: They should be redirected to the learning interface for that course.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has set goals with reminders
+<strong>When</strong>: They view their goals
+<strong>Then</strong>: Goals with reminders should show the bell icon indicating active reminders.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is working toward achievements
+<strong>When</strong>: They view unearned achievements
+<strong>Then</strong>: Progress bars should show how close they are to earning each achievement.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user accesses the dashboard on different devices
+<strong>When</strong>: They view the dashboard on mobile, tablet, and desktop
+<strong>Then</strong>: The layout should adapt appropriately to each screen size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has been active in another tab/session
+<strong>When</strong>: They return to the dashboard
+<strong>Then</strong>: The dashboard should refresh to show updated progress and statistics.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user hasn’t set any learning goals
+<strong>When</strong>: They view the goals section
+<strong>Then</strong>: They should see a prompt to add their first goal with an “Add Goal” button.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Network issues occur during dashboard loading
+<strong>When</strong>: The dashboard tries to fetch user data
+<strong>Then</strong>: Appropriate error states should be displayed without crashing the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has enrolled in many courses
+<strong>When</strong>: The dashboard loads
+<strong>Then</strong>: All courses should display without significant performance issues.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user completes a lesson in another tab
+<strong>When</strong>: They return to the dashboard
+<strong>Then</strong>: Progress indicators and statistics should update to reflect the recent activity.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="profile-page">
+<h3>Profile Page<a class="headerlink" href="#profile-page" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>UAT</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Given</strong>: A user navigates to their profile page
+<strong>When</strong>: The page loads
+<strong>Then</strong>: Their profile information (name, bio, email, join date) should be displayed correctly.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to update their profile
+<strong>When</strong>: They click “Edit Profile,” make changes, and click “Save Changes”
+<strong>Then</strong>: The profile information should be updated and persisted.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user views the Overview tab
+<strong>When</strong>: The tab loads
+<strong>Then</strong>: All statistics (completed courses, in-progress courses, lessons, streaks, points) should display accurate numbers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is learning multiple languages
+<strong>When</strong>: They view the Overview tab
+<strong>Then</strong>: All languages they’re learning should be displayed as badges.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user hasn’t enrolled in any courses
+<strong>When</strong>: They view the Courses tab
+<strong>Then</strong>: They should see a prompt to browse courses with a link to the courses page.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has enrolled in courses
+<strong>When</strong>: They view the Courses tab
+<strong>Then</strong>: All courses should show accurate progress percentages and completion status.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has earned achievements
+<strong>When</strong>: They view the Achievements tab
+<strong>Then</strong>: Earned achievements should be highlighted with earned dates, and unearned ones should show progress.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has both earned and unearned achievements
+<strong>When</strong>: They view the Achievements tab
+<strong>Then</strong>: Earned achievements should appear first, followed by unearned ones.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to update their settings
+<strong>When</strong>: They navigate to the Settings tab
+<strong>Then</strong>: All editable fields should be accessible when in edit mode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is viewing the Settings tab without editing
+<strong>When</strong>: They view personal information fields
+<strong>Then</strong>: All fields should be disabled until edit mode is activated.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user wants to manage notifications
+<strong>When</strong>: They view the Notifications section in Settings
+<strong>Then</strong>: They should be able to enable/disable different notification types.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user wants to manage account security
+<strong>When</strong>: They view the Privacy &amp; Security section
+<strong>Then</strong>: Options for changing password, downloading data, and deleting account should be available.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has uploaded a profile picture
+<strong>When</strong>: They view their profile
+<strong>Then</strong>: Their custom avatar should be displayed; otherwise, initials should be shown.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user is browsing their profile
+<strong>When</strong>: They switch between Overview, Courses, Achievements, and Settings tabs
+<strong>Then</strong>: Each tab should load the appropriate content without page refresh.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: Profile data is loading
+<strong>When</strong>: The user navigates to the profile page
+<strong>Then</strong>: Loading indicators should be displayed until data is fully loaded.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: Network issues occur during profile data loading
+<strong>When</strong>: The page tries to fetch user data
+<strong>Then</strong>: Appropriate error states should be displayed without crashing the interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user accesses the profile page on different devices
+<strong>When</strong>: They view the profile on mobile, tablet, and desktop
+<strong>Then</strong>: The layout should adapt appropriately to each screen size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user has consistent learning activity
+<strong>When</strong>: They view their streak information
+<strong>Then</strong>: Both current streak and longest streak should display accurate numbers.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Given</strong>: A user has completed some courses
+<strong>When</strong>: They view the Courses tab
+<strong>Then</strong>: Completed courses should be marked with a “Completed” badge and completion date.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Given</strong>: A user updates their profile information
+<strong>When</strong>: They refresh the page or navigate away and return
+<strong>Then</strong>: All changes should be persisted and displayed correctly.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="third_party_docs.html" class="btn btn-neutral float-left" title="Third-Party Code Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_feedback.html" class="btn btn-neutral float-right" title="User Feedback" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Priyanka Gohil.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
