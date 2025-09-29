@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  addCollaborator,
   addToFavorites,
   checkIfEnrolled,
   checkIfFavorited,
@@ -151,6 +150,7 @@ export default function CourseOverview() {
         const courseData = await getCourseById(params.id as string);
         setCourse(courseData as Course);
 
+        console.log(courseData);
         if (user) {
           const favorited = await checkIfFavorited(
             params.id as string,
@@ -182,12 +182,6 @@ export default function CourseOverview() {
   // Main render of the course overview page
   return (
     <div className="min-h-screen">
-      <CollaborateButton
-        courseId={course.id}
-        authorId={course.author_id}
-        openToCollab={course.open_to_collab}
-      />
-
       <div className="p-8">
         {/* Course Header Section */}
         <div className="max-w-6xl mx-auto">
@@ -279,7 +273,7 @@ export default function CourseOverview() {
 
             {/* Course Preview and Actions Section */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-8 border border-gray-200">
+              <Card className="sticky top-8 border border-gray-200 pt-0">
                 <CardContent className="p-0">
                   <div className="relative w-full h-48 rounded-t-lg overflow-hidden">
                     <Image
@@ -288,27 +282,10 @@ export default function CourseOverview() {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                      <Button
-                        size="lg"
-                        className="bg-white text-gray-900 hover:bg-gray-100"
-                      >
-                        <Play className="h-5 w-5 mr-2" />
-                        Preview Course
-                      </Button>
-                    </div>
                   </div>
-                  <div className="p-6">
-                    <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {course.price}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        Full lifetime access
-                      </div>
-                    </div>
+                  <div className="px-4">
 
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-3 mt-4">
                       {!isEnrolled ? (
                         <Button
                           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -326,6 +303,11 @@ export default function CourseOverview() {
                           </Link>
                         </Button>
                       )}
+                      <CollaborateButton
+                        courseId={course.id}
+                        authorId={course.author_id}
+                        openToCollab={course.open_to_collab}
+                      />
 
                       <div className="flex gap-2">
                         <Button

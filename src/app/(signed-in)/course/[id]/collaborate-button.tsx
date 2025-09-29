@@ -68,6 +68,7 @@ function CollaborateButton({
       <Button
         variant={"destructive"}
         disabled={loading}
+        className="w-full"
         onClick={async () => {
           if (!user) return;
           try {
@@ -88,7 +89,7 @@ function CollaborateButton({
 
   if (collaborationStatus === "pending") {
     return (
-      <Button variant={"secondary"} disabled={true}>
+      <Button variant={"secondary"} disabled={true} className="w-full">
         Waiting for Response
       </Button>
     );
@@ -96,7 +97,7 @@ function CollaborateButton({
 
     if (collaborationStatus === "rejected") {
     return (
-      <Button variant={"secondary"} disabled={true}>
+      <Button variant={"secondary"} disabled={true} className="w-full">
         Request was Rejected
       </Button>
     );
@@ -106,7 +107,7 @@ function CollaborateButton({
     <Button
       onClick={handleCollaborate}
       disabled={loading}
-      className={clsx({ flex: isVisible }, { hidden: !isVisible })}
+      className={clsx("w-full", { flex: isVisible }, { hidden: !isVisible })}
     >
       {loading ? <Loader2 className="animate-spin" /> : "Collaborate"}
     </Button>
