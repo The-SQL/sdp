@@ -66,7 +66,7 @@ export default function Courses() {
       // Get ALL data in parallel
       const [allCourses, recommendedCourses, favoriteCourseIds] = await Promise.all([
         getAllCourses(),
-        getRecommendedCourses(userId),
+        getRecommendedCourses(),
         getUserFavoriteCourseIds(userId), // Get ALL favorites at once
       ]);
 
