@@ -20,6 +20,7 @@ type SearchableInputProps<TItem extends { id: string; name: string }> = {
   placeholder?: string;
   getLabel?: (item: TItem) => string;
   clearOnSelect?: boolean;
+  disabled?: boolean;
 };
 
 function SearchableInput<TItem extends { id: string; name: string }>({
@@ -31,6 +32,7 @@ function SearchableInput<TItem extends { id: string; name: string }>({
   placeholder = "Search…",
   getLabel = (i) => i.name,
   clearOnSelect = false,
+  disabled = false,
 }: SearchableInputProps<TItem>) {
   const [showPopover, setShowPopover] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -45,11 +47,13 @@ function SearchableInput<TItem extends { id: string; name: string }>({
   // Keep input in sync if parent changes selected
   useEffect(() => {
     if (selected) {
-      setQuery(getLabel(selected));
+      const label = getLabel(selected);
+      // Only update state if the label actually changed to avoid rerenders
+      setQuery((prev) => (prev === label ? prev : label));
       setResults([]);
       setShowPopover(false);
     }
-  }, [selected, getLabel]);
+  }, [selected]);
 
   // Fetch results when typing
   useEffect(() => {
@@ -117,6 +121,7 @@ function SearchableInput<TItem extends { id: string; name: string }>({
       <PopoverTrigger asChild>
         <Input
           ref={inputRef}
+          disabled={disabled}
           type="text"
           placeholder={placeholder}
           value={query}

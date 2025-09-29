@@ -4,22 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Lesson, Unit } from "@/utils/types";
-import {
-    FileText,
-    HelpCircle,
-    Mic,
-    Plus,
-    Trash2,
-    Video
-} from "lucide-react";
+import { FileText, HelpCircle, Mic, Plus, Trash2, Video } from "lucide-react";
 const lessonTypes = [
   {
     type: "video",
@@ -55,6 +48,9 @@ function BuilderTab({
   setLessons,
   setUnits,
   removeUnit,
+  courseVersion = "main",
+  originalUnits,
+  originalLessons,
 }: {
   units: Unit[];
   setUnits: React.Dispatch<React.SetStateAction<Unit[]>>;
@@ -63,7 +59,36 @@ function BuilderTab({
   lessons: Lesson[];
   addLesson: (unitId: string) => void;
   removeUnit: (unitId: string) => void;
+  courseVersion?: string;
+  originalUnits?: Unit[];
+  originalLessons?: Lesson[];
 }) {
+  // prepare maps for quick lookup
+  const origUnitsMap = new Map<string, Unit>((originalUnits || []).map((u) => [u.id, u]));
+  const origLessonsMap = new Map<string, Lesson>((originalLessons || []).map((l) => [l.id, l]));
+
+  const unitChanged = (unit: Unit) => {
+    if (!originalUnits) return false;
+    const orig = origUnitsMap.get(unit.id);
+    if (!orig) return true; // new unit => changed
+    return (orig.title || "") !== (unit.title || "");
+  };
+
+  const lessonChanged = (lesson: Lesson) => {
+    if (!originalLessons) return false;
+    const orig = origLessonsMap.get(lesson.id);
+    if (!orig) return true; // new lesson
+    if ((orig.title || "") !== (lesson.title || "")) return true;
+    try {
+      return JSON.stringify(orig.content || {}) !== JSON.stringify(lesson.content || {});
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const highlight = (changed: boolean) =>
+    changed && courseVersion !== "main" ? "ring-2 ring-yellow-300 bg-yellow-50" : "";
+
   return (
     <>
       {/* <Button onClick={() => console.log(lessons)}>Test</Button> */}
@@ -97,7 +122,7 @@ function BuilderTab({
                       );
                       setUnits(updatedUnits);
                     }}
-                    className="text-lg font-semibold border-none p-0 h-auto"
+                    className={`text-lg font-semibold border-none p-0 h-auto ${highlight(unitChanged(unit))}`}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -119,7 +144,7 @@ function BuilderTab({
                   .map((lesson, lessonIndex) => (
                     <div
                       key={lesson.id}
-                      className="border border-gray-200 rounded-lg p-4"
+                      className={`border border-gray-200 rounded-lg p-4 ${highlight(lessonChanged(lesson))}`}
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium">
@@ -135,7 +160,7 @@ function BuilderTab({
                             );
                             setLessons(updatedLesson);
                           }}
-                          className="flex-1 font-medium"
+                          className={`flex-1 font-medium ${highlight(lessonChanged(lesson))}`}
                         />
                         <Select
                           value={lesson.content_type}
@@ -228,6 +253,12 @@ function BuilderTab({
                             <Textarea
                               placeholder="Video description and notes..."
                               rows={2}
+                              value={
+                                lesson.content_type === "video" &&
+                                "notes" in lesson.content
+                                  ? lesson.content.notes ?? ""
+                                  : ""
+                              }
                               onChange={(e) => {
                                 setLessons(
                                   lessons.map((l) =>
@@ -250,6 +281,12 @@ function BuilderTab({
                           <Textarea
                             placeholder="Write your lesson content here..."
                             rows={4}
+                            value={
+                              lesson.content_type === "text" &&
+                              "body" in lesson.content
+                                ? lesson.content.body ?? ""
+                                : ""
+                            }
                             onChange={(e) => {
                               setLessons(
                                 lessons.map((l) =>
@@ -318,6 +355,12 @@ function BuilderTab({
                             <Textarea
                               placeholder="Audio transcript and pronunciation notes..."
                               rows={2}
+                              value={
+                                lesson.content_type === "audio" &&
+                                "transcript" in lesson.content
+                                  ? lesson.content.transcript ?? ""
+                                  : ""
+                              }
                               onChange={(e) => {
                                 setLessons(
                                   lessons.map((l) =>

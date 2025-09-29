@@ -29,29 +29,15 @@ export default function CreateCourse() {
     estimated_duration: "",
     learning_objectives: "",
     profile_url: "",
-    is_public: true,
+    is_public: false,
     is_published: false,
+    open_to_collab: true,
   });
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [uploadStep, setUploadStep] = useState<string>("");
-  const [collaborators] = useState([]);
-  const [pendingRequests] = useState([
-    {
-      id: "1",
-      user: "Alex Chen",
-      message: "I'd love to help with pronunciation sections",
-      date: "2 days ago",
-    },
-    {
-      id: "2",
-      user: "Sarah Johnson",
-      message: "Can I contribute cultural context lessons?",
-      date: "1 week ago",
-    },
-  ]);
 
   const addUnit = () => {
     const newUnit = {
@@ -84,15 +70,13 @@ export default function CreateCourse() {
     ]);
   };
 
-  const publishCourse = async (
-    state: string
-  ): Promise<{ success: boolean; data: Course | null }> => {
+  const publishCourse = async (): Promise<{
+    success: boolean;
+    data: Course | null;
+  }> => {
     try {
       const courseToPublish = {
         ...courseData,
-        is_published:
-          state === "public" || state === "unlisted" || state === "draft",
-        is_public: state === "public",
       };
       console.log("Course data to save:", courseToPublish);
       console.log("Tags to save:", tags);
@@ -226,13 +210,19 @@ export default function CreateCourse() {
 
           <TabsContent value="collaboration" className="space-y-6">
             <CollaborationTab
-              collaborators={collaborators}
-              pendingRequests={pendingRequests}
+              courseData={courseData}
+              setCourseData={setCourseData}
             />
           </TabsContent>
 
           <TabsContent value="publish" className="space-y-6">
-            <PublishTab publishCourse={publishCourse} uploadStep={uploadStep} />
+            <PublishTab
+              publishCourse={publishCourse}
+              uploadStep={uploadStep}
+              courseData={courseData}
+              setCourseData={setCourseData}
+              isAuthor={true}
+            />
           </TabsContent>
         </Tabs>
       </div>

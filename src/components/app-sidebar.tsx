@@ -31,7 +31,7 @@ import Link from "next/link";
 const NAV_LINKS = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Explore Courses", href: "/courses", icon: Search },
-  { name: "Create Course", href: "/create-course", icon: Plus },
+  { name: "Manage Courses", href: "/manage-courses", icon: Plus },
   { name: "Discussion Forums", href: "/forums", icon: MessageSquare },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
