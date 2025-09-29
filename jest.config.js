@@ -1,18 +1,18 @@
-const nextJest = require('next/jest');
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: './',
+  dir: "./",
 });
 
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testEnvironment: "jest-environment-jsdom",
 
-   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1', // 👈 maps @/... to your src folder
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1", // 👈 maps @/... to your src folder
   },
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
   },
 
   // Tell Jest where to collect coverage from
@@ -47,8 +47,8 @@ const customJestConfig = {
     '!**/mock/**',
   ],
 
-  coverageDirectory: 'coverage',   // where reports are stored
-  coverageReporters: ['text', 'lcov', 'clover'], // formats for GitHub & Codecov
+  coverageDirectory: "coverage", // where reports are stored
+  coverageReporters: ["text", "lcov", "clover"], // formats for GitHub & Codecov
 };
 
 module.exports = createJestConfig(customJestConfig);

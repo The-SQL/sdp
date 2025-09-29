@@ -12,6 +12,8 @@ export type Course = {
   is_published: boolean;
   created_at?: string;
   updated_at?: string;
+  open_to_collab: boolean;
+  language_name?: string; // optional, for easier access to language name
 };
 
  export type Notification = {
@@ -41,12 +43,28 @@ export type Unit = {
   created_at?: string;
 };
 
+export type LessonContent =
+  | { url?: string; notes?: string; fileName?: string }
+  | { body?: string }
+  | { url?: string; transcript?: string; fileName?: string }
+  | {
+      exerciseType: "quiz";
+      question: string;
+      options: string[];
+      correct: number;
+    }
+  | {
+      exerciseType: "fill-blank";
+      sentence: string;
+      blankIndex: number | null;
+    };
+
 export type Lesson = {
   id: string;
   unit_id: string;
   title: string;
-  content_type: string;
-  content:object;
+  content_type: "video" | "text" | "audio" | "exercise";
+  content: LessonContent;
   order_index: number;
   created_at?: string;
 };
@@ -116,6 +134,7 @@ export interface UserCoursesState {
   num_in_progress: number;
 }
 
+/*
 // --- Progress (from `user_progress`) ---
 export interface UserProgress {
   id: string;
@@ -123,6 +142,14 @@ export interface UserProgress {
   course_id: string;
   progress: number;
   updated_at: string;
+}
+  */
+
+export interface UserProgress {
+  lesson_id: string;
+  status: "not_started" | "in_progress" | "completed";
+  last_accessed?: string;
+  score?: number;
 }
 
 export interface ForumCategory {
@@ -219,3 +246,34 @@ export interface PostsFilter {
   page?: number;
   limit?: number;
 }
+export type CollaboratorStatus =
+  | "pending"
+  | "active"
+  | "rejected"
+  | "cancelled";
+
+export type Collaborators = {
+  id?: string;
+  course_id: string;
+  user_id: string;
+  status: CollaboratorStatus;
+  created_at?: string;
+};
+
+export type SuggestedChangeStatus = "pending" | "approved" | "rejected";
+export type SuggestedChangePayload = {
+  course: Course;
+  units: Unit[];
+  lessons: Lesson[];
+};
+export type SuggestedChange = {
+  id?: string;
+  collaborator_id: string;
+  course_id: string;
+  summary: string;
+  payload: SuggestedChangePayload;
+  status: SuggestedChangeStatus;
+  created_at?: string;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+};

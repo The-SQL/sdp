@@ -29,28 +29,15 @@ export default function CreateCourse() {
     estimated_duration: "",
     learning_objectives: "",
     profile_url: "",
-    is_public: true,
+    is_public: false,
     is_published: false,
+    open_to_collab: true,
   });
   const [courseImageFile, setCourseImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [collaborators] = useState([]);
-  const [pendingRequests] = useState([
-    {
-      id: "1",
-      user: "Alex Chen",
-      message: "I'd love to help with pronunciation sections",
-      date: "2 days ago",
-    },
-    {
-      id: "2",
-      user: "Sarah Johnson",
-      message: "Can I contribute cultural context lessons?",
-      date: "1 week ago",
-    },
-  ]);
+  const [uploadStep, setUploadStep] = useState<string>("");
 
   const addUnit = () => {
     const newUnit = {
@@ -76,29 +63,31 @@ export default function CreateCourse() {
         id: `temp-${prevLessons.length + 1}`,
         title: `Lesson ${prevLessons.length + 1}`,
         content_type: "text",
-        content: {},
+        content: { body: "" },
         unit_id: unitId,
         order_index: prevLessons.filter((l) => l.unit_id === unitId).length + 1,
       },
     ]);
   };
 
-  const publishCourse = async (
-    state: string
-  ): Promise<{ success: boolean; data: Course | null }> => {
+  const publishCourse = async (): Promise<{
+    success: boolean;
+    data: Course | null;
+  }> => {
     try {
       const courseToPublish = {
         ...courseData,
-        is_published: state === "public" || state === "unlisted",
-        is_public: state === "public",
       };
       console.log("Course data to save:", courseToPublish);
       console.log("Tags to save:", tags);
       console.log("Units to save:", units);
       console.log("Lessons to save:", lessons);
+      setUploadStep("Uploading course...");
       const result = await insertCourse(courseToPublish);
 
+      let updatedLessons = [...lessons];
       if (result) {
+        setUploadStep("Uploading assets...");
         if (courseImageFile) {
           const publicUrl = await uploadImageToSupabase(
             courseImageFile,
@@ -112,17 +101,57 @@ export default function CreateCourse() {
           console.log("Updated course: ", updatedResult);
         }
 
+        // Upload audio/video files for lessons
+        updatedLessons = await Promise.all(
+          lessons.map(async (lesson) => {
+            if (
+              (lesson.content_type === "video" ||
+                lesson.content_type === "audio") &&
+              typeof lesson.content === "object" &&
+              "url" in lesson.content &&
+              lesson.content.url &&
+              typeof lesson.content.url === "string" &&
+              lesson.content.url.startsWith("blob:") &&
+              lesson.content.fileName // fileName should be set in builder-tab.tsx
+            ) {
+              const fileType =
+                lesson.content_type === "video" ? "videos" : "audios";
+              const file = await fetch(lesson.content.url).then((r) =>
+                r.blob()
+              );
+              const ext = lesson.content.fileName.split(".").pop();
+              const publicUrl = await uploadImageToSupabase(
+                new File([file], `${lesson.id}.${ext}`),
+                `course-${fileType}`,
+                `${result.id}-${lesson.id}.${ext}`
+              );
+              return {
+                ...lesson,
+                content: {
+                  ...lesson.content,
+                  url: publicUrl,
+                },
+              };
+            }
+            return lesson;
+          })
+        );
+
+        setUploadStep("Uploading tags...");
         await insertCourseTags(
           result.id!,
           tags.map((tag) => tag.id)
         );
 
+        setUploadStep("Uploading units...");
         await insertUnits(result.id!, units);
 
-        await insertLessons(result.id!, lessons);
+        setUploadStep("Uploading lessons...");
+        await insertLessons(result.id!, updatedLessons);
       }
 
       console.log("Done");
+      setUploadStep("Course published successfully!");
       return { success: true, data: result };
     } catch (error) {
       console.error("Error saving draft: ", error);
@@ -181,13 +210,19 @@ export default function CreateCourse() {
 
           <TabsContent value="collaboration" className="space-y-6">
             <CollaborationTab
-              collaborators={collaborators}
-              pendingRequests={pendingRequests}
+              courseData={courseData}
+              setCourseData={setCourseData}
             />
           </TabsContent>
 
           <TabsContent value="publish" className="space-y-6">
-            <PublishTab publishCourse={publishCourse} />
+            <PublishTab
+              publishCourse={publishCourse}
+              uploadStep={uploadStep}
+              courseData={courseData}
+              setCourseData={setCourseData}
+              isAuthor={true}
+            />
           </TabsContent>
         </Tabs>
       </div>

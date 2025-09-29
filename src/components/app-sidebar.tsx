@@ -27,11 +27,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import clsx from "clsx";
 
 const NAV_LINKS = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Explore Courses", href: "/courses", icon: Search },
-  { name: "Create Course", href: "/create-course", icon: Plus },
+  { name: "Manage Courses", href: "/manage-courses", icon: Plus },
   { name: "Discussion Forums", href: "/forums", icon: MessageSquare },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
@@ -58,7 +59,9 @@ function AppSideBar() {
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === link.href}
-                    className="truncate font-medium text-base py-6"
+                    className={clsx("truncate font-medium text-base py-6", {
+                      "bg-sidebar-primary": pathname === link.href,
+                    })}
                   >
                     <Link href={link.href} className="flex items-center gap-2">
                       <link.icon className="h-5 w-5" />
