@@ -65,7 +65,6 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
   const supabase = createClient();
 
   try {
-    await ensureUserInitialized(userId);
     const streak = await updateUserStreak(userId);
 
     const [lessonsRes, coursesRes, quizzesRes] = await Promise.all([
@@ -122,7 +121,6 @@ export async function getUserAchievements(
   const supabase = createClient();
 
   try {
-    await ensureUserInitialized(userId);
     const stats = await getUserStats(userId);
     if (!stats) return null;
 
@@ -292,70 +290,70 @@ export async function getUserProgress(
   return data;
 }
 
-// ---------------- User Streak ----------------
+
 export async function updateUserStreak(
-  userId: string
+  userId: string
 ): Promise<{ current_streak: number; longest_streak: number }> {
-  const supabase = createClient();
-  const { data: streak } = await supabase
-    .from("user_streaks")
-    .select<string, StreakData>("*")
-    .eq("user_id", userId)
-    .maybeSingle();
+  const supabase = createClient();
+  const { data: streak } = await supabase
+    .from("user_streaks")
+    .select<string, StreakData>("*")
+    .eq("user_id", userId)
+    .maybeSingle();
 
-  const today = new Date();
-  if (!streak) {
-    const { data: newStreak } = await supabase
-      .from("user_streaks")
-      .insert({
-        user_id: userId,
-        current_streak: 1,
-        longest_streak: 1,
-        updated_at: today.toISOString(),
-      })
-      .select()
-      .single();
-    return { current_streak: 1, longest_streak: 1 };
+  const today = new Date();
+
+  // --- Case 1: New user or user with no streak record ---
+  if (!streak) {
+    // Create a new record, starting the streak today.
+    await supabase.from("user_streaks").insert({
+      user_id: userId,
+      current_streak: 1,
+      longest_streak: 1,
+      updated_at: today.toISOString(),
+    });
+    return { current_streak: 1, longest_streak: 1 };
+  }
+
+  // --- Case 2: Existing user ---
+
+  // **FIX: Normalize dates to compare calendar days, not timestamps**
+  const lastUpdate = new Date(streak.updated_at);
+  
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const lastUpdateStart = new Date(lastUpdate.getFullYear(), lastUpdate.getMonth(), lastUpdate.getDate());
+
+  const diffTime = todayStart.getTime() - lastUpdateStart.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  let newCurrent = streak.current_streak;
+  let newLongest = streak.longest_streak;
+
+  if (diffDays === 1) {
+    // Active on a consecutive day, increment streak.
+    newCurrent += 1;
+  } else if (diffDays > 1) {
+    // Missed one or more days, reset streak to 1.
+    newCurrent = 1;
+  } else if (diffDays === 0 && newCurrent === 0) {
+    // This handles users created by the old `ensureUserInitialized` function.
+    // If their streak is 0 and they are active today, start it at 1.
+    newCurrent = 1;
   }
+  // If diffDays is 0 and streak is > 0, do nothing.
 
-  const lastUpdate = new Date(streak.updated_at);
-  const diffDays = Math.floor(
-    (today.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  let newCurrent = streak.current_streak;
-  let newLongest = streak.longest_streak;
+  // Update the longest streak if the current one is greater.
+  newLongest = Math.max(newLongest, newCurrent);
 
-  if (diffDays === 1) newCurrent += 1;
-  else if (diffDays > 1) newCurrent = 1;
+  // Update the record with the new streak values and today's timestamp.
+  await supabase
+    .from("user_streaks")
+    .update({
+      current_streak: newCurrent,
+      longest_streak: newLongest,
+      updated_at: today.toISOString(),
+    })
+    .eq("user_id", userId);
 
-  newLongest = Math.max(newLongest, newCurrent);
-
-  await supabase
-    .from("user_streaks")
-    .update({
-      current_streak: newCurrent,
-      longest_streak: newLongest,
-      updated_at: today.toISOString(),
-    })
-    .eq("user_id", userId);
-
-  return { current_streak: newCurrent, longest_streak: newLongest };
-}
-
-// ---------------- Ensure User Initialized ----------------
-export async function ensureUserInitialized(userId: string): Promise<void> {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("user_streaks")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (!data) {
-    await supabase.from("user_streaks").insert({
-      user_id: userId,
-      current_streak: 0,
-      longest_streak: 0,
-      updated_at: new Date().toISOString(),
-    });
-  }
+  return { current_streak: newCurrent, longest_streak: newLongest };
 }

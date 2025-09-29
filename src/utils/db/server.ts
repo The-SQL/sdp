@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { updateUserStreak,ensureUserInitialized } from "./profile";
+import { updateUserStreak } from "./profile";
 
 export async function insertUser(
   clerk_id: string,
@@ -18,7 +18,6 @@ export async function insertUser(
     throw error;
   }
 
-   await ensureUserInitialized(clerk_id);
    await updateUserStreak(clerk_id)
 
   return data;
