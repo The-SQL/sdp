@@ -7,15 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
-  CollaboratorWithUser,
-  getCourseCollaborators,
-  updateCollaboratorStatus,
+    CollaboratorWithUser,
+    getCourseCollaborators,
+    updateCollaboratorStatus,
 } from "@/utils/db/client";
-import { Collaborators, Course } from "@/utils/types";
+import { Course } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
+import { format } from "date-fns";
 import { Loader2, Plus, Users } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { format } from "date-fns";
 
 function CollaborationTab({
   courseData,
