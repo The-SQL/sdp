@@ -19,6 +19,7 @@ import SetupTab from "./setup-tab";
 
 export default function CreateCourse() {
   const { user } = useUser();
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const [courseData, setCourseData] = useState<Course>({
     author_id: "",
@@ -74,6 +75,8 @@ export default function CreateCourse() {
     success: boolean;
     data: Course | null;
   }> => {
+    if (isPublishing) return { success: false, data: null };
+    setIsPublishing(true);
     try {
       const courseToPublish = {
         ...courseData,
@@ -156,6 +159,8 @@ export default function CreateCourse() {
     } catch (error) {
       console.error("Error saving draft: ", error);
       return { success: false, data: null };
+    } finally {
+      setIsPublishing(false);
     }
   };
 
