@@ -2,13 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  insertCourse,
-  insertCourseTags,
-  insertLessons,
-  insertUnits,
-  updateCourse,
-  uploadImageToSupabase,
+    uploadImageToSupabase,
 } from "@/utils/db/client";
+import { insertCourse, updateCourse } from "@/utils/db/courses";
+import { insertLessons } from "@/utils/db/lessons";
+import { insertCourseTags } from "@/utils/db/tags";
+import { insertUnits } from "@/utils/db/units";
 import { Course, Lesson, Tag, Unit } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";

@@ -3,7 +3,7 @@ import {
   addCollaborator,
   cancelCollaboration,
   getCourseCollaborator,
-} from "@/utils/db/client";
+} from "@/utils/db/collaboration";
 import { CollaboratorStatus } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import clsx from "clsx";

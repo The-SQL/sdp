@@ -10,7 +10,7 @@ import {
     CollaboratorWithUser,
     getCourseCollaborators,
     updateCollaboratorStatus,
-} from "@/utils/db/client";
+} from "@/utils/db/collaboration";
 import { Course } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
