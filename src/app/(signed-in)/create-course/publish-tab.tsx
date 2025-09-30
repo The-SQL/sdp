@@ -225,6 +225,7 @@ function PublishTab({
 
                     if (success) {
                       alert("Course change request proposed successfully.");
+                      router.push(`/manage-courses`);
                     } else {
                       alert("There was an error making the request.");
                     }

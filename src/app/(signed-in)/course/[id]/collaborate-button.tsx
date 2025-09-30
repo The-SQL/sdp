@@ -45,6 +45,7 @@ function CollaborateButton({
     async function fetchCollaborationStatus() {
       if (user) {
         try {
+          setLoading(true);
           const data = await getCourseCollaborator(courseId, user.id);
           if (data) {
             setCollaborationStatus(data.status);
@@ -53,6 +54,8 @@ function CollaborateButton({
           }
         } catch (err) {
           console.error("Error fetching collaboration status:", err);
+        } finally {
+          setLoading(false);
         }
       }
     }
@@ -82,7 +85,7 @@ function CollaborateButton({
           }
         }}
       >
-        {loading ? <Loader2 className="animate-spin" /> : "Stop Collaboration"}
+        {loading ? <Loader2 className="animate-spin" /> : "Stop Collaborating"}
       </Button>
     );
   }
@@ -95,7 +98,7 @@ function CollaborateButton({
     );
   }
 
-    if (collaborationStatus === "rejected") {
+  if (collaborationStatus === "rejected") {
     return (
       <Button variant={"secondary"} disabled={true} className="w-full">
         Request was Rejected
