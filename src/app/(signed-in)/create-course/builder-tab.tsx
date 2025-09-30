@@ -535,6 +535,7 @@ function BuilderTab({
                                               <Button
                                                 variant="ghost"
                                                 size="sm"
+                                                data-testid={`delete-option-${idx}`}
                                                 onClick={() => {
                                                   if (
                                                     "exerciseType" in
@@ -591,6 +592,7 @@ function BuilderTab({
                                       <Button
                                         variant="outline"
                                         size="sm"
+      
                                         onClick={() => {
                                           if (
                                             "exerciseType" in lesson.content &&
@@ -688,6 +690,7 @@ function BuilderTab({
                                                       : "outline"
                                                   }
                                                   size="sm"
+                                                  data-testid={`delete-option-${idx}`}
                                                   onClick={() => {
                                                     if (
                                                       "exerciseType" in

@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { updateUserStreak } from "./profile";
 import { SupabaseCourseList } from "./client";
-import { ensureUserInitialized, updateUserStreak } from "./profile";
 import {
   Course,
   Lesson,

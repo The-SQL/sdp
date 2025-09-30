@@ -1,7 +1,7 @@
 // __tests__/forums.test.tsx
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Forums from "../app/(signed-in)/forums/page";
+import Forums from "../../app/(signed-in)/forums/page";
 import { useUser } from "@clerk/nextjs";
 import { ToastProvider } from "@/components/ui/toast";
 
