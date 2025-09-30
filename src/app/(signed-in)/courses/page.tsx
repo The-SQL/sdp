@@ -18,9 +18,9 @@ import { Search, Filter, Star, Clock, Users, Heart } from "lucide-react";
 import {
   getAllCourses,
   getRecommendedCourses,
-  checkIfFavorited,
   addToFavorites,
   removeFromFavorites,
+  getUserFavoriteCourseIds,
 } from "@/utils/db/client";
 import { useAuth } from "@clerk/nextjs";
 import Loading from "@/components/loading";
@@ -35,7 +35,7 @@ interface Course {
   duration: string;
   students: number;
   rating: number;
-  reviews: number;
+  reviews: number | string; // Allow both number and string
   author: string;
   description: string;
   tags: string[];
@@ -63,23 +63,23 @@ export default function Courses() {
       if (!userId) return;
 
       try {
-        const [allCourses, recommendedCourses] = await Promise.all([
-          getAllCourses(),
-          getRecommendedCourses(),
-        ]);
+        // Get ALL data in parallel
+        const [allCourses, recommendedCourses, favoriteCourseIds] =
+          await Promise.all([
+            getAllCourses(),
+            getRecommendedCourses(),
+            getUserFavoriteCourseIds(userId), // Get ALL favorites at once
+          ]);
 
         const recommendedIds = new Set(recommendedCourses.map((c) => c.id));
+        const favoriteIds = new Set(favoriteCourseIds); // Convert to Set for fast lookup
 
-        const coursesWithStatus = await Promise.all(
-          allCourses.map(async (course) => {
-            const isFavorited = await checkIfFavorited(course.id, userId);
-            return {
-              ...course,
-              isRecommended: recommendedIds.has(course.id),
-              isFavorited,
-            } as Course;
-          })
-        );
+        // No need for async mapping now - just check against the Set
+        const coursesWithStatus = allCourses.map((course) => ({
+          ...course,
+          isRecommended: recommendedIds.has(course.id),
+          isFavorited: favoriteIds.has(course.id),
+        }));
 
         setCourses(coursesWithStatus);
       } catch (error) {
@@ -107,6 +107,7 @@ export default function Courses() {
         await addToFavorites(courseId, userId);
       }
 
+      // Update local state
       setCourses((prevCourses) =>
         prevCourses.map((course) =>
           course.id === courseId
@@ -263,113 +264,115 @@ export default function Courses() {
           {/* Course Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedCourses.map((course) => (
-              <Card
-                key={course.id}
-                className="hover:shadow-lg transition-shadow border border-gray-200 flex flex-col h-auto"
-              >
-                <CardContent className="p-0 flex flex-col flex-1">
-                  <div className="relative">
-                    <img
-                      src={course.image || "/placeholder.svg"}
-                      alt={course.title}
-                      className="h-48 w-full object-cover rounded-t-lg"
-                    />
-                    {course.isRecommended && (
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-blue-600 text-white">
-                          Recommended
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-lg text-gray-900">
-                        {course.title}
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`hover:text-red-500 ${
-                          course.isFavorited ? "text-red-500" : "text-gray-400"
-                        }`}
-                        onClick={() =>
-                          toggleFavorite(course.id, course.isFavorited || false)
-                        }
-                        disabled={!userId}
-                      >
-                        <Heart
-                          className={`h-4 w-4 ${
-                            course.isFavorited ? "fill-current" : ""
-                          }`}
-                        />
-                      </Button>
+              <Link href={`/course/${course.id}`} key={course.id}>
+                <Card className="hover:shadow-lg hover:scale-105 transition-transform border border-gray-200 flex flex-col h-full py-0">
+                  <CardContent className="p-0 flex flex-col flex-1">
+                    <div className="relative">
+                      <img
+                        src={course.image || "/placeholder.svg"}
+                        alt={course.title}
+                        className="h-48 w-full object-cover rounded-t-lg"
+                      />
+                      {course.isRecommended && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-blue-600 text-white">
+                            Recommended
+                          </Badge>
+                        </div>
+                      )}
                     </div>
-
-                    {course.description && (
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                        {course.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{course.duration}</span>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="font-semibold text-lg text-gray-900">
+                          {course.title}
+                        </h3>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`hover:text-red-500 ${
+                            course.isFavorited
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                          onClick={() =>
+                            toggleFavorite(
+                              course.id,
+                              course.isFavorited || false
+                            )
+                          }
+                          disabled={!userId}
+                        >
+                          <Heart
+                            className={`h-4 w-4 ${
+                              course.isFavorited ? "fill-current" : ""
+                            }`}
+                          />
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        <span>{course.students.toLocaleString()}</span>
+
+                      {course.description && (
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                          {course.description}
+                        </p>
+                      )}
+
+                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{course.duration}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          <span>{course.students.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <span>
+                            {course.rating.toFixed(1)} ({course.reviews})
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <span>
-                          {course.rating.toFixed(1)} ({course.reviews})
+
+                      {course.tags && course.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {course.tags.map((tag, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mt-auto">
+                        <Badge
+                          variant="secondary"
+                          className={
+                            course.level === "Beginner"
+                              ? "bg-green-100 text-green-800"
+                              : course.level === "Intermediate"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                          }
+                        >
+                          {course.level}
+                        </Badge>
+                        <span className="text-sm text-gray-600">
+                          by {course.author}
                         </span>
                       </div>
+
+                      <Button
+                        asChild
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-2"
+                      ></Button>
                     </div>
-
-                    {course.tags && course.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {course.tags.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mb-4 mt-auto">
-                      <Badge
-                        variant="secondary"
-                        className={
-                          course.level === "Beginner"
-                            ? "bg-green-100 text-green-800"
-                            : course.level === "Intermediate"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }
-                      >
-                        {course.level}
-                      </Badge>
-                      <span className="text-sm text-gray-600">
-                        by {course.author}
-                      </span>
-                    </div>
-
-                    <Button
-                      asChild
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-2"
-                    >
-                      <Link href={`/course/${course.id}`}>View Course</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

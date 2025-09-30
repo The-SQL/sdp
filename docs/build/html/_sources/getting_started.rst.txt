@@ -1,0 +1,54 @@
+Getting Started
+===============
+
+This section will guide you through the basics of getting started with documentation projects.
+
+Tutorial
+--------
+
+A step-by-step tutorial to create your first documentation project:
+
+1. Install the required tools
+2. Initialize your documentation project
+3. Write your first pages
+4. Build and test your documentation
+5. Deploy to your preferred platform
+
+Adding a documentation project
+------------------------------
+
+To add a new documentation project:
+
+.. code-block:: bash
+
+   # Initialize a new project
+   docs-init my-project
+   
+   # Navigate to project directory
+   cd my-project
+   
+   # Build the documentation
+   docs-build
+
+Popular documentation tools
+---------------------------
+
+- **Sphinx**: Python documentation generator
+- **MkDocs**: Markdown-based documentation tool
+- **Docusaurus**: React-based documentation framework
+- **GitBook**: Modern documentation platform
+- **Read the Docs**: Documentation hosting platform
+
+Example projects
+----------------
+
+Check out these example projects to get inspired:
+
+- `OSLearn Core Docs <https://github.com/oslearn/example-docs>`
+- `API Reference Template <https://github.com/oslearn/api-template>`
+- `Technical Guide Example <https://github.com/oslearn/tech-guide>`
+
+.. toctree::
+   :hidden:
+   
+   project_setup

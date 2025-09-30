@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer Guide &mdash; OSLearn  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tech Stack" href="tech_stack.html" />
+    <link rel="prev" title="Database Documentation" href="database_documentation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#what-is-oslearn">What is OSLearn?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methodology and Planning</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="management_methodology.html">Management Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#key-scrum-practices-we-follow">Key Scrum Practices We Follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#tools-supporting-our-scrum-process">Tools Supporting Our Scrum Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="git_methodology.html">Git Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#branching-strategy">Branching Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#commit-message-conventions">Commit Message Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#code-style-naming-conventions">Code Style &amp; Naming Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#general-principles">General Principles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#naming-conventions-by-type">Naming Conventions by Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="game_plan.html">Game Plan</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#primary-role-responsibilities">Primary Role Responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#sprint-by-sprint-workload-distribution">Sprint-by-Sprint Workload Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#how-this-distribution-is-fair">How This Distribution is Fair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#api-integration">API Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wireframes.html">Wireframes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#overall-design-philosophy">Overall Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#pages-overview">Pages Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#course-explorer">1. Course Explorer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#lesson-player">2. Lesson Player</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#course-builder">3. Course Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#review-dashboard">4. Review Dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframes.html#user-profile">5. User Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#key-user-flows-to-prototype">Key User Flows to Prototype</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#id1">Wireframes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mockups.html">Mockups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#layout">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#our-chosen-design-philosophy-clean-sleek">Our Chosen Design Philosophy: “Clean &amp; Sleek”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#id1">Mockups</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#endpoint">Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#request-body">Request Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#example-request">Example Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#responses">Responses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#success">Success</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#error-cases">Error Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database_documentation.html">Database Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#db-schema">DB Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#development-database-setup">1. Development Database Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-api-setup">2. Development API Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-site-setup">3. Development Site Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">4. Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tech_stack.html">Tech Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#tech-stack-motivation">Tech Stack Motivation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#frontend-react-next-js-tailwind-css-shadcn-ui">Frontend: React (Next.js) + Tailwind CSS + ShadCN UI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#backend-node-js-express-js">Backend: Node.js + Express.js</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#authentication-database-supabase">Authentication &amp; Database: Supabase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#ai-integration-openai-api">AI Integration: OpenAI API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#testing-jest">Testing: Jest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="third_party_docs.html">Third-Party Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#next-js">1. Next.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#react">2. React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#clerk">3. Clerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#lucide-react">4. Lucide React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#shadcn-ui">5. Shadcn UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#jest">6. Jest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#eslint">7. ESLint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#postcss">8. PostCSS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#typescript">9. TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#supabase">10. Supabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#other-notable-libraries">11. Other Notable Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#openai">12. OpenAI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#justification-summary">Justification Summary</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Testing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_acceptance_tests.html">User Acceptance Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_acceptance_tests.html#sprint-1">Sprint 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_acceptance_tests.html#sprint-2">Sprint 2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#course-overview-page">Course Overview Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#explore-courses-page">Explore Courses Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#create-course-page">Create Course Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#dashboard-page">Dashboard Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#profile-page">Profile Page</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_feedback.html">User Feedback</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#testing-script-tasks">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OSLearn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Developer Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/developer_guides.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="developer-guide">
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading"></a></h1>
+<section id="development-database-setup">
+<h2>1. Development Database Setup<a class="headerlink" href="#development-database-setup" title="Link to this heading"></a></h2>
+<p>This project uses <a class="reference external" href="https://supabase.com/">Supabase</a> as its database.</p>
+<section id="steps">
+<h3>Steps<a class="headerlink" href="#steps" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Create a Supabase Project</strong></p>
+<ul class="simple">
+<li><p>Visit <a class="reference external" href="https://app.supabase.com/">Supabase</a> and sign in.</p></li>
+<li><p>Click <strong>New Project</strong> and fill in the details.</p></li>
+</ul>
+</li>
+<li><p><strong>Configure Database Tables</strong></p>
+<ul class="simple">
+<li><p>In the Supabase dashboard, navigate to <strong>Table Editor</strong>.</p></li>
+<li><p>Create tables:
+- <code class="docutils literal notranslate"><span class="pre">users</span></code>: Columns: <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">clerk_id</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">email</span></code>
+- Add other tables as needed (e.g., <code class="docutils literal notranslate"><span class="pre">courses</span></code>, <code class="docutils literal notranslate"><span class="pre">lessons</span></code>, <code class="docutils literal notranslate"><span class="pre">user_progress</span></code>).</p></li>
+<li><p>Set up relationships and constraints as required.</p></li>
+</ul>
+</li>
+<li><p><strong>Get API Keys</strong></p>
+<ul class="simple">
+<li><p>In <strong>Project Settings &gt; API</strong>, copy:
+- <code class="docutils literal notranslate"><span class="pre">SUPABASE_URL</span></code>
+- <code class="docutils literal notranslate"><span class="pre">SUPABASE_ANON_KEY</span></code>
+- <code class="docutils literal notranslate"><span class="pre">SUPABASE_SERVICE_ROLE_KEY</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Configure Local Environment</strong></p>
+<ul>
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">.env.local</span></code> file in the project root:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">NEXT_PUBLIC_SUPABASE_URL</span><span class="o">=</span>your_supabase_url
+<span class="nv">NEXT_PUBLIC_SUPABASE_ANON_KEY</span><span class="o">=</span>your_supabase_anon_key
+<span class="nv">SUPABASE_SERVICE_ROLE_KEY</span><span class="o">=</span>your_supabase_service_key
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="development-api-setup">
+<h2>2. Development API Setup<a class="headerlink" href="#development-api-setup" title="Link to this heading"></a></h2>
+<p>API routes are managed using <a class="reference external" href="https://nextjs.org/docs/api-routes/introduction">Next.js API Routes</a>.</p>
+<section id="id2">
+<h3>Steps<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Create API Route Files</strong></p>
+<ul class="simple">
+<li><p>Add files in <code class="docutils literal notranslate"><span class="pre">src/pages/api/</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">users.ts</span></code>, <code class="docutils literal notranslate"><span class="pre">courses.ts</span></code>).</p></li>
+<li><p>Use the Supabase client for database operations (see <code class="docutils literal notranslate"><span class="pre">insertUser</span></code>, <code class="docutils literal notranslate"><span class="pre">checkUserExists</span></code> in <code class="docutils literal notranslate"><span class="pre">src/utils/db/server.ts</span></code>).</p></li>
+</ul>
+</li>
+<li><p><strong>Example API Route</strong></p>
+<div class="highlight-tsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// src/pages/api/users.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">insertUser</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@/utils/db/server&quot;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">handler</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">clerk_id</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">insertUser</span><span class="p">(</span><span class="nx">clerk_id</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">200</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">500</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="nx">error</span><span class="o">:</span><span class="w"> </span><span class="kt">error.message</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Test API Endpoints</strong></p>
+<ul class="simple">
+<li><p>Use tools like <a class="reference external" href="https://www.postman.com/">Postman</a> or <a class="reference external" href="https://curl.se/">curl</a> to test endpoints.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="development-site-setup">
+<h2>3. Development Site Setup<a class="headerlink" href="#development-site-setup" title="Link to this heading"></a></h2>
+<p>The frontend is built with <a class="reference external" href="https://nextjs.org/">Next.js</a>.</p>
+<section id="id3">
+<h3>Steps<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Install Dependencies</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+</pre></div>
+</div>
+</li>
+<li><p><strong>Run Development Server</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>run<span class="w"> </span>dev
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Visit <a class="reference external" href="http://localhost:3000/">http://localhost:3000</a> in your browser.</p></li>
+</ul>
+</li>
+<li><p><strong>Frontend Development</strong></p>
+<ul class="simple">
+<li><p>Edit pages in <code class="docutils literal notranslate"><span class="pre">src/app/</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">page.tsx</span></code>).</p></li>
+<li><p>Use components and hooks to interact with the API and Supabase.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="testing">
+<h2>4. Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Run tests with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+</li>
+<li><p>Coverage reports are generated in the <code class="docutils literal notranslate"><span class="pre">coverage/</span></code> folder.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="database_documentation.html" class="btn btn-neutral float-left" title="Database Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tech_stack.html" class="btn btn-neutral float-right" title="Tech Stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Priyanka Gohil.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
