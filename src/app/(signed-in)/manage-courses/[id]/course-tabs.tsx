@@ -145,9 +145,10 @@ function CourseTabs({
             `${courseData.id}`
           );
 
-          courseData.profile_url = publicUrl;
+          courseToPublish.profile_url = publicUrl;
         }
 
+        
         const suggestedChanges: SuggestedChange = {
           collaborator_id: user.id,
           course_id: courseData.id!,
