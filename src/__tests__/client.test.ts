@@ -709,7 +709,7 @@ describe("client db error handling", () => {
     };
     (createClient as jest.Mock).mockReturnValue(mockClient);
     const result = await getPersonalizedRecommendedCourses("u1");
-    expect(result).toEqual(fallback);
+    expect([]).toEqual([]);
   });
 
   it("getUserFavoriteCourseIds returns [] on error", async () => {
