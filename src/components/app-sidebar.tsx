@@ -14,7 +14,6 @@ import NotificationBell from "./notificationBell";
 
 import { usePathname } from "next/navigation";
 
-
 import {
   Sidebar,
   SidebarContent,
@@ -25,9 +24,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import clsx from "clsx";
+import { useEffect } from "react";
 
 const NAV_LINKS = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -36,17 +37,22 @@ const NAV_LINKS = [
   { name: "Discussion Forums", href: "/forums", icon: MessageSquare },
   { name: "Flashcards", href: "/flashcards", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
-  {name: "Notifications", href:"/notifications",icon: NotificationBell}
+  { name: "Notifications", href: "/notifications", icon: NotificationBell },
 ];
 
 function AppSideBar() {
   const pathname = usePathname();
+  const { open } = useSidebar();
+
+  useEffect(() => {
+    console.log("Sidebar open state:", open);
+  }, [open]);
   return (
-    <Sidebar variant="sidebar">
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader className="text-center text-xl font-medium pt-4">
         <div className="flex items-center justify-center gap-2">
           <Globe className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold">OSLearn</span>
+          {open && <span className="text-xl font-bold">OSLearn</span>}
         </div>
       </SidebarHeader>
       <SidebarContent className="pt-4">
@@ -74,7 +80,6 @@ function AppSideBar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
     </Sidebar>
   );
 }

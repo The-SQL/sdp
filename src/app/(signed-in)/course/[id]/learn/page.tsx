@@ -2,56 +2,48 @@
 // app/course/[id]/learn/page.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import Loading from "@/components/loading";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Pause,
-  Volume2,
-  BookOpen,
-  CheckCircle,
-  Circle,
-  Bot,
-  Send,
-  Users,
-  ChevronDown,
-  ChevronUp,
-  Download,
-  Maximize,
-  Minimize,
-  GripVertical,
-  XCircle,
-  Video,
-  FileText,
-  Mic,
-  HelpCircle,
-  Loader2,
+    checkIfEnrolled,
+    enrollInCourse,
+    getCourseWithContent,
+    getUserProgress,
+    updateLessonProgress,
+} from "@/utils/db/learn";
+import { Lesson, UserProgress as UserProgressType } from "@/utils/types";
+import { useUser } from "@clerk/nextjs";
+import {
+    BookOpen,
+    CheckCircle,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronUp,
+    Circle,
+    FileText,
+    HelpCircle,
+    Loader2,
+    Mic,
+    Pause,
+    Play,
+    Users,
+    Video,
+    XCircle
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
-import {
-  getCourseWithContent,
-  getUserProgress,
-  updateLessonProgress,
-  checkIfEnrolled,
-  enrollInCourse,
-} from "@/utils/db/learn";
-import { Lesson, Unit, UserProgress as UserProgressType } from "@/utils/types";
-import Loading from "@/components/loading";
+import { useEffect, useRef, useState } from "react";
 
 interface CourseWithContent {
   id: string;

@@ -343,6 +343,21 @@ export async function getCourseById(id: string) {
     ?.map((ct: { tags: { name: string } | null }) => ct.tags?.name)
     .filter((name): name is string => name != null) || ["Language"];
 
+  // Ensure units and lessons are ordered by their order_index
+  if (Array.isArray(supabaseCourse.units)) {
+    supabaseCourse.units.sort((a, b) =>
+      (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+    );
+
+    supabaseCourse.units.forEach((unit: UnitWithLessons) => {
+      if (Array.isArray(unit.lessons)) {
+        unit.lessons.sort((a, b) =>
+          (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+        );
+      }
+    });
+  }
+
   const chapters = supabaseCourse.units.map((unit: UnitWithLessons) => {
     const lessons_detail = unit.lessons.map(
       (lesson: { title: string; duration: number; content_type: string }) => ({

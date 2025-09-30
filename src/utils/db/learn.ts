@@ -1,6 +1,5 @@
 // utils/db/learn.ts
 import { createClient } from "@/utils/supabase/client";
-import { Lesson, Unit, UserProgress } from "../types";
 
 export async function getCourseWithContent(courseId: string) {
   const supabase = createClient();
@@ -36,6 +35,21 @@ export async function getCourseWithContent(courseId: string) {
   if (courseError) {
     console.error("Error fetching course:", courseError);
     throw courseError;
+  }
+
+  // Ensure units and lessons are ordered by order_index
+  if (course && Array.isArray(course.units)) {
+    course.units.sort((a: any, b: any) =>
+      (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+    );
+
+    course.units.forEach((unit: any) => {
+      if (Array.isArray(unit.lessons)) {
+        unit.lessons.sort((a: any, b: any) =>
+          (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+        );
+      }
+    });
   }
 
   return course;
