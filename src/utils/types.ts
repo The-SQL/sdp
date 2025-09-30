@@ -134,7 +134,6 @@ export interface UserCoursesState {
   num_in_progress: number;
 }
 
-/*
 // --- Progress (from `user_progress`) ---
 export interface UserProgress {
   id: string;
@@ -143,7 +142,29 @@ export interface UserProgress {
   progress: number;
   updated_at: string;
 }
-  */
+
+export interface LearningGoal {
+  id: string;
+  user_id: string;
+  description: string;
+  target_date: string;
+  created_at: string;
+  completed: boolean;
+}
+
+export type FavCourse = {
+  title: string;
+  difficulty: string,
+  author: string;
+}
+
+export type SupabaseFavoriteRow = {
+  courses: {
+    title: string;
+    difficulty: string;
+    author: { name: string };
+  };
+}
 
 export interface UserProgress {
   lesson_id: string;

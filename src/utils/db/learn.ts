@@ -6,8 +6,9 @@ export async function getCourseWithContent(courseId: string) {
   const supabase = createClient();
 
   const { data: course, error: courseError } = await supabase
-  .from("courses")
-  .select(`
+    .from("courses")
+    .select(
+      `
     id,
     title,
     description,
@@ -29,9 +30,10 @@ export async function getCourseWithContent(courseId: string) {
         unit_id
       )
     )
-  `)
-  .eq("id", courseId)
-  .single();
+  `
+    )
+    .eq("id", courseId)
+    .single();
 
   if (courseError) {
     console.error("Error fetching course:", courseError);
@@ -40,14 +42,16 @@ export async function getCourseWithContent(courseId: string) {
 
   // Ensure units and lessons are ordered by order_index
   if (course && Array.isArray(course.units)) {
-    course.units.sort((a: UnitWithLessons, b: UnitWithLessons) =>
-      (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+    course.units.sort(
+      (a: UnitWithLessons, b: UnitWithLessons) =>
+        (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
     );
 
     course.units.forEach((unit: UnitWithLessons) => {
       if (Array.isArray(unit.lessons)) {
-        unit.lessons.sort((a: Lesson, b: Lesson) =>
-          (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+        unit.lessons.sort(
+          (a: Lesson, b: Lesson) =>
+            (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
         );
       }
     });
@@ -56,30 +60,46 @@ export async function getCourseWithContent(courseId: string) {
   return course;
 }
 
-export async function getUserProgress(userId: string, courseId: string) {
+export async function getUserProgress(
+  userId: string,
+  courseId: string
+): Promise<
+  {
+    lesson_id: string;
+    status: string;
+    last_accessed: string;
+    score: number;
+  }[]
+> {
   const supabase = createClient();
 
   const { data: progress, error } = await supabase
     .from("user_progress")
-    .select(`
+    .select(
+      `
       lesson_id,
       status,
       last_accessed,
       score
-    `)
+    `
+    )
     .eq("user_id", userId)
-    .in("lesson_id", 
-      (await supabase
-        .from("lessons")
-        .select("id")
-        .in("unit_id", 
-          (await supabase
-            .from("units")
-            .select("id")
-            .eq("course_id", courseId)
-          ).data?.map(u => u.id) || []
-        )
-      ).data?.map(l => l.id) || []
+    .in(
+      "lesson_id",
+      (
+        await supabase
+          .from("lessons")
+          .select("id")
+          .in(
+            "unit_id",
+            (
+              await supabase
+                .from("units")
+                .select("id")
+                .eq("course_id", courseId)
+            ).data?.map((u) => u.id) || []
+          )
+      ).data?.map((l) => l.id) || []
     );
 
   if (error) {
@@ -145,35 +165,34 @@ async function updateCourseProgress(userId: string, lessonId: string) {
   const supabase = createClient();
 
   // Get the unit_id from the lesson first
-    const { data: lesson } = await supabase
-        .from("lessons")
-        .select("unit_id")
-        .eq("id", lessonId)
-        .single();
+  const { data: lesson } = await supabase
+    .from("lessons")
+    .select("unit_id")
+    .eq("id", lessonId)
+    .single();
 
-    if (!lesson) return;
+  if (!lesson) return;
 
-    // Then get the course_id from the unit
-    const { data: unit } = await supabase
-        .from("units")
-        .select("course_id")
-        .eq("id", lesson.unit_id)
-        .single();
+  // Then get the course_id from the unit
+  const { data: unit } = await supabase
+    .from("units")
+    .select("course_id")
+    .eq("id", lesson.unit_id)
+    .single();
 
-    if (!unit) return;
+  if (!unit) return;
 
-    const courseId = unit.course_id;
+  const courseId = unit.course_id;
 
   // Get all lessons in the course
   const { data: lessons } = await supabase
     .from("lessons")
     .select("id")
-    .in("unit_id", 
-      (await supabase
-        .from("units")
-        .select("id")
-        .eq("course_id", courseId)
-      ).data?.map(u => u.id) || []
+    .in(
+      "unit_id",
+      (
+        await supabase.from("units").select("id").eq("course_id", courseId)
+      ).data?.map((u) => u.id) || []
     );
 
   if (!lessons) return;
@@ -183,12 +202,17 @@ async function updateCourseProgress(userId: string, lessonId: string) {
     .from("user_progress")
     .select("lesson_id, status")
     .eq("user_id", userId)
-    .in("lesson_id", lessons.map(l => l.id));
+    .in(
+      "lesson_id",
+      lessons.map((l) => l.id)
+    );
 
   // Calculate overall progress percentage
-  const completedLessons = progress?.filter(p => p.status === "completed").length || 0;
+  const completedLessons =
+    progress?.filter((p) => p.status === "completed").length || 0;
   const totalLessons = lessons.length;
-  const overallProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+  const overallProgress =
+    totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
   // Update user_courses table
   const { data: userCourse } = await supabase
@@ -219,7 +243,10 @@ async function updateCourseProgress(userId: string, lessonId: string) {
   }
 }
 
-export async function checkIfEnrolled(userId: string, courseId: string): Promise<boolean> {
+export async function checkIfEnrolled(
+  userId: string,
+  courseId: string
+): Promise<boolean> {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -237,7 +264,10 @@ export async function checkIfEnrolled(userId: string, courseId: string): Promise
   return !!data;
 }
 
-export async function enrollInCourse(userId: string, courseId: string): Promise<void> {
+export async function enrollInCourse(
+  userId: string,
+  courseId: string
+): Promise<void> {
   const supabase = createClient();
 
   const { error } = await supabase.from("user_courses").insert({

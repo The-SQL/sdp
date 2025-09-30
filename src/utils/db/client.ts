@@ -6,8 +6,13 @@ import {
     UserCoursesState,
     UserProfile,
     UserProgress,
-    UserStats
+    UserStats,
+    LearningGoal,
+    FavCourse,
+    SupabaseFavoriteRow,
 } from "../types";
+import { makeSupabaseMock } from "@/__mocks__/supabase";
+import { create } from "domain";
 
 export interface SupabaseCourseList {
   id: string;
@@ -586,6 +591,26 @@ export async function removeFromFavorites(
   }
 }
 
+export async function getFavorites(userId: string): Promise<FavCourse[]>{
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('user_favorite_courses')
+    .select('courses(title, difficulty, author:author_id(name))')
+    .eq('user_id', userId)
+  if(error){
+    console.error('Error fetching favorites:', error.message);
+    return [];
+  }
+  console.log("Favorite courses raw:", data);
+
+  return (data as unknown as SupabaseFavoriteRow[]).map((row) => ({
+    title: row.courses?.title ?? 'Untitled',
+    difficulty: row.courses?.difficulty ?? 'Unknown',
+    author: row.courses?.author?.name ?? 'Unknown Author',
+  }));
+}
+
 /**
  * Checks if a user is enrolled in a specific course
  * @param courseId - The course ID to check
@@ -751,6 +776,57 @@ export async function getUserCourses(
   };
 }
 
+//Adding new learning goal to database
+
+export async function addLearningGoal(description: string, targetDate: Date, user_id: string): Promise<LearningGoal | null>{
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .insert([{ description, target_date: targetDate, user_id }])
+    .select()
+    .single()
+  
+  if(error){
+    console.error('Error adding learning goal:', error.message);
+    return null;
+  }
+
+  return data as LearningGoal;
+}
+
+export async function getLearningGoals(userId: string): Promise<LearningGoal[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  
+    if(error){
+      console.error('Fetch error:', error.message);
+      return [];
+    }
+
+    return data ?? [];
+}
+
+export async function completeLearningGoal(userId: string, description: string){
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('learning_goals')
+    .update({completed : true})
+    .eq('user_id', userId)
+    .eq('description', description)
+
+    if(error){
+      console.error('Can not update learning goal:', error.message);
+      throw error;
+    }
+
+    return data;
+}
 export async function getCoursesByAuthor(
   authorId: string
 ): Promise<Course[] | null> {
