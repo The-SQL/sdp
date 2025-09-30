@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframes &mdash; OSLearn  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mockups" href="mockups.html" />
+    <link rel="prev" title="Game Plan" href="game_plan.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#what-is-oslearn">What is OSLearn?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methodology and Planning</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="management_methodology.html">Management Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#key-scrum-practices-we-follow">Key Scrum Practices We Follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#tools-supporting-our-scrum-process">Tools Supporting Our Scrum Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="git_methodology.html">Git Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#branching-strategy">Branching Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#commit-message-conventions">Commit Message Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#code-style-naming-conventions">Code Style &amp; Naming Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#general-principles">General Principles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="git_methodology.html#naming-conventions-by-type">Naming Conventions by Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="game_plan.html">Game Plan</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#primary-role-responsibilities">Primary Role Responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#sprint-by-sprint-workload-distribution">Sprint-by-Sprint Workload Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#how-this-distribution-is-fair">How This Distribution is Fair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#api-integration">API Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Wireframes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overall-design-philosophy">Overall Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pages-overview">Pages Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#course-explorer">1. Course Explorer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lesson-player">2. Lesson Player</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#course-builder">3. Course Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#review-dashboard">4. Review Dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-profile">5. User Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#key-user-flows-to-prototype">Key User Flows to Prototype</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Wireframes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mockups.html">Mockups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#layout">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#our-chosen-design-philosophy-clean-sleek">Our Chosen Design Philosophy: “Clean &amp; Sleek”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#id1">Mockups</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#endpoint">Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#request-body">Request Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#example-request">Example Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#responses">Responses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#success">Success</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_documentation.html#error-cases">Error Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database_documentation.html">Database Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#db-schema">DB Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guides.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-database-setup">1. Development Database Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-api-setup">2. Development API Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#id2">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-site-setup">3. Development Site Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guides.html#id3">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#testing">4. Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tech_stack.html">Tech Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#tech-stack-motivation">Tech Stack Motivation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#frontend-react-next-js-tailwind-css-shadcn-ui">Frontend: React (Next.js) + Tailwind CSS + ShadCN UI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#backend-node-js-express-js">Backend: Node.js + Express.js</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#authentication-database-supabase">Authentication &amp; Database: Supabase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#ai-integration-openai-api">AI Integration: OpenAI API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tech_stack.html#testing-jest">Testing: Jest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="third_party_docs.html">Third-Party Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#next-js">1. Next.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#react">2. React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#clerk">3. Clerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#lucide-react">4. Lucide React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#shadcn-ui">5. Shadcn UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#jest">6. Jest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#eslint">7. ESLint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#postcss">8. PostCSS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#typescript">9. TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#supabase">10. Supabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#other-notable-libraries">11. Other Notable Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#openai">12. OpenAI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#justification-summary">Justification Summary</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Testing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_acceptance_tests.html">User Acceptance Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_acceptance_tests.html#sprint-1">Sprint 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_acceptance_tests.html#sprint-2">Sprint 2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#course-overview-page">Course Overview Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#explore-courses-page">Explore Courses Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#create-course-page">Create Course Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#dashboard-page">Dashboard Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_acceptance_tests.html#profile-page">Profile Page</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_feedback.html">User Feedback</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#testing-script-tasks">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OSLearn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Wireframes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/wireframes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="wireframes">
+<h1>Wireframes<a class="headerlink" href="#wireframes" title="Link to this heading"></a></h1>
+<section id="overall-design-philosophy">
+<h2>Overall Design Philosophy<a class="headerlink" href="#overall-design-philosophy" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Clean &amp; Focused</strong>: The interface is minimalistic to reduce cognitive load, especially for users concentrating on learning a new language.</p></li>
+<li><p><strong>Modular &amp; Consistent</strong>: The Course Builder uses clear, reusable components (text, multiple choice, audio input) that align with their display in the Lesson Player.</p></li>
+<li><p><strong>Gamification Hints</strong>: Subtle use of progress bars, badges, streak counters, and positive reinforcement to encourage consistent learning.</p></li>
+<li><p><strong>Community-First</strong>: Features for rating, commenting, and suggesting edits are easily accessible but non-intrusive.</p></li>
+</ul>
+</section>
+<section id="pages-overview">
+<h2>Pages Overview<a class="headerlink" href="#pages-overview" title="Link to this heading"></a></h2>
+<section id="course-explorer">
+<h3>1. Course Explorer<a class="headerlink" href="#course-explorer" title="Link to this heading"></a></h3>
+<p><strong>Purpose</strong>: The homepage and primary discovery mechanism for learners.</p>
+<p><strong>Wireframe Discussion</strong>:</p>
+<ul class="simple">
+<li><p><strong>Hero Section</strong>: A prominent search bar with quick filters for <code class="docutils literal notranslate"><span class="pre">Language</span></code>, <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code>, and <code class="docutils literal notranslate"><span class="pre">Popularity</span></code>.</p></li>
+<li><p><strong>Personalized Recommendations</strong>: A section titled “Continue Your Journey” or “Recommended for You” displays courses in languages the user is studying.</p></li>
+<li><p><strong>Browse Sections</strong>: Scrolling sections categorize courses: “Most Popular,” “Newly Added,” “Featured Constructed Languages,” etc.</p></li>
+<li><p><strong>Course Cards</strong>: Each card includes:
+- Course Title &amp; Language Flag/Name
+- Author username
+- Average Rating (stars) and number of reviews
+- Difficulty Level (color-coded: Beginner, Intermediate, Advanced)
+- A short preview image/icon of the course content
+- A <strong>“Preview” button</strong> to view the course structure and a sample lesson before enrolling.</p></li>
+<li><p><strong>Advanced Search/Filter Page</strong>: Accessible from the main search bar, this modal or page includes all tags, a full language list (with search), course length, and specific content types (e.g., “has audio exercises”).</p></li>
+</ul>
+</section>
+<section id="lesson-player">
+<h3>2. Lesson Player<a class="headerlink" href="#lesson-player" title="Link to this heading"></a></h3>
+<p><strong>Purpose</strong>: The core learning experience, designed to be immersive, responsive, and highly functional.</p>
+<p><strong>Wireframe Discussion</strong>:</p>
+<ul class="simple">
+<li><p><strong>Header Context</strong>:
+- Displays Course title, current Unit/Lesson title (e.g., “Spanish 101 &gt; Unit 3: Food &gt; Lesson 2: Ordering at a Restaurant”).
+- A collapsible sidebar icon reveals the course outline, showing completed, current, and upcoming lessons for navigation.</p></li>
+<li><p><strong>Main Content Area</strong>: Dynamic, changing based on lesson component type:
+- <strong>Text/Instruction Component</strong>: A clean, readable panel with formatted text, examples, and highlighted key points.
+- <strong>Multiple Choice Question</strong>: Clear question prompt, large tap-targets for answers, with feedback on correct/incorrect selections.
+- <strong>Audio Component</strong>: A large play button for native speaker recordings, a record button for pronunciation practice, and a waveform visualizer for comparison.
+- <strong>Image Matching</strong>: Drag-and-drop or click-to-match functionality.</p></li>
+<li><p><strong>Progress &amp; Navigation Bar (Bottom)</strong>:
+- A “Check Answer” or “Submit” button that changes to “Next” after interaction.
+- A progress bar within the current lesson (e.g., “3/5 exercises completed”).
+- Buttons for “Previous,” “Next,” and “Save &amp; Exit” to bookmark progress.</p></li>
+<li><p><strong>Helper Tools (Floating/Icons)</strong>:
+- A “Report an Issue” button tied to the Community API, allowing users to flag errors in questions or content.</p></li>
+</ul>
+</section>
+<section id="course-builder">
+<h3>3. Course Builder<a class="headerlink" href="#course-builder" title="Link to this heading"></a></h3>
+<p><strong>Purpose</strong>: A powerful, user-friendly interface for authors to create and structure courses, designed as a multi-step process.</p>
+<p><strong>Wireframe Discussion (Multi-Part)</strong>:</p>
+<p><strong>Part 1: Course Outline View</strong></p>
+<ul class="simple">
+<li><p>Resembles a project management tool or document outline.</p></li>
+<li><p><strong>Left Panel</strong>: A hierarchical list for structuring the course:
+- Top-level <strong>Units</strong> (e.g., “Greetings,” “Grammar Fundamentals”).
+- Within Units, <strong>Lessons</strong> can be added.
+- Authors can drag and drop to reorder units and lessons.</p></li>
+<li><p><strong>Main Panel</strong>: Editable content for the selected lesson:
+- <strong>Lesson Title &amp; Objective</strong>: Fields to describe the learning goal.
+- <strong>Component Library</strong>: Drag-and-drop components (Text, Multiple Choice, Audio, Image, Flashcards) to build the lesson.</p></li>
+<li><p><strong>Settings/Properties Panel (Right)</strong>: Configures difficulty, tags, and settings for the course or selected unit/lesson.</p></li>
+</ul>
+<p><strong>Part 2: Component Editor</strong></p>
+<ul class="simple">
+<li><p>For a “Multiple Choice” component, a form includes:
+- Field for the question prompt.
+- Fields for answer options, with checkboxes to mark correct answers.
+- Fields for feedback on correct/incorrect answers.</p></li>
+<li><p>For an “Audio” component, includes an upload button and a transcript field.</p></li>
+</ul>
+<p><strong>Part 3: Preview Mode</strong></p>
+<ul class="simple">
+<li><p>A toggle button allows authors to view the lesson as a learner would, testing flow and functionality before publishing.</p></li>
+</ul>
+</section>
+<section id="review-dashboard">
+<h3>4. Review Dashboard<a class="headerlink" href="#review-dashboard" title="Link to this heading"></a></h3>
+<p><strong>Purpose</strong>: A personalized, data-driven hub for reinforcement and spaced repetition, leveraging the Quiz Engine API.</p>
+<p><strong>Wireframe Discussion</strong>:</p>
+<ul class="simple">
+<li><p><strong>Overview Stats</strong>: Displays “Current Streak: 5 days,” “Items due for review: 27,” “Total Words Learned: 420.”</p></li>
+<li><p><strong>Spaced Repetition Queue</strong>: Lists items (vocabulary, grammar rules) “Due Today” and “Due Soon,” pulled by the Quiz Engine API. Each item has a “Review Now” button for a flashcard-style quiz.</p></li>
+<li><p><strong>Weakness Analysis</strong>: A section titled “Areas Needing Work” groups struggling items by category (e.g., “Grammatical Gender,” “Verb Conjugations in Past Tense”). Clicking a category starts a targeted practice session.</p></li>
+<li><p><strong>History Charts</strong>: Simple graphs showing activity and accuracy trends over the last week/month to visualize progress.</p></li>
+<li><p><strong>Quick Access</strong>: A button to start a general review session mixing all item types.</p></li>
+</ul>
+</section>
+<section id="user-profile">
+<h3>5. User Profile<a class="headerlink" href="#user-profile" title="Link to this heading"></a></h3>
+<p><strong>Purpose</strong>: Tracks personal achievements, manages created content, and showcases community involvement.</p>
+<p><strong>Wireframe Discussion (Tabbed Layout)</strong>:</p>
+<ul class="simple">
+<li><p><strong>Progress Tab</strong>:
+- Enrolled Courses: Visual cards with progress bars showing completion.
+- Daily streak counter and a calendar view of active learning days.
+- Achievements/badges (e.g., “Polyglot - Studying 5+ languages,” “Contributor - Suggested 10+ edits”).</p></li>
+<li><p><strong>Authored Courses Tab</strong>:
+- Lists user-created courses with stats: enrolled learners, average rating, total completions.
+- Buttons to edit, view analytics, or archive courses.</p></li>
+<li><p><strong>Contributions Tab</strong>:
+- A feed of community activity: ratings, comments, and suggested edits (with status: Pending, Accepted, Rejected).
+- A karma or “Helpfulness Score” based on upvotes for contributions.</p></li>
+</ul>
+</section>
+</section>
+<section id="key-user-flows-to-prototype">
+<h2>Key User Flows to Prototype<a class="headerlink" href="#key-user-flows-to-prototype" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>The Learning Loop</strong>: <code class="docutils literal notranslate"><span class="pre">Course</span> <span class="pre">Explorer</span></code> -&gt; Preview -&gt; Enroll -&gt; <code class="docutils literal notranslate"><span class="pre">Lesson</span> <span class="pre">Player</span></code> -&gt; Complete lesson -&gt; Redirect to <code class="docutils literal notranslate"><span class="pre">Review</span> <span class="pre">Dashboard</span></code> for recap.</p></li>
+<li><p><strong>The Creation Flow</strong>: User Profile -&gt; “Create New Course” -&gt; <code class="docutils literal notranslate"><span class="pre">Course</span> <span class="pre">Builder</span></code> (Outline -&gt; Add Lessons -&gt; Add Components -&gt; Preview) -&gt; Publish -&gt; appears in <code class="docutils literal notranslate"><span class="pre">Course</span> <span class="pre">Explorer</span></code>.</p></li>
+<li><p><strong>The Feedback Loop</strong>: Inside <code class="docutils literal notranslate"><span class="pre">Lesson</span> <span class="pre">Player</span></code> -&gt; see a mistake -&gt; click “Report Issue” / “Suggest Edit” -&gt; submit correction -&gt; notification to course author via <code class="docutils literal notranslate"><span class="pre">Community</span> <span class="pre">API</span></code>.</p></li>
+</ol>
+</section>
+<section id="id1">
+<h2>Wireframes<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/WhatsApp_Image_2025-08-14_at_19.05.18.webp"><img alt="Wireframe Image" src="_images/WhatsApp_Image_2025-08-14_at_19.05.18.webp" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/WhatsApp%20Image%202025-08-14%20at%2019.05.20.jpeg"><img alt="Wireframe Image" src="_images/WhatsApp%2520Image%25202025-08-14%2520at%252019.05.20.jpeg" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/WhatsApp%20Image%202025-08-14%20at%2019.05.19.jpeg"><img alt="Wireframe Image" src="_images/WhatsApp%2520Image%25202025-08-14%2520at%252019.05.19.jpeg" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="_images/WhatsApp%20Image%202025-08-14%20at%2019.05.20-2.jpeg"><img alt="Wireframe Image" src="_images/WhatsApp%2520Image%25202025-08-14%2520at%252019.05.20-2.jpeg" style="width: 600px;" />
+</a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="game_plan.html" class="btn btn-neutral float-left" title="Game Plan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mockups.html" class="btn btn-neutral float-right" title="Mockups" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Priyanka Gohil.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

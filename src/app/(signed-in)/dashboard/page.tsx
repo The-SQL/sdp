@@ -163,7 +163,7 @@ export default function Dashboard() {
 
     const res = [...template];
     for (const row of progressRows) {
-      const ts = row.updated_at;
+      const ts = row.last_accessed;
       if (!ts) continue;
       const dt = new Date(ts);
       if (dt < startOfWeek) continue;

@@ -15,9 +15,10 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import SearchableInput from "@/components/ui/searchable-input";
-import { createLanguage, createTag } from "@/utils/db/client";
+import { createTag } from "@/utils/db/tags";
+import { createLanguage } from "@/utils/db/languages";
 import { XIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 function SetupTab({
   courseData,
@@ -25,17 +26,32 @@ function SetupTab({
   setCourseImageFile,
   tags,
   setTags,
+  courseVersion = "main",
+  originalCourse,
 }: {
   courseData: Course;
   setCourseData: Dispatch<SetStateAction<Course>>;
   setCourseImageFile: Dispatch<SetStateAction<File | null>>;
-  tags: Tag[];
-  setTags: Dispatch<SetStateAction<Tag[]>>;
+  tags?: Tag[];
+  setTags?: Dispatch<SetStateAction<Tag[]>>;
+  courseVersion?: string;
+  originalCourse?: Course;
 }) {
-  const [localImageUrl, setLocalImageUrl] = useState<string>("");
+  // Determine which fields changed compared to the original main course
+  const original = originalCourse;
+  const fieldChanged = (key: keyof Course) => {
+    if (!original) return false;
+    // simple shallow comparison for basic fields
+ 
+    return (original?.[key] ?? "") !== (courseData?.[key] ?? "");
+  };
+
+
+  const highlight = (changed: boolean) =>
+    changed && courseVersion !== "main" ? "ring-2 ring-yellow-300 bg-yellow-50" : "";
 
   const removeTag = (id: string) => {
-    setTags((prev) => prev.filter((tag) => tag.id !== id));
+    setTags?.((prev) => prev.filter((tag) => tag.id !== id));
   };
 
   const searchLanguages = async (
@@ -76,6 +92,7 @@ function SetupTab({
               <Input
                 placeholder="e.g., Spanish for Travel Enthusiasts"
                 value={courseData.title}
+                className={highlight(fieldChanged("title"))}
                 onChange={(e) =>
                   setCourseData({ ...courseData, title: e.target.value })
                 }
@@ -93,7 +110,7 @@ function SetupTab({
                   const file = e.target.files?.[0];
                   if (file) {
                     const url = URL.createObjectURL(file);
-                    setLocalImageUrl(url);
+                    setCourseData((p) => ({ ...p, profile_url: url }));
                     setCourseImageFile(file);
                   }
                 }}
@@ -105,27 +122,42 @@ function SetupTab({
                 <Label className="block text-sm font-medium text-gray-700 mb-2">
                   Language
                 </Label>
-                <SearchableInput<Language>
-                  dbCall={searchLanguages}
-                  onSelect={(lang) => {
-                    setCourseData((p) => ({ ...p, language_id: lang.id })); // your actual state update
-                  }}
-                  isCreationAllowed
-                  createSearchType={createLanguage}
-                  placeholder="Enter language..."
-                />
+                <div className={highlight(fieldChanged("language_id"))}>
+                  <SearchableInput<Language>
+                    dbCall={searchLanguages}
+                    selected={
+                      courseData.language_id && courseData.language_name
+                        ? {
+                            id: courseData.language_id,
+                            name: courseData.language_name,
+                          }
+                        : null
+                    }
+                    onSelect={(lang) => {
+                      setCourseData((p) => ({
+                        ...p,
+                        language_id: lang.id,
+                        language_name: lang.name,
+                      }));
+                    }}
+                    isCreationAllowed
+                    createSearchType={createLanguage}
+                    placeholder="Enter language..."
+                  />
+                </div>
               </div>
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-2">
                   Difficulty Level
                 </Label>
+                <div className={highlight(fieldChanged("difficulty"))}>
                 <Select
                   value={courseData.difficulty}
                   onValueChange={(value: string) =>
                     setCourseData({ ...courseData, difficulty: value })
                   }
                 >
-                  <SelectTrigger>
+                   <SelectTrigger>
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
@@ -134,6 +166,7 @@ function SetupTab({
                     <SelectItem value="advanced">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
+                </div>
               </div>
             </div>
 
@@ -144,6 +177,7 @@ function SetupTab({
               <Input
                 placeholder="e.g., 8 weeks"
                 value={courseData.estimated_duration}
+                className={highlight(fieldChanged("estimated_duration"))}
                 onChange={(e) =>
                   setCourseData({
                     ...courseData,
@@ -160,6 +194,7 @@ function SetupTab({
               <Textarea
                 placeholder="Describe what students will learn and achieve in this course..."
                 rows={4}
+                className={highlight(fieldChanged("description"))}
                 value={courseData.description}
                 onChange={(e) =>
                   setCourseData({ ...courseData, description: e.target.value })
@@ -174,6 +209,7 @@ function SetupTab({
               <Textarea
                 placeholder="Master basic conversation skills, Learn 500+ essential vocabulary words, Understand cultural context"
                 rows={3}
+                className={highlight(fieldChanged("learning_objectives"))}
                 value={courseData.learning_objectives}
                 onChange={(e) =>
                   setCourseData({
@@ -184,35 +220,37 @@ function SetupTab({
               />
             </div>
 
-            <div>
-              <Label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </Label>
-              <SearchableInput<Tag>
-                dbCall={searchTags}
-                onSelect={(tag) => {
-                  if (tags.find((t) => t.id === tag.id)) return;
-                  setTags((prev) => [...prev, tag]);
-                }}
-                isCreationAllowed
-                clearOnSelect
-                createSearchType={createTag}
-                placeholder="Enter tag..."
-              />
-              <div className="mt-2 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <Badge key={tag.id} className="cursor-pointer">
-                    {tag.name}{" "}
-                    <span
-                      className="text-gray-400"
-                      onClick={() => removeTag(tag.id)}
-                    >
-                      <XIcon className="w-4 h-4" />
-                    </span>
-                  </Badge>
-                ))}
+            {tags && setTags && (
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags
+                </Label>
+                <SearchableInput<Tag>
+                  dbCall={searchTags}
+                  onSelect={(tag) => {
+                    if (tags.find((t) => t.id === tag.id)) return;
+                    setTags((prev) => [...prev, tag]);
+                  }}
+                  isCreationAllowed
+                  clearOnSelect
+                  createSearchType={createTag}
+                  placeholder="Enter tag..."
+                />
+                <div className={`mt-2 flex flex-wrap gap-2`}>
+                  {tags.map((tag) => (
+                    <Badge key={tag.id} className={`cursor-pointer`}>
+                      {tag.name}
+                      <span
+                        className="text-gray-400"
+                        onClick={() => removeTag(tag.id)}
+                      >
+                        <XIcon className="w-4 h-4" />
+                      </span>
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -226,14 +264,14 @@ function SetupTab({
           <CardContent>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
-                {localImageUrl || courseData.profile_url ? (
+                {courseData.profile_url ? (
                   <img
-                    src={localImageUrl || courseData.profile_url}
+                    src={courseData.profile_url}
                     alt="Course Preview"
-                    className="w-16 h-16 object-cover rounded-lg border"
+                    className={`w-16 h-16 object-cover rounded-lg border ${highlight(fieldChanged('profile_url'))}`}
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white text-2xl">
+                  <div className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white text-2xl ${highlight(fieldChanged('profile_url'))}`}>
                     🌍
                   </div>
                 )}
@@ -243,13 +281,13 @@ function SetupTab({
                   </h3>
                   {courseData.difficulty && (
                     <Badge
-                      className={
+                      className={`${highlight(fieldChanged('difficulty'))} ${
                         courseData.difficulty === "beginner"
                           ? "bg-green-100 text-green-800"
                           : courseData.difficulty === "intermediate"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
-                      }
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                      }`}
                     >
                       {courseData.difficulty}
                     </Badge>

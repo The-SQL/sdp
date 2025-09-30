@@ -1,61 +1,98 @@
-// Central Supabase mock factory for reusable tests
 export type QueryResult = { data: unknown; error: unknown };
 
 export function makeSupabaseMock(options: {
-  insertSelect?: QueryResult; // for insert().select()
-  selectEq?: QueryResult;     // for select().eq()
+  insertSelect?: QueryResult;
+  selectEq?: QueryResult;
 }) {
   const selectAfterInsert = jest
     .fn()
     .mockResolvedValue(options.insertSelect ?? { data: null, error: null });
+
   const insert = jest.fn().mockReturnValue({ select: selectAfterInsert });
 
-  const eqAfterSelect = jest
+  const order = jest.fn().mockReturnThis();
+  const limit = jest.fn().mockReturnThis();
+  const range = jest.fn().mockReturnThis();
+  const inFn = jest.fn().mockReturnThis();
+  const or = jest.fn().mockReturnThis();
+  const contains = jest.fn().mockReturnThis();
+
+  const single = jest
     .fn()
     .mockResolvedValue(options.selectEq ?? { data: null, error: null });
-  const select = jest.fn().mockReturnValue({ eq: eqAfterSelect });
+  const maybeSingle = jest
+    .fn()
+    .mockResolvedValue(options.selectEq ?? { data: null, error: null });
 
-  // Mock for update chain: .from().update().eq().select()
+  // THIS IS THE FULL CHAIN OBJECT
+  const chain = {
+    eq: jest.fn().mockReturnThis(),
+    order,
+    limit,
+    range,
+    single,
+    maybeSingle,
+    select: jest.fn().mockReturnThis(),
+    in: inFn,
+    or,
+    contains,
+  };
+
+  // Patch select and eq to return the full chain
+  chain.select = jest.fn().mockReturnValue(chain);
+  chain.eq = jest.fn().mockReturnValue(chain);
+
   const update = jest.fn().mockImplementation(() => ({
     eq: () => ({
       select: selectAfterInsert,
     }),
   }));
 
-  // Add support for .single() and .maybeSingle() after select/eq
-  const single = jest.fn().mockResolvedValue(options.selectEq ?? { data: null, error: null });
-  const maybeSingle = jest.fn().mockResolvedValue(options.selectEq ?? { data: null, error: null });
+  const deleteEq = jest.fn().mockResolvedValue({ error: null });
+  const deleteFn = jest.fn().mockReturnValue({ eq: deleteEq });
 
-  // Add support for .order() and .limit() chain
-  const order = jest.fn().mockReturnThis();
-  const limit = jest.fn().mockReturnThis();
-
-  // Add support for .delete()
-  const deleteFn = jest.fn().mockResolvedValue({ error: null });
-
-  // Add support for .storage (for uploadImageToSupabase)
   const upload = jest.fn().mockResolvedValue({ error: null });
-  const getPublicUrl = jest.fn().mockReturnValue({ data: { publicUrl: 'mock-url' } });
+  const getPublicUrl = jest
+    .fn()
+    .mockReturnValue({ data: { publicUrl: "mock-url" } });
   const fromStorage = jest.fn().mockReturnValue({ upload, getPublicUrl });
   const storage = { from: fromStorage };
 
-  // Patch .from() to support all chains
   const from = jest.fn().mockReturnValue({
     insert,
-    select,
+    select: chain.select,
     update,
-    eq: eqAfterSelect,
+    eq: chain.eq,
+    in: inFn,
+    or,
+    contains,
     order,
     limit,
+    range,
     delete: deleteFn,
     storage,
   });
 
-  const client = { from, storage };
+  const client = { from, storage, rpc: jest.fn().mockResolvedValue({}) };
 
-  // Patch select/eq to support .single() and .maybeSingle()
-  select.mockReturnValue({ eq: eqAfterSelect, single, maybeSingle, order, limit });
-  eqAfterSelect.mockReturnValue({ single, maybeSingle });
-
-  return { client, from, update, insert, select, selectAfterInsert, eqAfterSelect, single, maybeSingle, order, limit, deleteFn, storage };
+  return {
+    client,
+    from,
+    insert,
+    update,
+    select: chain.select,
+    eq: chain.eq,
+    single,
+    maybeSingle,
+    order,
+    limit,
+    range,
+    inFn,
+    or,
+    contains,
+    deleteFn,
+    deleteEq,
+    storage,
+    selectAfterInsert,
+  };
 }
