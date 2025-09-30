@@ -16,14 +16,14 @@ export type Course = {
   language_name?: string; // optional, for easier access to language name
 };
 
- export type Notification = {
+export type Notification = {
   id: string;
   user_id: string;
   message: string;
-  metadata?: Record<string,string>;
+  metadata?: Record<string, string>;
   is_read: boolean;
   created_at: string;
-}
+};
 
 export type Language = {
   id: string;
@@ -207,7 +207,7 @@ export interface ForumPostWithAuthor extends ForumPost {
     clerk_id: string;
     name: string;
     profile_url: string;
-    created_at: Date
+    created_at: Date;
   };
   replies_count: number;
   likes_count: number;
@@ -297,4 +297,31 @@ export type SuggestedChange = {
   created_at?: string;
   reviewed_by?: string | null;
   reviewed_at?: string | null;
+};
+
+export type UnitWithLessons = {
+  id: string;
+  course_id: string;
+  title: string;
+  order_index: number;
+  created_at?: string;
+  lessons?: Array<{
+    id: string;
+    unit_id: string;
+    title: string;
+    content_type: "video" | "text" | "audio" | "exercise";
+    content: LessonContent;
+    order_index: number;
+    duration?: number | null;
+    description?: string | null;
+  }>;
+};
+
+export type CourseWithContent = {
+  id: string;
+  title: string;
+  description?: string | null;
+  difficulty?: string | null;
+  profile_url?: string | null;
+  units?: UnitWithLessons[];
 };
