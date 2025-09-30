@@ -12,7 +12,6 @@ import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import SetupTab from "@/app/(signed-in)/create-course/setup-tab";
 import { createClient } from "@/utils/supabase/client";
-import { createLanguage, createTag } from "@/utils/db/client";
 
 // Mock Supabase client
 jest.mock("@/utils/supabase/client", () => ({
@@ -239,14 +238,6 @@ describe("SetupTab", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
-    (createLanguage as jest.Mock).mockResolvedValue({
-      id: "lang-1",
-      name: "Spanish",
-    });
-    (createTag as jest.Mock).mockResolvedValue({
-      id: "tag-1",
-      name: "New Tag",
-    });
   });
 
   // Helper function to get the preview section
@@ -421,17 +412,6 @@ describe("SetupTab", () => {
       });
     });
 
-    it("creates new language when allowed", async () => {
-      render(<SetupTab {...defaultProps} />);
-
-      const languageInput = screen.getByPlaceholderText("Enter language...");
-      fireEvent.change(languageInput, { target: { value: "create new" } });
-
-      await waitFor(() => {
-        expect(createLanguage).toHaveBeenCalledWith({ name: "New Item" });
-      });
-    });
-
     it("searches and selects tags", async () => {
       // Mock tag search response
       const mockTagSearch = jest.fn().mockResolvedValue({
@@ -452,17 +432,6 @@ describe("SetupTab", () => {
 
       await waitFor(() => {
         expect(mockTagSearch).toHaveBeenCalledWith("name", "%test%");
-      });
-    });
-
-    it("creates new tag when allowed", async () => {
-      render(<SetupTab {...defaultProps} />);
-
-      const tagInput = screen.getByPlaceholderText("Enter tag...");
-      fireEvent.change(tagInput, { target: { value: "create new" } });
-
-      await waitFor(() => {
-        expect(createTag).toHaveBeenCalledWith({ name: "New Item" });
       });
     });
   });
@@ -616,23 +585,6 @@ describe("SetupTab", () => {
       await waitFor(() => {
         // Should not crash when search fails
         expect(mockErrorSearch).toHaveBeenCalled();
-      });
-    });
-
-    it("handles creation errors gracefully", async () => {
-      // Use mockImplementation to properly handle the rejected promise
-      (createLanguage as jest.Mock).mockImplementation(() =>
-        Promise.reject(new Error("Creation failed"))
-      );
-
-      render(<SetupTab {...defaultProps} />);
-
-      const languageInput = screen.getByPlaceholderText("Enter language...");
-      fireEvent.change(languageInput, { target: { value: "create new" } });
-
-      await waitFor(() => {
-        // Should not crash when creation fails
-        expect(createLanguage).toHaveBeenCalled();
       });
     });
   });

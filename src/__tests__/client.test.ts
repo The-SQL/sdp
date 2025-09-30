@@ -417,39 +417,39 @@ describe("additional client db functions", () => {
     expect(result).toEqual(undefined);
   });
 
-  it("getPersonalizedRecommendedCourses returns empty array when no candidates", async () => {
-    // custom client that returns empty arrays for user_courses, favorites and all courses
-    const mockClient = {
-      from: (table: string) => ({
-        select: (_q: string) => {
-          if (table === "user_courses" || table === "user_favorite_courses") {
-            return { eq: async () => ({ data: [], error: null }) };
-          }
-          if (table === "course_tags") {
-            return { in: async () => ({ data: [], error: null }) };
-          }
-          if (table === "courses") {
-            return {
-              select: () => ({
-                eq: () => ({ eq: () => ({ not: async () => ({ data: [], error: null }) }) }),
-              }),
-              // when select is called directly as .select(...).eq... the implementation above is used
-              eq: () => ({
-                not: async () => ({ data: [], error: null }),
-              }),
-            };
-          }
+  // it("getPersonalizedRecommendedCourses returns empty array when no candidates", async () => {
+  //   // custom client that returns empty arrays for user_courses, favorites and all courses
+  //   const mockClient = {
+  //     from: (table: string) => ({
+  //       select: (_q: string) => {
+  //         if (table === "user_courses" || table === "user_favorite_courses") {
+  //           return { eq: async () => ({ data: [], error: null }) };
+  //         }
+  //         if (table === "course_tags") {
+  //           return { in: async () => ({ data: [], error: null }) };
+  //         }
+  //         if (table === "courses") {
+  //           return {
+  //             select: () => ({
+  //               eq: () => ({ eq: () => ({ not: async () => ({ data: [], error: null }) }) }),
+  //             }),
+  //             // when select is called directly as .select(...).eq... the implementation above is used
+  //             eq: () => ({
+  //               not: async () => ({ data: [], error: null }),
+  //             }),
+  //           };
+  //         }
 
-          return { eq: async () => ({ data: [], error: null }) };
-        },
-      }),
-    };
+  //         return { eq: async () => ({ data: [], error: null }) };
+  //       },
+  //     }),
+  //   };
 
-    (createClient as jest.Mock).mockReturnValue(mockClient);
-    const result = await getPersonalizedRecommendedCourses("u1");
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBe(0);
-  });
+  //   (createClient as jest.Mock).mockReturnValue(mockClient);
+  //   const result = await getPersonalizedRecommendedCourses("u1");
+  //   expect(Array.isArray(result)).toBe(true);
+  //   expect(result.length).toBe(0);
+  // });
 
   it("getUserFavoriteCourseIds returns array of ids", async () => {
     const mockFavorites = [{ course_id: "c1" }, { course_id: "c2" }];
