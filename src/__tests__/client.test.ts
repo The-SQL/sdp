@@ -280,7 +280,7 @@ describe("additional client db functions", () => {
     const mockClient = {
       from: (table: string) => ({
         select: (_q: string) => ({
-          eq: (_k: string, _v: any) => ({
+          eq: (_k: string, _v: unknown) => ({
             single: async () => ({ data: mockCourse, error: null }),
           }),
         }),
