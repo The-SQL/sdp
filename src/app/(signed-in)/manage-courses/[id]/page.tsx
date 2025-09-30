@@ -1,4 +1,4 @@
-import { getCourseSuggestedEdits } from "@/utils/db/client";
+import { getCourseSuggestedEdits } from "@/utils/db/suggested-edits";
 import {
   getLessonsByUnitId,
   getStandardCourseById,

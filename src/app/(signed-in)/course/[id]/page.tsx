@@ -357,7 +357,7 @@ export default function CourseOverview() {
                   <CardTitle>Course Curriculum</CardTitle>
                   <p className="text-sm text-gray-600">
                     {course.chapters.length} chapters • {course.totalLessons}{" "}
-                    lessons • {course.duration} total
+                    lessons 
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -379,7 +379,7 @@ export default function CourseOverview() {
                                   {chapter.title}
                                 </h3>
                                 <p className="text-sm text-gray-600">
-                                  {chapter.lessons} lessons • {chapter.duration}
+                                  {chapter.lessons} lessons
                                 </p>
                               </div>
                             </div>
@@ -411,9 +411,7 @@ export default function CourseOverview() {
                                       {lesson.title}
                                     </span>
                                   </div>
-                                  <span className="text-xs text-gray-500">
-                                    {lesson.duration}
-                                  </span>
+
                                 </div>
                               )
                             )}

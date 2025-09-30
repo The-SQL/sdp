@@ -1,19 +1,12 @@
 import { createClient } from "@/utils/supabase/client";
 import {
-  Collaborators,
-  CollaboratorStatus,
-  Course,
-  Language,
-  Lesson,
-  SuggestedChange,
-  SuggestedChangeStatus,
-  Unit,
-  UserAchievement,
-  UserCourse,
-  UserCoursesState,
-  UserProfile,
-  UserProgress,
-  UserStats,
+    Course,
+    UserAchievement,
+    UserCourse,
+    UserCoursesState,
+    UserProfile,
+    UserProgress,
+    UserStats
 } from "../types";
 
 export interface SupabaseCourseList {
@@ -64,15 +57,6 @@ interface CourseFeedback {
   users: { name: string; profile_url: string | null } | null;
 }
 
-// Add type for collaborator rows that include the joined user record
-export interface CollaboratorWithUser extends Collaborators {
-  users?: {
-    clerk_id: string;
-    name: string;
-    profile_url: string | null;
-    bio: string | null;
-  } | null;
-}
 
 interface CourseTagWithTag {
   tags: { name: string } | null;
@@ -122,52 +106,6 @@ export async function checkUserExists(clerk_id: string) {
   return data ? data.length > 0 : false;
 }
 
-/**
- * Inserts a new course into the database
- * @param course - The course object to insert
- * @returns The inserted course data
- */
-export async function insertCourse(course: Course): Promise<Course | null> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("courses")
-    .insert([course])
-    .select();
-
-  if (error) {
-    console.error("Error inserting course:", error);
-    throw error;
-  }
-
-  return data ? data[0] : null;
-}
-
-/**
- * Updates an existing course in the database
- * @param courseId - The ID of the course to update
- * @param updates - Partial course object with fields to update
- * @returns The updated course data
- */
-export async function updateCourse(
-  courseId: string,
-  updates: Partial<Course>
-): Promise<Course> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("courses")
-    .update(updates)
-    .eq("id", courseId)
-    .select();
-
-  if (error) {
-    console.error("Error updating course:", error);
-    throw error;
-  }
-
-  return data[0];
-}
 
 /**
  * Uploads an image file to Supabase storage
@@ -199,188 +137,6 @@ export const uploadImageToSupabase = async (
   return data.publicUrl;
 };
 
-export async function createLanguage(language: string): Promise<Language> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("languages")
-    .insert({ name: language })
-    .select();
-
-  if (error) {
-    console.error("Error creating language:", error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function createTag(
-  tag: string
-): Promise<{ id: string; name: string }> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("tags")
-    .insert({ name: tag })
-    .select();
-
-  if (error) {
-    console.error("Error creating tag:", error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function insertCourseTag(
-  courseId: string,
-  tagId: string
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("course_tags")
-    .insert({ course_id: courseId, tag_id: tagId });
-
-  if (error) {
-    console.error("Error inserting course tag:", error);
-    throw error;
-  }
-}
-
-export async function insertCourseTags(courseId: string, tagIds: string[]) {
-  const supabase = createClient();
-
-  const payload = tagIds.map((tagId) => ({
-    course_id: courseId,
-    tag_id: tagId,
-  }));
-
-  const { error } = await supabase.from("course_tags").insert(payload);
-
-  if (error) throw error;
-}
-
-export async function insertUnit(
-  courseId: string,
-  title: string,
-  order_index: number
-): Promise<Unit> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("units")
-    .insert({ course_id: courseId, title, order_index })
-    .select();
-
-  if (error) {
-    console.error("Error inserting unit:", error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function insertUnits(courseId: string, units: Unit[]) {
-  const supabase = createClient();
-
-  const payload = units.map((unit) => ({
-    course_id: courseId,
-    id: unit.id,
-    title: unit.title,
-    order_index: unit.order_index,
-  }));
-
-  const { error } = await supabase.from("units").insert(payload);
-
-  if (error) throw error;
-}
-
-export async function updateUnit(
-  unitId: string,
-  updates: Partial<Unit>
-): Promise<Unit> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("units")
-    .update(updates)
-    .eq("id", unitId)
-    .select();
-
-  if (error) {
-    console.error("Error updating unit:", error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function insertLesson(
-  unitId: string,
-  title: string,
-  content_type: string,
-  content: object,
-  order_index: number
-): Promise<Lesson> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("lessons")
-    .insert({
-      unit_id: unitId,
-      title,
-      content_type,
-      content,
-      order_index,
-    })
-    .select();
-
-  if (error) {
-    console.error("Error inserting lesson:", error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function insertLessons(courseId: string, lessons: Lesson[]) {
-  const supabase = createClient();
-
-  const payload = lessons.map((lesson) => ({
-    unit_id: lesson.unit_id,
-    title: lesson.title,
-    order_index: lesson.order_index,
-    content_type: lesson.content_type,
-    content: lesson.content,
-    duration: 888,
-  }));
-
-  const { error } = await supabase.from("lessons").insert(payload);
-
-  if (error) throw error;
-}
-
-export async function updateLesson(
-  lessonId: string,
-  updates: Partial<Lesson>
-): Promise<Lesson> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("lessons")
-    .update(updates)
-    .eq("id", lessonId)
-    .select();
-
-  if (error) {
-    console.error("Error updating lesson:", error);
-    throw error;
-  }
-
-  return data[0];
-}
 
 /**
  * Fetches all public and published courses for the explore page
@@ -414,6 +170,10 @@ export async function getAllCourses() {
   if (error) {
     console.error("Supabase error:", error);
     throw new Error("Failed to fetch courses");
+  }
+
+  if(!courses) {
+    return [];
   }
 
   const transformedCourses = (courses as SupabaseCourseList[]).map((course) => {
@@ -583,6 +343,21 @@ export async function getCourseById(id: string) {
     ?.map((ct: { tags: { name: string } | null }) => ct.tags?.name)
     .filter((name): name is string => name != null) || ["Language"];
 
+  // Ensure units and lessons are ordered by their order_index
+  if (Array.isArray(supabaseCourse.units)) {
+    supabaseCourse.units.sort((a, b) =>
+      (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+    );
+
+    supabaseCourse.units.forEach((unit: UnitWithLessons) => {
+      if (Array.isArray(unit.lessons)) {
+        unit.lessons.sort((a, b) =>
+          (Number(a.order_index) || 0) - (Number(b.order_index) || 0)
+        );
+      }
+    });
+  }
+
   const chapters = supabaseCourse.units.map((unit: UnitWithLessons) => {
     const lessons_detail = unit.lessons.map(
       (lesson: { title: string; duration: number; content_type: string }) => ({
@@ -700,6 +475,10 @@ export async function getRecommendedCourses() {
   if (error) {
     console.error("Supabase error:", error);
     throw new Error("Failed to fetch recommended courses");
+  }
+
+  if(!courses) {
+    return [];
   }
 
   const transformedCourses = (courses as SupabaseCourseList[]).map((course) => {
@@ -989,202 +768,6 @@ export async function getCoursesByAuthor(
   return data;
 }
 
-export async function getCourseCollaborators(
-  courseId: string
-): Promise<CollaboratorWithUser[] | null> {
-  const supabase = createClient();
-
-  // Get collaborator records along with user details using an embedded select
-  const { data, error } = await supabase
-    .from("collaborators")
-    .select(
-      `
-          *,
-          users(
-            clerk_id,
-            name,
-            profile_url,
-            bio
-          )
-        `
-    )
-    .eq("course_id", courseId);
-
-  if (error) {
-    console.error("Error fetching course collaborators:", error.message);
-    return null;
-  }
-
-  return data as CollaboratorWithUser[] | null;
-}
-
-export async function updateCollaborationStatus(
-  courseId: string,
-  userId: string,
-  status: CollaboratorStatus
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("collaborators")
-    .update({ status })
-    .eq("course_id", courseId)
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error updating collaboration status:", error);
-    throw error;
-  }
-}
-
-export async function addCollaborator(
-  courseId: string,
-  userId: string,
-  status: CollaboratorStatus
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("collaborators")
-    .insert([{ course_id: courseId, user_id: userId, status }]);
-
-  if (error && error.code === "23505") {
-    await updateCollaborationStatus(courseId, userId, status);
-  } else if (error) {
-    console.error("Error adding collaborator:", error);
-    throw error;
-  }
-}
-
-export async function removeCollaborator(
-  courseId: string,
-  userId: string
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("collaborators")
-    .delete()
-    .eq("course_id", courseId)
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error removing collaborator:", error);
-    throw error;
-  }
-}
-
-export async function updateCollaboratorStatus(
-  collaboratorId: string,
-  status: CollaboratorStatus
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("collaborators")
-    .update({ status })
-    .eq("id", collaboratorId);
-
-  if (error) {
-    console.error("Error updating collaborator status:", error);
-    throw error;
-  }
-}
-
-export async function getCourseCollaborator(
-  courseId: string,
-  userId: string
-): Promise<Collaborators | null> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("collaborators")
-    .select("*")
-    .eq("course_id", courseId)
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error fetching course collaborator:", error.message);
-    return null;
-  }
-
-  return data[0];
-}
-
-export async function cancelCollaboration(
-  courseId: string,
-  userId: string
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("collaborators")
-    .update({ status: "cancelled" })
-    .eq("course_id", courseId)
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Error cancelling collaboration:", error);
-    throw error;
-  }
-}
-
-export async function insertSuggestedEdit(
-  suggestedChanges: SuggestedChange
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("suggested_edits")
-    .insert([suggestedChanges]);
-
-  if (error) {
-    console.error("Error inserting suggested edit:", error);
-    throw error;
-  }
-}
-
-export async function getCourseSuggestedEdits(
-  courseId: string
-): Promise<SuggestedChange[] | null> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("suggested_edits")
-    .select("*")
-    .eq("course_id", courseId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching suggested edits:", error.message);
-    return null;
-  }
-
-  return data;
-}
-
-export async function updateSuggestedEditStatus(
-  editId: string,
-  status: SuggestedChangeStatus,
-  reviewedBy: string
-): Promise<void> {
-  const supabase = createClient();
-
-  const { error } = await supabase
-    .from("suggested_edits")
-    .update({
-      status,
-      reviewed_by: reviewedBy,
-      reviewed_at: new Date().toISOString(),
-    })
-    .eq("id", editId);
-
-  if (error) {
-    console.error("Error updating suggested edit status:", error);
-    throw error;
-  }
-}
-
 export async function getPersonalizedRecommendedCourses(
   userId: string
 ): Promise<SupabaseCourseList[]> {
@@ -1354,5 +937,9 @@ export async function getUserFavoriteCourseIds(
     return [];
   }
 
+  if(!data) {
+    return [];
+  }
+  
   return data.map((item) => item.course_id);
 }

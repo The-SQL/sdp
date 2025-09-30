@@ -15,7 +15,8 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import SearchableInput from "@/components/ui/searchable-input";
-import { createLanguage, createTag } from "@/utils/db/client";
+import { createTag } from "@/utils/db/tags";
+import { createLanguage } from "@/utils/db/languages";
 import { XIcon } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 
