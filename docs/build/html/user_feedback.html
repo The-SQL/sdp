@@ -177,6 +177,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#testing-script-tasks">Testing Script &amp; Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-feedback-sprint-2">User Feedback Sprint 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Conclusion &amp; Outcomes</a></li>
 </ul>
 </li>
 </ul>
@@ -309,6 +313,126 @@
 <li><p><strong>Quick UI/Usability Wins</strong>: Implemented by updating CSS.</p></li>
 <li><p><strong>Strategic Feature Requests</strong>: Formalized into user stories and prioritized for the next sprint.</p></li>
 </ol>
+</section>
+<section id="user-feedback-sprint-2">
+<h2>User Feedback Sprint 2<a class="headerlink" href="#user-feedback-sprint-2" title="Link to this heading"></a></h2>
+<p><strong>Product</strong>: OSLearn - Language Learning Platform</p>
+<p><strong>Tested Features</strong>: Course Learning Interface, Dashboard, Course Management, Community Forums</p>
+<p><strong>Testing Date</strong>: 15/10/25</p>
+<p><strong>Participants</strong>: 6 Users</p>
+<p><strong>Methodology</strong>: Unmoderated testing with session recording. Users were given specific tasks related to the learning experience, course management, and community features. Feedback was collected through in-app surveys and session analytics.</p>
+</section>
+<section id="id1">
+<h2>Testing Script &amp; Tasks<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p><strong>Introduction</strong>: “Welcome to OSLearn testing. Today we’re evaluating the core learning experience, progress tracking, and community features. Please complete the following tasks while thinking aloud about your experience.”</p>
+<p><strong>Task 1: Course Learning</strong>
+“Enroll in a course and complete at least 3 lessons of different types (video, text, exercise). Navigate between lessons and mark them as complete.”</p>
+<p><strong>Task 2: Progress Tracking</strong>
+“Check your learning progress on the dashboard. Review your weekly activity and current streak.”</p>
+<p><strong>Task 3: Course Management</strong>
+“As a course creator, edit an existing course by adding a new unit and modifying lesson content.”</p>
+<p><strong>Task 4: Community Engagement</strong>
+“Browse the forums, create a new discussion post, and reply to an existing thread.”</p>
+<p><strong>Task 5: Content Moderation</strong>
+“Test the profanity filter by attempting to post inappropriate content in the forums.”</p>
+</section>
+<section id="id2">
+<h2>Summary of Feedback &amp; Evidence of Integration<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>User</p></th>
+<th class="head"><p>Key Feedback (Verbatim Where Possible)</p></th>
+<th class="head"><p>Category</p></th>
+<th class="head"><p>Evidence of Integration / Developer Response</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>All</p></td>
+<td><p>“The sidebar curriculum is essential but takes too much space on mobile. Need better mobile navigation.”</p></td>
+<td><p>UI/Usability</p></td>
+<td><p><strong>Integrated.</strong> Added mobile-responsive sidebar with slide-out drawer and close button. Implemented “Open Curriculum” button for mobile access.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>User 1</p></td>
+<td><p>“Love the different content types! The audio player with transcript is perfect for language learning.”</p></td>
+<td><p>Positive</p></td>
+<td><p><strong>N/A</strong> - Positive reinforcement of existing feature design.</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>User 2</p></td>
+<td><p>“When I complete a video lesson, it should automatically mark as complete. I don’t want to click the button every time.”</p></td>
+<td><p>Feature Request</p></td>
+<td><p><strong>Integrated.</strong> Added auto-completion for media lessons (video/audio) when content ends. Manual completion still available for all lesson types.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>User 3</p></td>
+<td><p>“The progress bar in the sidebar is motivating! But I want to see my overall course completion more prominently.”</p></td>
+<td><p>UI/Usability</p></td>
+<td><p><strong>Integrated.</strong> Enhanced progress visualization with completed/total lessons count and percentage progress bar in sidebar header.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-even"><td><p>User 4</p></td>
+<td><p>“Exercise feedback is helpful, but I want to see why my answer was wrong with more explanation.”</p></td>
+<td><p>Feature Enhancement</p></td>
+<td><p><strong>Integrated.</strong> Enhanced exercise components to show correct answers with explanations for both MCQ and fill-in-the-blank exercises.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>User 5</p></td>
+<td><p>“As a course collaborator, the version switching between main and suggested edits is confusing. Need clearer labels.”</p></td>
+<td><p>UX/Clarity</p></td>
+<td><p><strong>Integrated.</strong> Improved version selector with clear “Main” and “Suggested Edit - [Date]” labels in course management interface.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-even"><td><p>User 6</p></td>
+<td><p>“Forum post creation is smooth, but I accidentally posted inappropriate content. Glad it was blocked!”</p></td>
+<td><p>Content Moderation</p></td>
+<td><p><strong>Integrated.</strong> Implemented comprehensive profanity checking for forum posts (title, content, tags) with clear error messaging.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>All</p></td>
+<td><p>“Navigation between lessons should be easier. The Previous/Next buttons are too far apart on mobile.”</p></td>
+<td><p>UI/Usability</p></td>
+<td><p><strong>Integrated.</strong> Restructured lesson navigation footer with stacked layout on mobile and better button placement.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-even"><td><p>User 2, 4</p></td>
+<td><p>“Discussion forum loading is slow when there are many posts. The infinite scroll sometimes glitches.”</p></td>
+<td><p>Performance</p></td>
+<td><p><strong>Integrated.</strong> Optimized forum post loading with better pagination handling and loading states. Fixed scroll restoration issues.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>User 3, 5</p></td>
+<td><p>“Dashboard stats don’t always match my actual progress. Some completed lessons aren’t reflected.”</p></td>
+<td><p>Data Accuracy</p></td>
+<td><p><strong>Fixed.</strong> Synchronized progress tracking between learning interface and dashboard. Fixed cache invalidation for real-time updates.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-even"><td><p>User 1, 6</p></td>
+<td><p>“The ‘Mark Complete’ button state should be more obvious. Sometimes I don’t know if I’ve completed a lesson.”</p></td>
+<td><p>UI/Clarity</p></td>
+<td><p><strong>Integrated.</strong> Enhanced visual states for completion buttons with distinct colors and icons for complete/incomplete states.</p></td>
+<td><p>Done</p></td>
+</tr>
+<tr class="row-odd"><td><p>All</p></td>
+<td><p><strong>Consensus</strong>: The collaborative editing workflow for course management needs better visual differentiation between original and suggested changes.</p></td>
+<td><p>Feature Enhancement</p></td>
+<td><p><strong>Backlog.</strong> Created story <strong>CMS-02: Enhanced Visual Diff for Course Editing</strong> to show side-by-side comparison of changes.</p></td>
+<td><p>Backlog (S3)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h2>Conclusion &amp; Outcomes<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>The testing revealed strong positive reception for the multi-format learning content and community features. Key improvements were made to:</p>
+<ol class="arabic simple">
+<li><p><strong>Mobile Experience</strong>: Completely overhauled mobile navigation for the learning interface</p></li>
+<li><p><strong>Progress Tracking</strong>: Enhanced real-time synchronization and visual feedback</p></li>
+<li><p><strong>Content Moderation</strong>: Strengthened profanity filtering across community features</p></li>
+<li><p><strong>User Experience</strong>: Streamlined workflows for both learners and content creators</p></li>
+</ol>
+<p>The collaborative course editing system received particular praise, though users requested better visual differentiation between versions, which has been prioritized for future development.</p>
 </section>
 </section>
 
