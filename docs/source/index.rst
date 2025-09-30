@@ -34,6 +34,7 @@ To get started with OSLearn:
    :caption: Introduction
 
    introduction
+   features
    
 .. toctree::
    :maxdepth: 2
