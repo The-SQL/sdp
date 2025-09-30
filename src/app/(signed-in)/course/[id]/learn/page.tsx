@@ -1,4 +1,3 @@
-
 // app/course/[id]/learn/page.tsx
 "use client";
 
@@ -7,39 +6,39 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import {
-    checkIfEnrolled,
-    enrollInCourse,
-    getCourseWithContent,
-    getUserProgress,
-    updateLessonProgress,
+  checkIfEnrolled,
+  enrollInCourse,
+  getCourseWithContent,
+  getUserProgress,
+  updateLessonProgress,
 } from "@/utils/db/learn";
 import { Lesson, UserProgress as UserProgressType } from "@/utils/types";
 import { useUser } from "@clerk/nextjs";
 import {
-    BookOpen,
-    CheckCircle,
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    ChevronUp,
-    Circle,
-    FileText,
-    HelpCircle,
-    Loader2,
-    Mic,
-    Pause,
-    Play,
-    Users,
-    Video,
-    XCircle
+  BookOpen,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Circle,
+  FileText,
+  HelpCircle,
+  Loader2,
+  Mic,
+  Pause,
+  Play,
+  Users,
+  Video,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -91,12 +90,15 @@ function MCQExercise({ question }: { question: MCQQuestion }) {
     setIsSubmitted(true);
   };
 
-  const isCorrect = selectedOption && question.correctAnswer.includes(selectedOption);
+  const isCorrect =
+    selectedOption && question.correctAnswer.includes(selectedOption);
 
   return (
     <Card className="border border-gray-200">
       <CardContent className="p-4 sm:p-6">
-        <h3 className="font-semibold mb-4 text-sm sm:text-base">{question.question}</h3>
+        <h3 className="font-semibold mb-4 text-sm sm:text-base">
+          {question.question}
+        </h3>
         <div className="space-y-2 mb-4">
           {question.options.map((option: MCQOption) => (
             <button
@@ -118,17 +120,23 @@ function MCQExercise({ question }: { question: MCQQuestion }) {
           ))}
         </div>
         {isSubmitted && (
-          <div className={`flex items-center gap-2 mb-4 ${isCorrect ? "text-green-600" : "text-red-600"} text-sm sm:text-base`}>
+          <div
+            className={`flex items-center gap-2 mb-4 ${isCorrect ? "text-green-600" : "text-red-600"} text-sm sm:text-base`}
+          >
             {isCorrect ? (
               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
             ) : (
               <XCircle className="h-4 w-4 sm:h-5 sm:w-5" />
             )}
-            <span>{isCorrect ? "Correct!" : `Incorrect. The correct answer is: ${question.options.find((opt: MCQOption) => opt.id === question.correctAnswer[0])?.text}`}</span>
+            <span>
+              {isCorrect
+                ? "Correct!"
+                : `Incorrect. The correct answer is: ${question.options.find((opt: MCQOption) => opt.id === question.correctAnswer[0])?.text}`}
+            </span>
           </div>
         )}
         {!isSubmitted && (
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={!selectedOption}
             className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
@@ -150,14 +158,17 @@ function FillBlankExercise({ question }: { question: FillBlankQuestion }) {
   };
 
   // Fix: Add null/undefined check and trim before comparison
-  const isCorrect = question.correctAnswer.some((ans: string) => 
-    ans && answer.trim().toLowerCase() === ans.trim().toLowerCase()
+  const isCorrect = question.correctAnswer.some(
+    (ans: string) =>
+      ans && answer.trim().toLowerCase() === ans.trim().toLowerCase()
   );
 
   return (
     <Card className="border border-gray-200">
       <CardContent className="p-4 sm:p-6">
-        <h3 className="font-semibold mb-4 text-sm sm:text-base">{question.question}</h3>
+        <h3 className="font-semibold mb-4 text-sm sm:text-base">
+          {question.question}
+        </h3>
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <input
             type="text"
@@ -167,7 +178,7 @@ function FillBlankExercise({ question }: { question: FillBlankQuestion }) {
             placeholder="Type your answer..."
             disabled={isSubmitted}
           />
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={!answer.trim()}
             className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
@@ -176,13 +187,19 @@ function FillBlankExercise({ question }: { question: FillBlankQuestion }) {
           </Button>
         </div>
         {isSubmitted && (
-          <div className={`flex items-center gap-2 text-sm sm:text-base ${isCorrect ? "text-green-600" : "text-red-600"}`}>
+          <div
+            className={`flex items-center gap-2 text-sm sm:text-base ${isCorrect ? "text-green-600" : "text-red-600"}`}
+          >
             {isCorrect ? (
               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
             ) : (
               <XCircle className="h-4 w-4 sm:h-5 sm:w-5" />
             )}
-            <span>{isCorrect ? "Correct!" : `Incorrect. The correct answer is: ${question.correctAnswer[0] || ''}`}</span>
+            <span>
+              {isCorrect
+                ? "Correct!"
+                : `Incorrect. The correct answer is: ${question.correctAnswer[0] || ""}`}
+            </span>
           </div>
         )}
       </CardContent>
@@ -191,7 +208,15 @@ function FillBlankExercise({ question }: { question: FillBlankQuestion }) {
 }
 
 // Media Player Components
-const VideoPlayer = ({ src, title, onEnded }: { src: string; title: string; onEnded?: () => void }) => {
+const VideoPlayer = ({
+  src,
+  title,
+  onEnded,
+}: {
+  src: string;
+  title: string;
+  onEnded?: () => void;
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = () => {
@@ -221,7 +246,15 @@ const VideoPlayer = ({ src, title, onEnded }: { src: string; title: string; onEn
   );
 };
 
-const AudioPlayer = ({ src, title, onEnded }: { src: string; title: string; onEnded?: () => void }) => {
+const AudioPlayer = ({
+  src,
+  title,
+  onEnded,
+}: {
+  src: string;
+  title: string;
+  onEnded?: () => void;
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -237,24 +270,28 @@ const AudioPlayer = ({ src, title, onEnded }: { src: string; title: string; onEn
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div 
+      <div
         className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 sm:p-8 flex items-center justify-center min-h-[300px] sm:min-h-[400px] cursor-pointer"
         onClick={togglePlay}
       >
         {src ? (
           <div className="text-center w-full">
-            <div className={`w-24 h-24 sm:w-32 sm:h-32 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-all duration-200 ${
-              isPlaying ? 'scale-110' : 'scale-100'
-            }`}>
+            <div
+              className={`w-24 h-24 sm:w-32 sm:h-32 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-all duration-200 ${
+                isPlaying ? "scale-110" : "scale-100"
+              }`}
+            >
               {isPlaying ? (
                 <Pause className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
               ) : (
                 <Play className="h-8 w-8 sm:h-12 sm:w-12 text-white ml-2" />
               )}
             </div>
-            <p className="text-lg sm:text-2xl font-bold text-gray-900 mb-2">{title}</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 mb-2">
+              {title}
+            </p>
             <p className="text-gray-600 text-sm sm:text-base">
-              {isPlaying ? 'Now Playing...' : 'Click to play'}
+              {isPlaying ? "Now Playing..." : "Click to play"}
             </p>
             <audio
               ref={audioRef}
@@ -270,7 +307,9 @@ const AudioPlayer = ({ src, title, onEnded }: { src: string; title: string; onEn
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <Mic className="h-8 w-8 sm:h-12 sm:w-12 text-gray-500" />
             </div>
-            <p className="text-base sm:text-xl text-gray-500">Audio content not available</p>
+            <p className="text-base sm:text-xl text-gray-500">
+              Audio content not available
+            </p>
           </div>
         )}
       </div>
@@ -280,7 +319,14 @@ const AudioPlayer = ({ src, title, onEnded }: { src: string; title: string; onEn
 
 export default function CourseLearning() {
   const [course, setCourse] = useState<CourseWithContent | null>(null);
-  const [userProgress, setUserProgress] = useState<UserProgressType[]>([]);
+  const [userProgress, setUserProgress] = useState<
+    {
+      lesson_id: string;
+      status: string;
+      last_accessed: string;
+      score: number;
+    }[]
+  >([]);
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -288,7 +334,9 @@ export default function CourseLearning() {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [forumOpen, setForumOpen] = useState(false);
-  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({});
+  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>(
+    {}
+  );
   const [sidebarWidth, setSidebarWidth] = useState(320);
   const [isResizing, setIsResizing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -311,12 +359,12 @@ export default function CourseLearning() {
       setIsResizing(false);
     };
 
-    window.addEventListener('mousemove', handleResize);
-    window.addEventListener('mouseup', stopResizing);
+    window.addEventListener("mousemove", handleResize);
+    window.addEventListener("mouseup", stopResizing);
 
     return () => {
-      window.removeEventListener('mousemove', handleResize);
-      window.removeEventListener('mouseup', stopResizing);
+      window.removeEventListener("mousemove", handleResize);
+      window.removeEventListener("mouseup", stopResizing);
     };
   }, [isResizing]);
 
@@ -332,13 +380,16 @@ export default function CourseLearning() {
       setIsEnrolled(enrolled);
 
       if (enrolled) {
-        const progressData = await getUserProgress(user.id, params.id as string);
+        const progressData = await getUserProgress(
+          user.id,
+          params.id as string
+        );
         setUserProgress(progressData);
       }
 
       if (courseData?.units && courseData.units.length > 0) {
         const initialExpanded: Record<string, boolean> = {};
-        courseData.units.forEach(unit => {
+        courseData.units.forEach((unit) => {
           initialExpanded[unit.id] = true;
         });
         setExpandedUnits(initialExpanded);
@@ -365,21 +416,32 @@ export default function CourseLearning() {
     }
   };
 
-  const handleMarkComplete = async (lessonId: string, currentlyCompleted: boolean) => {
+  const handleMarkComplete = async (
+    lessonId: string,
+    currentlyCompleted: boolean
+  ) => {
     if (!user) return;
 
     try {
       const newStatus = currentlyCompleted ? "not_started" : "completed";
       await updateLessonProgress(user.id, lessonId, newStatus);
 
-      setUserProgress(prev => {
-        const existing = prev.find(p => p.lesson_id === lessonId);
+      setUserProgress((prev) => {
+        const existing = prev.find((p) => p.lesson_id === lessonId);
         if (existing) {
-          return prev.map(p => 
+          return prev.map((p) =>
             p.lesson_id === lessonId ? { ...p, status: newStatus } : p
           );
         } else {
-          return [...prev, { lesson_id: lessonId, status: newStatus } as UserProgressType];
+          return [
+            ...prev,
+            {
+              lesson_id: lessonId,
+              status: newStatus,
+              last_accessed: new Date().toISOString(),
+              score: 0,
+            },
+          ];
         }
       });
     } catch (error) {
@@ -388,7 +450,7 @@ export default function CourseLearning() {
   };
 
   const getLessonStatus = (lessonId: string) => {
-    const progress = userProgress.find(p => p.lesson_id === lessonId);
+    const progress = userProgress.find((p) => p.lesson_id === lessonId);
     return progress?.status || "not_started";
   };
 
@@ -398,13 +460,14 @@ export default function CourseLearning() {
 
   const getCompletedLessonsCount = () => {
     if (!course) return 0;
-    return course.units.flatMap(unit => unit.lessons)
-      .filter(lesson => isLessonCompleted(lesson.id)).length;
+    return course.units
+      .flatMap((unit) => unit.lessons)
+      .filter((lesson) => isLessonCompleted(lesson.id)).length;
   };
 
   const getTotalLessonsCount = () => {
     if (!course) return 0;
-    return course.units.flatMap(unit => unit.lessons).length;
+    return course.units.flatMap((unit) => unit.lessons).length;
   };
 
   const getCurrentLesson = () => {
@@ -439,8 +502,10 @@ export default function CourseLearning() {
   const canGoNext = () => {
     if (!course) return false;
     const currentUnit = course.units[currentUnitIndex];
-    return currentLessonIndex < currentUnit.lessons.length - 1 || 
-           currentUnitIndex < course.units.length - 1;
+    return (
+      currentLessonIndex < currentUnit.lessons.length - 1 ||
+      currentUnitIndex < course.units.length - 1
+    );
   };
 
   const canGoPrevious = () => {
@@ -448,16 +513,16 @@ export default function CourseLearning() {
   };
 
   const toggleUnitExpansion = (unitId: string) => {
-    setExpandedUnits(prev => ({
+    setExpandedUnits((prev) => ({
       ...prev,
-      [unitId]: !prev[unitId]
+      [unitId]: !prev[unitId],
     }));
   };
 
   const handleLessonClick = async (unitIndex: number, lessonIndex: number) => {
     setCurrentUnitIndex(unitIndex);
     setCurrentLessonIndex(lessonIndex);
-    
+
     const lessonId = course?.units[unitIndex]?.lessons[lessonIndex]?.id;
     if (lessonId && !isLessonCompleted(lessonId)) {
       await handleMarkComplete(lessonId, false);
@@ -467,7 +532,7 @@ export default function CourseLearning() {
   const handleMediaEnded = async () => {
     const currentLesson = getCurrentLesson();
     if (!currentLesson || isLessonCompleted(currentLesson.id)) return;
-    
+
     await handleMarkComplete(currentLesson.id, false);
   };
 
@@ -479,8 +544,13 @@ export default function CourseLearning() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Course not found</h1>
-          <Link href="/explore" className="text-blue-600 hover:text-blue-700 text-sm sm:text-base">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+            Course not found
+          </h1>
+          <Link
+            href="/explore"
+            className="text-blue-600 hover:text-blue-700 text-sm sm:text-base"
+          >
             Back to Explore
           </Link>
         </div>
@@ -493,12 +563,14 @@ export default function CourseLearning() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="p-4 sm:p-6 text-center">
-            <h1 className="text-lg sm:text-xl font-bold mb-4">Enroll in Course</h1>
+            <h1 className="text-lg sm:text-xl font-bold mb-4">
+              Enroll in Course
+            </h1>
             <p className="text-gray-600 mb-6 text-sm sm:text-base">
-               Enroll in &quot;{course.title}&quot; to start learning
+              Enroll in &quot;{course.title}&quot; to start learning
             </p>
-            <Button 
-              onClick={handleEnroll} 
+            <Button
+              onClick={handleEnroll}
               disabled={isEnrolling}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
             >
@@ -516,7 +588,8 @@ export default function CourseLearning() {
   const currentLesson = getCurrentLesson();
   const completedLessons = getCompletedLessonsCount();
   const totalLessons = getTotalLessonsCount();
-  const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+  const progressPercentage =
+    totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
   const getContentTypeIcon = (contentType: string) => {
     switch (contentType) {
@@ -537,56 +610,60 @@ export default function CourseLearning() {
     <div className="h-screen overflow-hidden bg-white flex flex-col md:flex-row">
       {/* Sidebar Backdrop */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-      
-      {/* Sidebar */}
-      <div 
-      ref={sidebarRef}
-      className={`bg-gray-50 border-r border-gray-200 overflow-y-auto flex-shrink-0 fixed md:static top-0 left-0 z-20 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} w-full md:w-[${sidebarWidth}px] flex flex-col`}
-      style={{ width: isSidebarOpen ? '100%' : `${sidebarWidth}px` }}
-    >
-      <div className="md:hidden sticky top-0 z-30 bg-gray-50 border-b border-gray-200 p-3 sm:p-4">
-        <Button 
-          variant="ghost"
-          size="lg"
-          onClick={() => setIsSidebarOpen(false)}
-          className="w-full flex justify-between items-center text-base sm:text-lg font-semibold text-gray-900 hover:bg-gray-100"
-        >
-          <span>Close Curriculum</span>
-          <XCircle className="h-6 w-6 sm:h-7 sm:w-7 text-gray-600" />
-        </Button>
-      </div>
 
-      <div className="p-2 sm:p-4 md:p-6 border-b border-gray-200">
-        <Link
-          href={`/course/${course.id}`}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 text-sm sm:text-base"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Back to Course
-        </Link>
-        <h2 className="font-bold text-base sm:text-lg text-gray-900 break-words">{course.title}</h2>
-        <p className="text-sm text-gray-600 mb-4 break-words">{course.difficulty}</p>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Progress</span>
-            <span className="font-medium">
-              {completedLessons}/{totalLessons}
-            </span>
-          </div>
-          <Progress value={progressPercentage} />
+      {/* Sidebar */}
+      <div
+        ref={sidebarRef}
+        className={`bg-gray-50 border-r border-gray-200 overflow-y-auto flex-shrink-0 fixed md:static top-0 left-0 z-20 transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} w-full md:w-[${sidebarWidth}px] flex flex-col`}
+        style={{ width: isSidebarOpen ? "100%" : `${sidebarWidth}px` }}
+      >
+        <div className="md:hidden sticky top-0 z-30 bg-gray-50 border-b border-gray-200 p-3 sm:p-4">
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={() => setIsSidebarOpen(false)}
+            className="w-full flex justify-between items-center text-base sm:text-lg font-semibold text-gray-900 hover:bg-gray-100"
+          >
+            <span>Close Curriculum</span>
+            <XCircle className="h-6 w-6 sm:h-7 sm:w-7 text-gray-600" />
+          </Button>
         </div>
-      </div>
+
+        <div className="p-2 sm:p-4 md:p-6 border-b border-gray-200">
+          <Link
+            href={`/course/${course.id}`}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 text-sm sm:text-base"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Course
+          </Link>
+          <h2 className="font-bold text-base sm:text-lg text-gray-900 break-words">
+            {course.title}
+          </h2>
+          <p className="text-sm text-gray-600 mb-4 break-words">
+            {course.difficulty}
+          </p>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Progress</span>
+              <span className="font-medium">
+                {completedLessons}/{totalLessons}
+              </span>
+            </div>
+            <Progress value={progressPercentage} />
+          </div>
+        </div>
 
         <div className="p-2 sm:p-3 md:p-4 flex-1 overflow-y-auto">
           <div className="space-y-2 sm:space-y-3">
             {course.units.map((unit, unitIndex) => (
               <div key={unit.id} className="border border-gray-200 rounded-lg">
-                <div 
+                <div
                   className="p-2 sm:p-3 bg-gray-100 flex items-center justify-between cursor-pointer"
                   onClick={() => toggleUnitExpansion(unit.id)}
                 >
@@ -599,13 +676,15 @@ export default function CourseLearning() {
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                   )}
                 </div>
-                
+
                 {expandedUnits[unit.id] && (
                   <div className="p-1 sm:p-2 space-y-1">
                     {unit.lessons.map((lesson, lessonIndex) => {
                       const isCompleted = isLessonCompleted(lesson.id);
-                      const isCurrent = unitIndex === currentUnitIndex && lessonIndex === currentLessonIndex;
-                      
+                      const isCurrent =
+                        unitIndex === currentUnitIndex &&
+                        lessonIndex === currentLessonIndex;
+
                       return (
                         <div
                           key={lesson.id}
@@ -614,20 +693,25 @@ export default function CourseLearning() {
                               ? "bg-blue-50 border border-blue-200"
                               : "hover:bg-gray-100"
                           }`}
-                          onClick={() => handleLessonClick(unitIndex, lessonIndex)}
+                          onClick={() =>
+                            handleLessonClick(unitIndex, lessonIndex)
+                          }
                         >
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <div 
+                            <div
                               className="flex-shrink-0 cursor-pointer transition-all duration-200 ease-in-out"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleMarkComplete(lesson.id, isLessonCompleted(lesson.id));
+                                handleMarkComplete(
+                                  lesson.id,
+                                  isLessonCompleted(lesson.id)
+                                );
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'scale(1.1)';
+                                e.currentTarget.style.transform = "scale(1.1)";
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'scale(1)';
+                                e.currentTarget.style.transform = "scale(1)";
                               }}
                             >
                               {isCompleted ? (
@@ -639,9 +723,7 @@ export default function CourseLearning() {
                             <div className="flex-1 min-w-0">
                               <h4
                                 className={`text-xs sm:text-sm font-medium break-words ${
-                                  isCurrent
-                                    ? "text-blue-900"
-                                    : "text-gray-900"
+                                  isCurrent ? "text-blue-900" : "text-gray-900"
                                 }`}
                               >
                                 {lesson.title}
@@ -670,7 +752,7 @@ export default function CourseLearning() {
         {/* Header */}
         <div className="p-3 sm:p-4 md:p-6 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between md:hidden mb-3 sm:mb-4">
-            <Button 
+            <Button
               variant="outline"
               size="sm"
               onClick={() => setIsSidebarOpen(true)}
@@ -693,7 +775,11 @@ export default function CourseLearning() {
             <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
               <Dialog open={forumOpen} onOpenChange={setForumOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs sm:text-sm"
+                  >
                     <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     Discussion Forum
                   </Button>
@@ -719,7 +805,7 @@ export default function CourseLearning() {
                 <LessonContent
                   lesson={currentLesson}
                   isCompleted={isLessonCompleted(currentLesson.id)}
-                  onMarkComplete={(completed) => 
+                  onMarkComplete={(completed) =>
                     handleMarkComplete(currentLesson.id, completed)
                   }
                   onMediaEnded={handleMediaEnded}
@@ -728,7 +814,9 @@ export default function CourseLearning() {
             </Card>
           ) : (
             <div className="h-full flex items-center justify-center">
-              <p className="text-gray-500 text-sm sm:text-base">Select a lesson to begin</p>
+              <p className="text-gray-500 text-sm sm:text-base">
+                Select a lesson to begin
+              </p>
             </div>
           )}
         </div>
@@ -750,11 +838,15 @@ export default function CourseLearning() {
             <div className="flex items-center gap-2 sm:gap-4 order-3 sm:order-2 w-full sm:w-auto justify-center">
               {currentLesson && (
                 <Button
-                  variant={isLessonCompleted(currentLesson.id) ? "outline" : "default"}
-                  onClick={() => handleMarkComplete(
-                    currentLesson.id, 
-                    isLessonCompleted(currentLesson.id)
-                  )}
+                  variant={
+                    isLessonCompleted(currentLesson.id) ? "outline" : "default"
+                  }
+                  onClick={() =>
+                    handleMarkComplete(
+                      currentLesson.id,
+                      isLessonCompleted(currentLesson.id)
+                    )
+                  }
                   size="sm"
                   className={`w-full sm:w-auto text-sm sm:text-base ${!isLessonCompleted(currentLesson.id) ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
                 >
@@ -789,13 +881,13 @@ export default function CourseLearning() {
   );
 }
 
-function LessonContent({ 
-  lesson, 
-  isCompleted, 
-  onMarkComplete, 
-  onMediaEnded 
-}: { 
-  lesson: CourseWithContent['units'][0]['lessons'][0];
+function LessonContent({
+  lesson,
+  isCompleted,
+  onMarkComplete,
+  onMediaEnded,
+}: {
+  lesson: CourseWithContent["units"][0]["lessons"][0];
   isCompleted: boolean;
   onMarkComplete: (completed: boolean) => void;
   onMediaEnded?: () => void;
@@ -811,7 +903,11 @@ function LessonContent({
       case "exercise":
         return <ExerciseContent content={lesson.content} />;
       default:
-        return <div className="text-gray-500 text-sm sm:text-base">Unsupported content type</div>;
+        return (
+          <div className="text-gray-500 text-sm sm:text-base">
+            Unsupported content type
+          </div>
+        );
     }
   };
 
@@ -822,17 +918,20 @@ function LessonContent({
   );
 }
 
-function VideoContent({ content, onEnded }: { 
-  content: Lesson["content"]; 
-  onEnded?: () => void; 
+function VideoContent({
+  content,
+  onEnded,
+}: {
+  content: Lesson["content"];
+  onEnded?: () => void;
 }) {
   const videoContent = content as { url?: string; notes?: string };
 
   return (
     <div className="space-y-4 sm:space-y-6">
       {videoContent.url ? (
-        <VideoPlayer 
-          src={videoContent.url} 
+        <VideoPlayer
+          src={videoContent.url}
           title="Video Lesson"
           onEnded={onEnded}
         />
@@ -846,7 +945,9 @@ function VideoContent({ content, onEnded }: {
       )}
       {videoContent.notes && (
         <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-          <h3 className="font-semibold mb-2 text-sm sm:text-base">Lesson Notes</h3>
+          <h3 className="font-semibold mb-2 text-sm sm:text-base">
+            Lesson Notes
+          </h3>
           <p className="text-gray-700 text-sm sm:text-base">
             {videoContent.notes}
           </p>
@@ -856,23 +957,28 @@ function VideoContent({ content, onEnded }: {
   );
 }
 
-function AudioContent({ content, onEnded }: { 
-  content: Lesson["content"]; 
-  onEnded?: () => void; 
+function AudioContent({
+  content,
+  onEnded,
+}: {
+  content: Lesson["content"];
+  onEnded?: () => void;
 }) {
   const audioContent = content as { url?: string; transcript?: string };
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <AudioPlayer 
-        src={audioContent.url || ''} 
+      <AudioPlayer
+        src={audioContent.url || ""}
         title="Audio Lesson"
         onEnded={onEnded}
       />
-      
+
       {audioContent.transcript && (
         <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
-          <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Transcript</h3>
+          <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">
+            Transcript
+          </h3>
           <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
             {audioContent.transcript}
           </p>
@@ -882,9 +988,7 @@ function AudioContent({ content, onEnded }: {
   );
 }
 
-function TextContent({ content }: { 
-  content: Lesson["content"]; 
-}) {
+function TextContent({ content }: { content: Lesson["content"] }) {
   const textContent = content as { body?: string };
 
   return (
@@ -902,9 +1006,7 @@ function TextContent({ content }: {
   );
 }
 
-function ExerciseContent({ content }: { 
-  content: Lesson["content"]; 
-}) {
+function ExerciseContent({ content }: { content: Lesson["content"] }) {
   interface ExerciseContentType {
     exerciseType?: "quiz" | "fill-blank";
     question?: string;
@@ -923,38 +1025,47 @@ function ExerciseContent({ content }: {
           Practice Exercise
         </h2>
         <p className="text-gray-600 mb-4 sm:mb-6 md:mb-8 text-sm sm:text-base">
-          {exerciseContent.exerciseType === "quiz" && "Choose the correct option"}
+          {exerciseContent.exerciseType === "quiz" &&
+            "Choose the correct option"}
           {exerciseContent.exerciseType === "fill-blank" && "Fill in the blank"}
           {!exerciseContent.exerciseType && "Complete the following exercises"}
         </p>
       </div>
-      
+
       {exerciseContent.exerciseType === "quiz" && exerciseContent.options && (
-        <MCQExercise 
+        <MCQExercise
           question={{
             question: exerciseContent.question || "Select the correct answer:",
-            options: exerciseContent.options.map((option: string, index: number) => ({
-              id: index.toString(),
-              text: option
-            })),
-            correctAnswer: [exerciseContent.correct?.toString() || "0"]
+            options: exerciseContent.options.map(
+              (option: string, index: number) => ({
+                id: index.toString(),
+                text: option,
+              })
+            ),
+            correctAnswer: [exerciseContent.correct?.toString() || "0"],
           }}
         />
       )}
-      
-      {exerciseContent.exerciseType === "fill-blank" && exerciseContent.sentence && exerciseContent.blankIndex !== undefined && (
-        <FillBlankExercise 
-          question={{
-            question: `Fill in the blank: ${exerciseContent.sentence.replace(exerciseContent.sentence.split(" ")[exerciseContent.blankIndex], "______")}`,
-            correctAnswer: [exerciseContent.sentence.split(" ")[exerciseContent.blankIndex]]
-          }}
-        />
-      )}
-      
+
+      {exerciseContent.exerciseType === "fill-blank" &&
+        exerciseContent.sentence &&
+        exerciseContent.blankIndex !== undefined && (
+          <FillBlankExercise
+            question={{
+              question: `Fill in the blank: ${exerciseContent.sentence.replace(exerciseContent.sentence.split(" ")[exerciseContent.blankIndex], "______")}`,
+              correctAnswer: [
+                exerciseContent.sentence.split(" ")[exerciseContent.blankIndex],
+              ],
+            }}
+          />
+        )}
+
       {!exerciseContent.exerciseType && (
         <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center">
           <HelpCircle className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-600 text-sm sm:text-base">Exercise content format not supported</p>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Exercise content format not supported
+          </p>
         </div>
       )}
     </div>
