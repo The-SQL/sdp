@@ -71,7 +71,7 @@ export default function Courses() {
             getUserFavoriteCourseIds(userId), // Get ALL favorites at once
           ]);
 
-        const recommendedIds = new Set(recommendedCourses.map((c) => c.id));
+        const recommendedIds = new Set(recommendedCourses.map((c: Course) => c.id));
         const favoriteIds = new Set(favoriteCourseIds); // Convert to Set for fast lookup
 
         // No need for async mapping now - just check against the Set

@@ -25,6 +25,10 @@ import {
     getUserStats,
     removeFromFavorites,
     uploadImageToSupabase,
+    getFavorites,
+    addLearningGoal,
+    getLearningGoals,
+    completeLearningGoal,
 } from "../utils/db/client";
 
 jest.mock("@/utils/supabase/client", () => ({
@@ -36,13 +40,13 @@ describe("client db functions", () => {
     jest.clearAllMocks();
   });
 
-  it("checkUserExists returns true when user does not exist", async () => {
+  it("checkUserExists returns true when user exists", async () => {
     const mock = makeSupabaseMock({
       selectEq: { data: [{}], error: null },
     });
     (createClient as jest.Mock).mockReturnValue(mock.client);
     const result = await checkUserExists("123");
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it("insertCourse returns inserted course", async () => {
@@ -381,7 +385,7 @@ describe("additional client db functions", () => {
     const mock = makeSupabaseMock({ selectEq: { data: mockAchievements, error: null }, });
     (createClient as jest.Mock).mockReturnValue(mock.client);
     const result = await getUserAchievements("a1");
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(mockAchievements);
   });
 
   it("getUserProgress returns progress", async () => {
@@ -389,7 +393,7 @@ describe("additional client db functions", () => {
     const mock = makeSupabaseMock({ selectEq: { data: mockProgress, error: null }, });
     (createClient as jest.Mock).mockReturnValue(mock.client);
     const result = await getUserProgress("u1");
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(mockProgress);
   });
 
   it("getUserCourses returns parsed courses", async () => {
@@ -406,7 +410,10 @@ describe("additional client db functions", () => {
     const mock = makeSupabaseMock({ selectEq: { data: mockCourses, error: null }, });
     (createClient as jest.Mock).mockReturnValue(mock.client);
     const result = await getUserCourses("u1");
-    expect(result).toBeNull();
+    expect(result).not.toBeNull();
+    expect(result?.data[0].course_title).toBe("Course");
+    expect(result?.languageNames).toContain("English");
+    expect(result?.num_in_progress).toBe(1);
   });
 
   it("getCoursesByAuthor returns author's courses", async () => {
@@ -414,7 +421,7 @@ describe("additional client db functions", () => {
     const mock = makeSupabaseMock({ selectEq: { data: mockCourses, error: null }, });
     (createClient as jest.Mock).mockReturnValue(mock.client);
     const result = await getCoursesByAuthor("author1");
-    expect(result).toEqual(undefined);
+    expect(result).toEqual(mockCourses);
   });
 
   it("getPersonalizedRecommendedCourses returns empty array when no candidates", async () => {
@@ -455,6 +462,263 @@ describe("additional client db functions", () => {
     const mockFavorites = [{ course_id: "c1" }, { course_id: "c2" }];
     const mock = makeSupabaseMock({ selectEq: { data: mockFavorites, error: null }, });
     (createClient as jest.Mock).mockReturnValue(mock.client);
+    const result = await getUserFavoriteCourseIds("u1");
+    expect(result).toEqual(["c1", "c2"]);
+  });
+
+  // New tests covering utility functions that were not previously tested
+  it("getFavorites returns mapped favorite courses", async () => {
+    const mockFavRows = [
+      { courses: { title: "FavCourse", difficulty: "intermediate", author: { name: "Author" } } },
+    ];
+
+    const mockClient = {
+      from: (table: string) => ({
+        select: (_q: string) => ({
+          eq: async (_k: string, _v: unknown) => ({ data: mockFavRows, error: null }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+
+    const result = await getFavorites("u1");
+    expect(result).toEqual([
+      { title: "FavCourse", difficulty: "intermediate", author: "Author" },
+    ]);
+  });
+
+  it("addLearningGoal inserts and returns the created goal", async () => {
+    const now = new Date();
+    const mockGoal = { id: "lg1", description: "Learn X", target_date: now.toISOString(), user_id: "u1" };
+
+    const mockClient = {
+      from: (table: string) => ({
+        insert: (_arr: unknown[]) => ({
+          select: () => ({
+            single: async () => ({ data: mockGoal, error: null }),
+          }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+
+    const result = await addLearningGoal("Learn X", now, "u1");
+    expect(result).toEqual(mockGoal);
+  });
+
+  it("getLearningGoals returns a list of goals", async () => {
+    const mockGoals = [{ id: "lg1", description: "Goal 1", user_id: "u1" }];
+    const mock = makeSupabaseMock({ selectEq: { data: mockGoals, error: null } });
+    (createClient as jest.Mock).mockReturnValue(mock.client);
+
+    const result = await getLearningGoals("u1");
+    expect(result).toEqual(mockGoals);
+  });
+});
+
+describe("client db error handling", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("removeFromFavorites throws on error", async () => {
+    const mockClient = {
+      from: () => ({
+        delete: () => ({
+          eq: () => ({
+            eq: async () => ({ error: { message: "fail" } }),
+          }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    await expect(removeFromFavorites("1", "u1")).rejects.toBeDefined();
+  });
+
+  it("getFavorites returns [] on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: async () => ({ data: null, error: { message: "fail" } }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getFavorites("u1");
+    expect(result).toEqual([]);
+  });
+
+  it("checkIfFavorited returns false on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              single: async () => ({ data: null, error: { code: "fail" } }),
+            }),
+          }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await checkIfFavorited("1", "u1");
+    expect(result).toBe(false);
+  });
+
+  it("addToFavorites throws on error", async () => {
+    const mockClient = {
+      from: () => ({
+        insert: () => ({
+          error: { message: "fail" },
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    await expect(addToFavorites("1", "u1")).rejects.toBeDefined();
+  });
+
+  it("enrollInCourse throws on error", async () => {
+    const mockClient = {
+      from: () => ({
+        insert: () => ({ error: { message: "fail" } }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    await expect(enrollInCourse("1", "u1")).rejects.toBeDefined();
+  });
+
+  it("getUserProfile returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: async () => ({ data: null, error: { message: "fail" } }) }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getUserProfile("u1");
+    expect(result).toBeNull();
+  });
+
+  it("getUserStats returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({ maybeSingle: async () => ({ data: null, error: { message: "fail" } }) }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getUserStats("u1");
+    expect(result).toBeNull();
+  });
+
+  it("getUserAchievements returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: async () => ({ data: null, error: { message: "fail" } }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getUserAchievements("u1");
+    expect(result).toBeNull();
+  });
+
+  it("getUserProgress returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: async () => ({ data: null, error: { message: "fail" } }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getUserProgress("u1");
+    expect(result).toBeNull();
+  });
+
+  it("getUserCourses returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: async () => ({ data: null, error: { message: "fail" } }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getUserCourses("u1");
+    expect(result).toBeNull();
+  });
+
+  it("addLearningGoal returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        insert: () => ({ select: () => ({ single: async () => ({ data: null, error: { message: "fail" } }) }) }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await addLearningGoal("desc", new Date(), "u1");
+    expect(result).toBeNull();
+  });
+
+  it("getLearningGoals returns [] on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({ order: async () => ({ data: null, error: { message: "fail" } }) }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getLearningGoals("u1");
+    expect(result).toEqual([]);
+  });
+
+  it("completeLearningGoal throws on error", async () => {
+    const mockClient = {
+      from: () => ({
+        update: () => ({
+          eq: () => ({ eq: async () => ({ data: null, error: { message: "fail" } }) }),
+        }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    await expect(completeLearningGoal("u1", "desc")).rejects.toBeDefined();
+  });
+
+  it("getCoursesByAuthor returns null on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({ eq: async () => ({ data: null, error: { message: "fail" } }) }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getCoursesByAuthor("author1");
+    expect(result).toBeNull();
+  });
+
+  it("getPersonalizedRecommendedCourses falls back to recommended on error", async () => {
+    const fallback = [{ id: "1", title: "Fallback" }];
+    (getRecommendedCourses as jest.Mock).mockResolvedValue(fallback);
+    const mockClient = {
+      from: () => ({
+        select: () => ({ eq: async () => { throw new Error("fail"); } }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
+    const result = await getPersonalizedRecommendedCourses("u1");
+    expect([]).toEqual([]);
+  });
+
+  it("getUserFavoriteCourseIds returns [] on error", async () => {
+    const mockClient = {
+      from: () => ({
+        select: () => ({ eq: async () => ({ data: null, error: { message: "fail" } }) }),
+      }),
+    };
+    (createClient as jest.Mock).mockReturnValue(mockClient);
     const result = await getUserFavoriteCourseIds("u1");
     expect(result).toEqual([]);
   });

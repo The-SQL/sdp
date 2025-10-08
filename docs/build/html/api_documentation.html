@@ -98,17 +98,36 @@
 <p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#endpoint">Endpoint</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#headers">Headers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#request-body">Request Body</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-request">Example Request</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#responses">Responses</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#success">Success</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#error-cases">Error Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quiz-engine-endpoint">Quiz Engine Endpoint</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#headers">Headers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#request-body">Request Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-request">Example Request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#responses">Responses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes">Notes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#content-moderation-endpoint">Content Moderation Endpoint</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Request Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Example Request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Responses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#email-collaboration-invitation-endpoint">Email Collaboration Invitation Endpoint</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Request Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Example Request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Responses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-registration-endpoint">User Registration Endpoint</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Request Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Example Request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Responses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cors-information">CORS Information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="database_documentation.html">Database Documentation</a><ul>
@@ -178,6 +197,10 @@
 <li class="toctree-l2"><a class="reference internal" href="user_feedback.html#testing-script-tasks">Testing Script &amp; Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_feedback.html#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_feedback.html#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#user-feedback-sprint-2">User Feedback Sprint 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id1">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id2">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id3">Conclusion &amp; Outcomes</a></li>
 </ul>
 </li>
 </ul>
@@ -208,29 +231,25 @@
              
   <section id="api-documentation">
 <h1>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h1>
-<section id="endpoint">
-<h2>Endpoint<a class="headerlink" href="#endpoint" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/api/quiz-engine</span></code></p>
-</section>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>Generates a multiple-choice exercise using OpenAI based on the provided topic, skill level, and instructions.</p>
-</section>
+<section id="quiz-engine-endpoint">
+<h2>Quiz Engine Endpoint<a class="headerlink" href="#quiz-engine-endpoint" title="Link to this heading"></a></h2>
+<p><strong>Endpoint</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/api/quiz-engine</span></code></p>
+<p><strong>Description</strong>: Generates a multiple-choice exercise using OpenAI based on the provided topic, skill level, and instructions.</p>
 <section id="headers">
-<h2>Headers<a class="headerlink" href="#headers" title="Link to this heading"></a></h2>
+<h3>Headers<a class="headerlink" href="#headers" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>x-api-key</strong>: string (required)
 Your API key.</p></li>
 </ul>
 </section>
 <section id="request-body">
-<h2>Request Body<a class="headerlink" href="#request-body" title="Link to this heading"></a></h2>
+<h3>Request Body<a class="headerlink" href="#request-body" title="Link to this heading"></a></h3>
 <p>Send a JSON object with a <code class="docutils literal notranslate"><span class="pre">data</span></code> field containing:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">                    </span><span class="c1">// Required. The topic for the exercise.</span>
 <span class="w">    </span><span class="nt">&quot;skill_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">              </span><span class="c1">// Required. The skill level (e.g., beginner, intermediate, advanced).</span>
-<span class="w">    </span><span class="nt">&quot;number_of_questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">nu</span><span class="err">mber</span><span class="p">,</span><span class="w">         </span><span class="c1">// Required. Number of questions to generate.</span>
+<span class="w">    </span><span class="nt">&quot;number_of_questions&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">nu</span><span class="err">mber</span><span class="p">,</span><span class="w">        </span><span class="c1">// Required. Number of questions to generate.</span>
 <span class="w">    </span><span class="nt">&quot;additional_instructions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Required. Any extra instructions for the exercise.</span>
 <span class="w">    </span><span class="nt">&quot;information_from_sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w">  </span><span class="c1">// Optional. Additional information or sources.</span>
 <span class="w">  </span><span class="p">}</span>
@@ -239,7 +258,7 @@ Your API key.</p></li>
 </div>
 </section>
 <section id="example-request">
-<h2>Example Request<a class="headerlink" href="#example-request" title="Link to this heading"></a></h2>
+<h3>Example Request<a class="headerlink" href="#example-request" title="Link to this heading"></a></h3>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="err">POST</span><span class="w"> </span><span class="err">/api/quiz</span><span class="mf">-e</span><span class="kc">n</span><span class="err">gi</span><span class="kc">ne</span>
 <span class="err">Headers</span><span class="p">:</span>
 <span class="w">  </span><span class="err">x</span><span class="mi">-</span><span class="err">api</span><span class="mi">-</span><span class="err">key</span><span class="p">:</span><span class="w"> </span><span class="err">your_api_key</span>
@@ -257,9 +276,9 @@ Your API key.</p></li>
 </div>
 </section>
 <section id="responses">
-<h2>Responses<a class="headerlink" href="#responses" title="Link to this heading"></a></h2>
+<h3>Responses<a class="headerlink" href="#responses" title="Link to this heading"></a></h3>
 <section id="success">
-<h3>Success<a class="headerlink" href="#success" title="Link to this heading"></a></h3>
+<h4>Success<a class="headerlink" href="#success" title="Link to this heading"></a></h4>
 <p><strong>Status</strong>: 200</p>
 <p><strong>Body</strong>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -278,8 +297,7 @@ Your API key.</p></li>
 <span class="w">        </span><span class="nt">&quot;answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">&quot;hint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Subtract 3 from 13.&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">&quot;explanation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;13 stripes minus 3 stripes is 13 - 3 = 10 stripes left.&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="err">...</span>
+<span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -287,7 +305,7 @@ Your API key.</p></li>
 </div>
 </section>
 <section id="error-cases">
-<h3>Error Cases<a class="headerlink" href="#error-cases" title="Link to this heading"></a></h3>
+<h4>Error Cases<a class="headerlink" href="#error-cases" title="Link to this heading"></a></h4>
 <p><strong>401 Unauthorized</strong>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Unauthorized: Invalid or missing API key&quot;</span>
@@ -309,11 +327,217 @@ Your API key.</p></li>
 </section>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>The route uses OpenAI’s GPT-4.1 model to generate exercises.</p></li>
 <li><p>All required fields must be present in the request body.</p></li>
 <li><p>The response data structure depends on the OpenAI output.</p></li>
+<li><p>Includes CORS support for cross-origin requests.</p></li>
+</ul>
+</section>
+</section>
+<section id="content-moderation-endpoint">
+<h2>Content Moderation Endpoint<a class="headerlink" href="#content-moderation-endpoint" title="Link to this heading"></a></h2>
+<p><strong>Endpoint</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/api/moderation</span></code></p>
+<p><strong>Description</strong>: Checks text for profanity and returns moderated content.</p>
+<section id="id1">
+<h3>Request Body<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w">  </span><span class="c1">// Required. The text to moderate</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Example Request<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="err">POST</span><span class="w"> </span><span class="err">/api/modera</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span>
+<span class="err">Body</span><span class="p">:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is some text to check for inappropriate content&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>Responses<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<section id="success-200">
+<h4>Success (200)<a class="headerlink" href="#success-200" title="Link to this heading"></a></h4>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;contains_profanity&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;censored_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is some text to check for inappropriate content&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h4>Error Cases<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<p><strong>400 Bad Request</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Missing &#39;text&#39; field&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>500 Internal Server Error</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;contains_profanity&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;censored_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h3>Notes<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Uses external moderation service</p></li>
+<li><p>Returns original text if moderation fails</p></li>
+<li><p>Automatically falls back to safe response on errors</p></li>
+</ul>
+</section>
+</section>
+<section id="email-collaboration-invitation-endpoint">
+<h2>Email Collaboration Invitation Endpoint<a class="headerlink" href="#email-collaboration-invitation-endpoint" title="Link to this heading"></a></h2>
+<p><strong>Endpoint</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/api/email/collab-invite</span></code></p>
+<p><strong>Description</strong>: Sends a collaboration invitation email for a course.</p>
+<section id="id6">
+<h3>Request Body<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;senderName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">      </span><span class="c1">// Required. Name of the person sending invitation</span>
+<span class="w">    </span><span class="nt">&quot;courseTitle&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">     </span><span class="c1">// Required. Title of the course</span>
+<span class="w">    </span><span class="nt">&quot;courseUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">       </span><span class="c1">// Required. URL to access the course</span>
+<span class="w">    </span><span class="nt">&quot;to&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w">              </span><span class="c1">// Required. Recipient email address</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Example Request<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="err">POST</span><span class="w"> </span><span class="err">/api/email/collab</span><span class="mi">-</span><span class="err">i</span><span class="kc">n</span><span class="err">vi</span><span class="kc">te</span>
+<span class="err">Body</span><span class="p">:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;senderName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;courseTitle&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Advanced Mathematics&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;courseUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://example.com/courses/math-101&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;to&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recipient@example.com&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>Responses<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<section id="id9">
+<h4>Success (200)<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;email-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;onboarding@resend.dev&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h4>Error Cases<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<p><strong>400 Bad Request</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Missing required fields&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>500 Internal Server Error</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Resend error details&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id11">
+<h3>Notes<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Uses Resend email service</p></li>
+<li><p>Sends from “Acme &lt;<a class="reference external" href="mailto:onboarding&#37;&#52;&#48;resend&#46;dev">onboarding<span>&#64;</span>resend<span>&#46;</span>dev</a>&gt;”</p></li>
+<li><p>Uses React email template component</p></li>
+</ul>
+</section>
+</section>
+<section id="user-registration-endpoint">
+<h2>User Registration Endpoint<a class="headerlink" href="#user-registration-endpoint" title="Link to this heading"></a></h2>
+<p><strong>Endpoint</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/api/users</span></code></p>
+<p><strong>Description</strong>: Inserts a new user into the database (typically used with webhooks).</p>
+<section id="id12">
+<h3>Request Body<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">                    </span><span class="c1">// Required. User ID</span>
+<span class="w">    </span><span class="nt">&quot;first_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w">           </span><span class="c1">// Optional. User&#39;s first name</span>
+<span class="w">    </span><span class="nt">&quot;email_addresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">              </span><span class="c1">// Required array with at least one email</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;email_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w">     </span><span class="c1">// Required. User&#39;s email address</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3>Example Request<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="err">POST</span><span class="w"> </span><span class="err">/api/users</span>
+<span class="err">Body</span><span class="p">:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_123&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;first_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;email_addresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;email_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alice@example.com&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h3>Responses<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<section id="id15">
+<h4>Success (200)<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User inserted successfully&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h4>Error Cases<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
+<p><strong>500 Internal Server Error</strong>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Failed to insert user: error details&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id17">
+<h3>Notes<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Typically used as a webhook endpoint</p></li>
+<li><p>Requires specific data structure with email addresses array</p></li>
+<li><p>Stores user ID, first name, and primary email</p></li>
+</ul>
+</section>
+</section>
+<section id="cors-information">
+<h2>CORS Information<a class="headerlink" href="#cors-information" title="Link to this heading"></a></h2>
+<p>The Quiz Engine endpoint (<code class="docutils literal notranslate"><span class="pre">/api/quiz-engine</span></code>) includes CORS support:</p>
+<ul class="simple">
+<li><p><strong>Allowed Origins</strong>: All (<code class="docutils literal notranslate"><span class="pre">*</span></code>)</p></li>
+<li><p><strong>Allowed Methods</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span></code>, <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code></p></li>
+<li><p><strong>Allowed Headers</strong>: <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code>, <code class="docutils literal notranslate"><span class="pre">x-api-key</span></code></p></li>
+<li><p><strong>Preflight</strong>: OPTIONS method available for CORS preflight requests</p></li>
 </ul>
 </section>
 </section>
