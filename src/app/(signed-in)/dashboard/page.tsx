@@ -21,6 +21,9 @@ import {
   addLearningGoal,
   completeLearningGoal,
   getFavorites,
+  getLessonsCompleted,
+  getLoginStreak,
+  markLoginDay,
 } from "@/utils/db/client";
 import { useUser } from "@clerk/nextjs";
 import { Heart, Plus, Star, TrendingUp, Trophy } from "lucide-react";
@@ -31,8 +34,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 
 type CoursesStateT = Awaited<ReturnType<typeof getUserCourses>>; // UserCoursesState | null
-// type AchievementsT = Awaited<ReturnType<typeof getUserAchievements>>; // UserAchievement[] | null
-// type StatsT = Awaited<ReturnType<typeof getUserStats>>; // UserStats | null
 type ProgressRowsT = Awaited<ReturnType<typeof getUserProgress>>; // UserProgress[] | null
 type UserCourseT = NonNullable<CoursesStateT>["data"][number];
 
@@ -59,10 +60,12 @@ export default function Dashboard() {
   const [goalDeadline, setGoalDeadline] = useState("");
   const [coursesState, setCoursesState] = useState<CoursesStateT>(null);
   // const [achievements, setAchievements] = useState<AchievementsT>(null);
-  // const [stats, setStats] = useState<StatsT>(null);
   const [progressRows, setProgressRows] = useState<ProgressRowsT>(null);
   const [loading, setLoading] = useState(true);
   const [favCourses, setFavCourses] = useState<FavCourse[]>([]);
+  const [lessonsCompleted, setLessonsCompleted] = useState<number | null>(null);
+  const [loginStreak, setLoginStreak] = useState<number | null>(null);
+  
 
   const displayName =
     (user?.firstName && user?.lastName
@@ -79,22 +82,23 @@ export default function Dashboard() {
     (async () => {
       try {
         setLoading(true);
-        const [courses, prog, fetchedGoals, favorites] = await Promise.all([
+        const [courses, prog, fetchedGoals, favorites, count_lessons] = await Promise.all([
           getUserCourses(user.id),
           // getUserAchievements(user.id),
-          // getUserStats(user.id),
           getUserProgress(user.id),
           getLearningGoals(user.id),
           getFavorites(user.id),
+          getLessonsCompleted(user.id),
         ]);
 
         if (isCancelled) return;
         setCoursesState(courses);
         // setAchievements(ach);
-        // setStats(st);
         setProgressRows(prog);
         setGoals(fetchedGoals);
         setFavCourses(favorites);
+        setLessonsCompleted(count_lessons);
+        
       } catch (e) {
         console.error("Dashboard data load error:", e);
       } finally {
@@ -106,6 +110,25 @@ export default function Dashboard() {
       isCancelled = true;
     };
   }, [isLoaded, user]);
+
+  useEffect(() => {
+    if (!isLoaded || !user?.id) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        // idempotent: safe to call every mount/day
+        await markLoginDay(user.id, "Africa/Johannesburg");
+        const streak = await getLoginStreak(user.id, "Africa/Johannesburg", false);
+        if (!cancelled) setLoginStreak(streak ?? 0);
+      } catch (e) {
+        console.error("login streak load error:", e);
+        if (!cancelled) setLoginStreak(0);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [isLoaded, user?.id]);
 
   const currentCourses = useMemo(() => {
     const list: UserCourseT[] = coursesState?.data ?? [];
@@ -159,11 +182,7 @@ export default function Dashboard() {
     return res;
   }, [progressRows]);
 
-  const currentStreak = weeklyActivity.filter((d) => d.studied).length;
-  const totalMinutesThisWeek = weeklyActivity.reduce(
-    (s, d) => s + d.minutes,
-    0
-  );
+ 
 
   const [goals, setGoals] = useState<LearningGoal[]>([]);
   const [isCompleting, setIsCompleting] = useState<string | null>(null);
@@ -492,12 +511,12 @@ export default function Dashboard() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Lessons Completed</span>
-                  <span className="font-semibold text-gray-900">156</span>
+                  <span className="font-semibold text-gray-900">{lessonsCompleted ?? "-"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Current Streak</span>
                   <span className="font-semibold text-blue-600">
-                    {currentStreak} days
+                    {loginStreak ?? "-"} days
                   </span>
                 </div>
                 <div className="flex justify-between">

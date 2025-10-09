@@ -1019,3 +1019,37 @@ export async function getUserFavoriteCourseIds(
   
   return data.map((item) => item.course_id);
 }
+
+export async function getLessonsCompleted(userId: string){
+  const supabase = createClient();
+  if(!userId) throw new Error("User ID is required");
+
+  const { count, error } = await supabase
+    .from("user_progress")
+    .select("*", { count: "exact", head: true})
+    .eq("user_id", userId)
+    .eq("status","completed");
+  
+  if(error) throw error;
+  return count ?? 0;
+}
+
+export async function markLoginDay(userId: string, tz = "Africa/Johannesburg"){
+  const supabase = createClient();
+  const { error } = await supabase.rpc("mark_login_day", {
+    p_user_id: userId,
+    p_tz: tz,
+  });
+  if (error) throw error;
+}
+
+export async function getLoginStreak(userId: string, tz = "Africa/Johannesburg", allowGapToday = false) {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("get_login_streak", {
+    p_user_id: userId,
+    p_tz: tz,
+    p_allow_gap_today: allowGapToday,
+  });
+  if (error) throw error;
+  return data ?? 0;
+}
