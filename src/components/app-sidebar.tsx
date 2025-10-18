@@ -35,7 +35,7 @@ const NAV_LINKS = [
   { name: "Explore Courses", href: "/courses", icon: Search },
   { name: "Manage Courses", href: "/manage-courses", icon: Plus },
   { name: "Discussion Forums", href: "/forums", icon: MessageSquare },
-  { name: "Flashcards", href: "/flashcards", icon: CreditCard },
+  { name: "Flashcards", href: "/flashcards?tab=my-sets", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
   { name: "Notifications", href: "/notifications", icon: NotificationBell },
 ];

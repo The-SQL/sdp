@@ -19,9 +19,9 @@ const customJestConfig = {
   collectCoverage: true,
   collectCoverageFrom: [
     "src/utils/db/client.ts",
-    "src/utils/db/forum.ts",
     "src/app/\\(signed-in\\)/forums/page.tsx",
     "src/app/\\(signed-in\\)/forums/\\[id\\]/page.tsx",
+    "!src/utils/db/forum.ts",
     "!src/utils/db/server.ts",
     "!src/utils/types/**",
     "!src/utils/supabase/**",

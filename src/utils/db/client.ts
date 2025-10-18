@@ -2,18 +2,16 @@
 import { createClient } from "@/utils/supabase/client";
 import {
     Course,
+    FavCourse,
+    LearningGoal,
+    SupabaseFavoriteRow,
     UserAchievement,
     UserCourse,
     UserCoursesState,
     UserProfile,
     UserProgress,
     UserStats,
-    LearningGoal,
-    FavCourse,
-    SupabaseFavoriteRow,
 } from "../types";
-import { makeSupabaseMock } from "@/__mocks__/supabase";
-import { create } from "domain";
 
 export interface SupabaseCourseList {
   id: string;
