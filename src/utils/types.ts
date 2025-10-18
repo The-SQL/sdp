@@ -325,3 +325,22 @@ export type CourseWithContent = {
   profile_url?: string | null;
   units?: UnitWithLessons[];
 };
+
+export type Flashcard = {
+    id?: string;
+    front: string;
+    back: string;
+    flashcard_set_id: string;
+    created_at?: string;
+}
+
+export type FlashcardSet = {
+    id?: string;
+    author_id?: string;
+    title: string;
+    language_id: string;
+    language_name: string
+    description?: string;
+    visibility: "public" | "private";
+    created_at?: string;
+}
