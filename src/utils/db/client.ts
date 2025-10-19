@@ -583,7 +583,7 @@ export async function getRecommendedCourses(userId?: string) {
   // associated with those courses to compute affinity.
   let userFavoriteIds: string[] = [];
   let userEnrolledIds: string[] = [];
-  let userTagCounts: Record<string, number> = {};
+  const userTagCounts: Record<string, number> = {};
   let userUniqueTagCount = 0;
 
   if (userId) {
