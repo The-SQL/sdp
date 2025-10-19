@@ -50,9 +50,16 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) return
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     const loadData = async () => {
       setLoading(true)
+
+      // Set up a 10s timeout to catch hung requests in tests and logging
+      timeoutId = setTimeout(() => {
+        console.error("Data loading timed out")
+      }, 10000)
+
       try {
         const [profileData, statsData, achievementsData, progressData, coursesData] = await Promise.all([
           getUserProfile(user.id).catch(() => null),
@@ -75,10 +82,23 @@ export default function Profile() {
       } catch (error) {
         console.error("Error loading user data:", error)
       } finally {
+        // Clear the timeout when data finishes loading (success or error)
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+          timeoutId = null
+        }
         setLoading(false)
       }
     }
     loadData()
+
+    // Cleanup: clear timeout if component unmounts before load completes
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+        timeoutId = null
+      }
+    }
   }, [user])
 
   useEffect(() => {
