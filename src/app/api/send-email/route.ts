@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
+      from: "OSLearn <onboarding@resend.dev>",
       to: [emailData.to],
       subject: "Invitation to collaborate on a course",
       react: EmailTemplate(emailData),

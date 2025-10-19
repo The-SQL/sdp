@@ -772,28 +772,6 @@ export default function CourseLearning() {
                 {course.units[currentUnitIndex]?.lessons.length}
               </p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-              <Dialog open={forumOpen} onOpenChange={setForumOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs sm:text-sm"
-                  >
-                    <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    Discussion Forum
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Course Discussion Forum</DialogTitle>
-                  </DialogHeader>
-                  <div className="p-4 text-center text-gray-500 text-sm sm:text-base">
-                    Forum functionality coming soon
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
           </div>
         </div>
 

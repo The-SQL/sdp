@@ -38,12 +38,6 @@ export function EmailTemplate({
           "Open the course in your dashboard to accept the invite."
         )}
       </p>
-
-      <p style={{ marginTop: 20 }}>
-        Thanks,
-        <br />
-        {senderName}
-      </p>
     </div>
   );
 }

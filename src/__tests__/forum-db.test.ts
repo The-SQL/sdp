@@ -5,8 +5,8 @@
  * with proper Supabase method chaining mock
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as clientModule from "@/utils/supabase/client";
 import * as moderation from "@/utils/moderation";
+import * as clientModule from "@/utils/supabase/client";
 
 // Mock Supabase client creator
 jest.mock("@/utils/supabase/client", () => ({
@@ -18,27 +18,27 @@ jest.mock("@/utils/moderation", () => ({
 }));
 
 import {
-  fetchPosts,
-  fetchPostsByUserInterests,
-  createPost,
-  getPost,
-  getPostReplies,
-  createReply,
-  likePost,
-  unlikePost,
-  likeReply,
-  unlikeReply,
-  getUserActivity,
-  checkUserLikedPost,
-  checkUserLikedReply,
-  getUserPostLikes,
-  getUserReplyLikes,
-  getTrendingTopics,
-  createNotification,
-  getUserNotifications,
-  markNotificationAsRead,
-  markAllNotificationsAsRead,
-  getUnreadNotificationCount,
+    checkUserLikedPost,
+    checkUserLikedReply,
+    createNotification,
+    createPost,
+    createReply,
+    fetchPosts,
+    fetchPostsByUserInterests,
+    getPost,
+    getPostReplies,
+    getTrendingTopics,
+    getUnreadNotificationCount,
+    getUserActivity,
+    getUserNotifications,
+    getUserPostLikes,
+    getUserReplyLikes,
+    likePost,
+    likeReply,
+    markAllNotificationsAsRead,
+    markNotificationAsRead,
+    unlikePost,
+    unlikeReply,
 } from "@/utils/db/forum";
 function createChainableMock(result: any) {
   const then = jest

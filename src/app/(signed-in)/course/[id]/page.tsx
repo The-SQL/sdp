@@ -33,6 +33,15 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CollaborateButton from "./collaborate-button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import CourseRatingDialog from "./course-rating-dialog";
 
 // Define the Course interface for type safety
 interface Course {
@@ -284,7 +293,6 @@ export default function CourseOverview() {
                     />
                   </div>
                   <div className="px-4">
-
                     <div className="space-y-3 mt-4">
                       {!isEnrolled ? (
                         <Button
@@ -313,21 +321,6 @@ export default function CourseOverview() {
                         <Button
                           variant="outline"
                           className="flex-1 bg-transparent"
-                          onClick={toggleFavorite}
-                          disabled={!(user && !user.id)}
-                        >
-                          <Heart
-                            className={`h-4 w-4 mr-2 ${
-                              isStarred ? "fill-current text-red-500" : ""
-                            }`}
-                          />
-                          {isStarred
-                            ? "Added to Favorites"
-                            : "Add to Favorites"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="flex-1 bg-transparent"
                           onClick={handleShare}
                         >
                           <Share2 className="h-4 w-4 mr-2" />
@@ -343,11 +336,10 @@ export default function CourseOverview() {
 
           {/* Course Content Tabs Section */}
           <Tabs defaultValue="curriculum" className="max-w-6xl mx-auto">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
               <TabsTrigger value="about">About</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="discussions">Discussions</TabsTrigger>
             </TabsList>
 
             {/* Curriculum Tab Content */}
@@ -357,7 +349,7 @@ export default function CourseOverview() {
                   <CardTitle>Course Curriculum</CardTitle>
                   <p className="text-sm text-gray-600">
                     {course.chapters.length} chapters • {course.totalLessons}{" "}
-                    lessons 
+                    lessons
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -411,7 +403,6 @@ export default function CourseOverview() {
                                       {lesson.title}
                                     </span>
                                   </div>
-
                                 </div>
                               )
                             )}
@@ -450,23 +441,26 @@ export default function CourseOverview() {
             {/* Reviews Tab Content */}
             <TabsContent value="reviews" className="mt-6">
               <Card className="border border-gray-200">
-                <CardHeader>
-                  <CardTitle>Student Reviews</CardTitle>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                      <span className="text-2xl font-bold">
-                        {course.rating.toFixed(1)}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {course.reviews === 0
-                        ? "No reviews yet"
-                        : course.reviews === 1
-                          ? "Based on 1 review"
-                          : `Based on ${course.reviews} reviews`}
+                <CardHeader className="flex justify-between">
+                  <div>
+                    <CardTitle>Student Reviews</CardTitle>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                        <span className="text-2xl font-bold">
+                          {course.rating.toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {course.reviews === 0
+                          ? "No reviews yet"
+                          : course.reviews === 1
+                            ? "Based on 1 review"
+                            : `Based on ${course.reviews} reviews`}
+                      </div>
                     </div>
                   </div>
+                  <CourseRatingDialog />
                 </CardHeader>
                 <CardContent>
                   {reviews.length === 0 ? (
@@ -526,38 +520,6 @@ export default function CourseOverview() {
                       ))}
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Discussions Tab Content */}
-            <TabsContent value="discussions" className="mt-6">
-              <Card className="border border-gray-200">
-                <CardHeader>
-                  <CardTitle>Course Discussions</CardTitle>
-                  <p className="text-sm text-gray-600">
-                    Connect with fellow students and ask questions
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Join the Discussion
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      Enroll in this course to participate in discussions with
-                      other students
-                    </p>
-                    <Button
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={!isEnrolled ? handleEnroll : undefined}
-                    >
-                      {isEnrolled
-                        ? "Go to Discussions"
-                        : "Enroll to Join Discussions"}
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

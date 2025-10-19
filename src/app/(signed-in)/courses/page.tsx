@@ -67,7 +67,7 @@ export default function Courses() {
         const [allCourses, recommendedCourses, favoriteCourseIds] =
           await Promise.all([
             getAllCourses(),
-            getRecommendedCourses(),
+            getRecommendedCourses(userId),
             getUserFavoriteCourseIds(userId), // Get ALL favorites at once
           ]);
 

@@ -344,3 +344,12 @@ export type FlashcardSet = {
     visibility: "public" | "private";
     created_at?: string;
 }
+
+export type Review = {
+    id?: string;
+    user_id: string;
+    course_id: string;
+    rating: number;
+    comment?: string;
+    created_at?: string;
+}
