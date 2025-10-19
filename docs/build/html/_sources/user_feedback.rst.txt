@@ -1,227 +1,560 @@
+.. _user_feedback:
+
 User Feedback
 =============
 
-**Product**: OSLearn - Language Learning Platform
+We used Google Forms to gather structured feedback from our users, enabling us to capture their insights, experiences, and suggestions in a clear and organized manner. The tables below show all the responses we received for each sprint.
+Please find them here: 
+Sprint 2 - https://docs.google.com/forms/d/e/1FAIpQLSe37FfTMcs1gWBTaZgUlIMQX-ykyofw87kGW08NcWa5PibMUQ/viewform?usp=header
+Sprint 3 - https://docs.google.com/forms/d/e/1FAIpQLSeKt_CaBJ7NHLZ3pAW2yVCWuPCaLJ582U7d_yiSJVWlpU0OQA/viewform?usp=header 
+Sprint 4 - https://docs.google.com/forms/d/e/1FAIpQLSdPojp6njeolSet-x8K7jX3DTZefnkHYO9w4vL_QMv1E6wxog/viewform?usp=header 
 
-**Tested Features**: Course Discovery (Explore & Overview), Dashboard, User Profile, Create Content, Quiz Engine
+Analysis of Feedback
+-------------------
 
-**Testing Date**: 25/09/25
+For all sprints, we received very positive feedback regarding the clean and aesthetic UI of the web app.
 
-**Participants**: 5 Users
+**Sprint 2**
 
-**Methodology**: Moderated remote testing via Google Meet. Participants shared their screens and were asked to "think aloud" while completing tasks. Sessions were recorded for analysis. Users requested anonymity, so names and personal information are not recorded.
+Feedback focused primarily on **mobile responsiveness** and **content layout consistency**. Several users reported that certain pages, particularly the *Manage Course Page*, did not render properly on mobile devices. To address this, we implemented responsive design fixes and ensured visual uniformity by truncating long course descriptions to three lines, giving all course cards a cleaner and more structured appearance.
 
-Testing Script & Tasks
----------------------
+Users appreciated the site’s simplicity and design but expressed a desire for a **user dashboard** and **landing page**—features that were noted and moved to the backlog for Sprint 3. Feature-related feedback also pointed to limited **video player functionality**, as learners could only play or pause videos. In response, we enhanced the player to include controls such as **2x playback speed**, **skip forward/backward**, and **progress tracking**. Additionally, we introduced **filtering options** on the Explore Courses page, allowing users to sort by highest-rated or most-enrolled courses, significantly improving the browsing experience.
 
-**Introduction**: "Thank you for helping us test OSLearn. Today, we're evaluating how easy it is to discover and evaluate courses on our platform. Please verbalize your thoughts, feelings, and frustrations as you complete the tasks. There are no right or wrong answers; we're testing the platform, not you."
+Overall, Sprint 2 established a strong foundation for user satisfaction with design and usability, while identifying critical areas for further development in terms of responsiveness, accessibility, and interactivity.
 
-**Task 1: Discovery**
+**Sprint 3**
 
-"Imagine you want to learn basic Italian for an upcoming trip. Please find a suitable beginner Italian course."
+Feedback highlighted major usability improvements and user engagement features. Many returning users noticed **significant enhancements** from the previous sprint, particularly the introduction of a **dashboard**. However, users also requested more **personalized analytics**. We responded by integrating stats such as *Lessons Completed*, *Courses Completed*, *Languages Mastered*, and *Current Streaks* and enabling users to set **personal learning goals** directly from their dashboard.
 
-**Task 2: Evaluation**
+Several users noted the need for **better quiz feedback**, particularly when a question was answered incorrectly. As a result, we updated the quiz system to display the **correct answer after an incorrect response**, improving the learning experience. Users also requested improvements to **community interaction**, suggesting features like liking and replying to comments, and tagging users. These were successfully added, promoting more engaging discussions. The **course cards** were redesigned to be **fully clickable** for better accessibility, and **profile badges** were introduced to reward learning achievements and encourage consistency.
 
-"Now, please decide if you would enroll in this course. What information helps you make this decision?"
+In summary, Sprint 3 marked a key milestone where the platform evolved from focusing on core functionality to enhancing **personalization, engagement, and interactivity**, aligning well with user expectations.
 
-**Task 3: Personal Management**
+**Sprint 4**
 
-"Please find the page where you can see all the courses you're currently taking and check your progress in one of them."
+Feedback primarily revolved around **performance optimization** and **new learning tools**. Users initially reported **slow loading times**, which were subsequently improved through optimization, leading to **Google Lighthouse performance scores near 99** across pages. The **landing page** was polished to better convey the platform’s purpose, although a few users still suggested minor visual refinements.
 
-**Task 4: Profile Review**
+Newly introduced **flashcards** received positive feedback for ease of use and design consistency. Users suggested additional capabilities, such as a **search function for flashcard sets**, **public sharing options similar to Quizlet**, and **the ability to explore other users’ flashcards**—features that were added. Another major request was for a **notification system**, allowing users to receive alerts when someone replies to or likes their comments in discussions. This system was successfully implemented by the end of the sprint.
 
-"Please find and update your profile bio to say 'Learning Italian and Japanese'."
+Overall, Sprint 4 feedback reflected a mature and polished product phase, emphasizing **performance, discoverability, and interactivity**. Users expressed satisfaction with both the learning experience and social engagement aspects, signaling that the platform had achieved a high standard of usability and feature completeness.
 
-**Task 5: Course Creation**
+Responses
+---------
 
-"You've decided to create a short course on 'Coffee Shop Spanish'. Please use the course creation system to set up this course. Add a unit called 'Greetings and Ordering' with one video lesson and one text-based lesson on vocabulary."
-
-Summary of Feedback & Evidence of Integration
---------------------------------------------
-
-.. list-table::
-   :header-rows: 1
-   :widths: auto
-
-   * - User
-     - Key Feedback (Verbatim Where Possible)
-     - Category
-     - Evidence of Integration / Developer Response
-     - Status
-   * - All
-     - Loading page should be added. I don’t like seeing a white screen while waiting for the page to load.
-     - UI/Usability
-     - Added. A loading page was implemented to address page load times.
-     - Done
-   * - User 1
-     - "I love the tags! I searched 'Italian' and then saw the 'Travel' tag on one course, which is exactly what I need. That sold me."
-     - Positive
-     - **N/A** - Positive reinforcement of existing feature.
-     - N/A
-   * - User 1
-     - "The 'Level' badge is a bit plain. I almost missed it. Maybe colour-code it? Green for beginner, etc."
-     - UI/Usability
-     - **Integrated.** Level badges on Course Overview and Course Cards now have colored backgrounds: ``bg-green-100 text-green-800`` for Beginner, yellow for Intermediate, etc.
-     - Done
-   * - User 2
-     - "I can't tell if I'm already taking a course or not from the main list. I have to click in to see."
-     - Feature Request
-     - **Integrated.** The ``getUserCourses`` function is now used on the Explore page. Course cards for enrolled courses display an "Enrolled" badge.
-     - Done
-   * - User 3
-     - "On the course page, the 'What you'll learn' section is great. I want to see that *before* I click on a course, maybe on the card itself."
-     - Feature Request
-     - **Backlog.** Deemed too cluttered for mobile view. Compromise: added a tooltip on hover for course cards showing the first two learning objectives.
-     - Backlog (S3)
-   * - User 4
-     - "The 'Continue Learning' button is perfect. It's right there. But on my dashboard, the progress bar for my course is tiny and hard to see."
-     - UI/Usability
-     - **Integrated.** Progress bars on Dashboard course cards are now thicker, with bolded percentage labels for better visibility.
-     - Done
-   * - User 4
-     - "I finished a course but there's no way to celebrate! Can I leave a review? It says 'Based on 0 reviews'..."
-     - Feature Request
-     - **Integrated.** This feedback led to the development of the **Course Reviews & Ratings** feature, prioritized for Sprint 2.
-     - Done (S2)
-   * - User 5
-     - "I filtered for 'Beginner' courses but this one course that came up is listed as 'Intermediate' in its description."
-     - Bug
-     - **Fixed.** Bug in the course card component; filter was querying an incorrect field. Fixed to ensure consistency with ``course.level``.
-     - Done
-   * - User 5
-     - "The 'Students' stat is confusing. Is that all-time? This month? I'm not sure what it tells me about the course quality."
-     - Content Clarity
-     - **Integrated.** Added a tooltip to the "Students" icon on the Course Overview page clarifying "Total enrolled students".
-     - Done
-   * - All
-     - **Consensus**: The "Preview Course" button was used by all 5 users. 4/5 expected a video trailer or sample lesson, not just a promotional image.
-     - Expectation
-     - **Backlog.** Renamed to "Watch Preview" and added story **VID-01: Implement Video Course Previews** to the product backlog.
-     - Backlog
-
-Conclusion & Outcomes
---------------------
-
-User testing provided critical insights, moving the platform from "it works" to "it works well." Feedback was categorized into three areas:
-
-1. **Bugs & Immediate Fixes**: Addressed within 24 hours.
-2. **Quick UI/Usability Wins**: Implemented by updating CSS.
-3. **Strategic Feature Requests**: Formalized into user stories and prioritized for the next sprint.
-
-User Feedback Sprint 2
-----------------------
-
-**Product**: OSLearn - Language Learning Platform
-
-**Tested Features**: Course Learning Interface, Dashboard, Course Management, Community Forums
-
-**Testing Date**: 15/10/25
-
-**Participants**: 6 Users
-
-**Methodology**: Unmoderated testing with session recording. Users were given specific tasks related to the learning experience, course management, and community features. Feedback was collected through in-app surveys and session analytics.
-
-Testing Script & Tasks
----------------------
-
-**Introduction**: "Welcome to OSLearn testing. Today we're evaluating the core learning experience, progress tracking, and community features. Please complete the following tasks while thinking aloud about your experience."
-
-**Task 1: Course Learning**
-"Enroll in a course and complete at least 3 lessons of different types (video, text, exercise). Navigate between lessons and mark them as complete."
-
-**Task 2: Progress Tracking**
-"Check your learning progress on the dashboard. Review your weekly activity and current streak."
-
-**Task 3: Course Management**
-"As a course creator, edit an existing course by adding a new unit and modifying lesson content."
-
-**Task 4: Community Engagement**
-"Browse the forums, create a new discussion post, and reply to an existing thread."
-
-**Task 5: Content Moderation**
-"Test the profanity filter by attempting to post inappropriate content in the forums."
-
-Summary of Feedback & Evidence of Integration
---------------------------------------------
+Sprint 2
+~~~~~~~~
 
 .. list-table::
    :header-rows: 1
    :widths: auto
 
-   * - User
-     - Key Feedback (Verbatim Where Possible)
-     - Category
-     - Evidence of Integration / Developer Response
-     - Status
-   * - All
-     - "The sidebar curriculum is essential but takes too much space on mobile. Need better mobile navigation."
-     - UI/Usability
-     - **Integrated.** Added mobile-responsive sidebar with slide-out drawer and close button. Implemented "Open Curriculum" button for mobile access.
-     - Done
-   * - User 1
-     - "Love the different content types! The audio player with transcript is perfect for language learning."
-     - Positive
-     - **N/A** - Positive reinforcement of existing feature design.
-     - N/A
-   * - User 2
-     - "When I complete a video lesson, it should automatically mark as complete. I don't want to click the button every time."
-     - Feature Request
-     - **Integrated.** Added auto-completion for media lessons (video/audio) when content ends. Manual completion still available for all lesson types.
-     - Done
-   * - User 3
-     - "The progress bar in the sidebar is motivating! But I want to see my overall course completion more prominently."
-     - UI/Usability
-     - **Integrated.** Enhanced progress visualization with completed/total lessons count and percentage progress bar in sidebar header.
-     - Done
-   * - User 4
-     - "Exercise feedback is helpful, but I want to see why my answer was wrong with more explanation."
-     - Feature Enhancement
-     - **Integrated.** Enhanced exercise components to show correct answers with explanations for both MCQ and fill-in-the-blank exercises.
-     - Done
-   * - User 5
-     - "As a course collaborator, the version switching between main and suggested edits is confusing. Need clearer labels."
-     - UX/Clarity
-     - **Integrated.** Improved version selector with clear "Main" and "Suggested Edit - [Date]" labels in course management interface.
-     - Done
-   * - User 6
-     - "Forum post creation is smooth, but I accidentally posted inappropriate content. Glad it was blocked!"
-     - Content Moderation
-     - **Integrated.** Implemented comprehensive profanity checking for forum posts (title, content, tags) with clear error messaging.
-     - Done
-   * - All
-     - "Navigation between lessons should be easier. The Previous/Next buttons are too far apart on mobile."
-     - UI/Usability
-     - **Integrated.** Restructured lesson navigation footer with stacked layout on mobile and better button placement.
-     - Done
-   * - User 2, 4
-     - "Discussion forum loading is slow when there are many posts. The infinite scroll sometimes glitches."
-     - Performance
-     - **Integrated.** Optimized forum post loading with better pagination handling and loading states. Fixed scroll restoration issues.
-     - Done
-   * - User 3, 5
-     - "Dashboard stats don't always match my actual progress. Some completed lessons aren't reflected."
-     - Data Accuracy
-     - **Fixed.** Synchronized progress tracking between learning interface and dashboard. Fixed cache invalidation for real-time updates.
-     - Done
-   * - User 1, 6
-     - "The 'Mark Complete' button state should be more obvious. Sometimes I don't know if I've completed a lesson."
-     - UI/Clarity
-     - **Integrated.** Enhanced visual states for completion buttons with distinct colors and icons for complete/incomplete states.
-     - Done
-   * - All
-     - **Consensus**: The collaborative editing workflow for course management needs better visual differentiation between original and suggested changes.
-     - Feature Enhancement
-     - **Backlog.** Created story **CMS-02: Enhanced Visual Diff for Course Editing** to show side-by-side comparison of changes.
-     - Backlog (S3)
+   * - Email address
+     - What device did you use to access OSLearn?
+     - Was the site completely responsive?
+     - How easy was it to get started?
+     - Our goal was a clean and minimalistic aesthetic. How visually appealing did you find the overall design of the site?
+     - How smooth was the login/signup?
+     - How easy was it to find and browse courses?
+     - How intuitive was the lesson navigation?
+     - Did the video/audio players work smoothly?
+     - How easy was it to create and manage your own courses?
+     - We strive for a seamless experience. Were there any bugs or errors? If so, please provide details on what happened and where.
+     - How would you rate the user-friendliness of the site?
+     - How would you rate the site overall?
+     - Is there anything we're missing? Share your ideas for improvements or new features.
+   * - 2443320@students.wits.ac.za
+     - Phone
+     - No
+     - 4
+     - 5
+     - 5
+     - 5
+     - 4
+     - 5
+     - 5
+     - Your website is not completely responsive on my phone. The Manage Course Page is looking a bit weird.
+     - 4
+     - 4
+     - There is no landing page or dashboard for users. Users don't know what courses they are enrolled in unless they navigate to that specific course. However, the website looks very clean. Well done!
+   * - rajveergohil57@gmail.com
+     - Phone
+     - No
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - no
+     - 5
+     - 5
+     - no
+   * - 2552005@students.wits.ac.za
+     - Laptop
+     - Yes
+     - 4
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 
+     - 4
+     - 5
+     - Cleannnnnnn!!!!!!! Maybe you guys should add video controls like 2x speed and the ability to go forward or backwards instead of play/pause. Also, add a user dashboard to view courses.
+   * - mokoenadimphonyana@gmail.com
+     - Tablet
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 
+     - 5
+     - 5
+     - I can only play or pause the video when learning content. It would be helpful to have additional controls like scrolling forward.
+   * - bhavandomun25@gmail.com
+     - Laptop
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 4
+     - 5
+     - i didn't see any
+     - 5
+     - 4
+     - solid stuff
+   * - bangiehuzaifah43@gmail.com
+     - Phone
+     - No
+     - 4
+     - 5
+     - 5
+     - 5
+     - 4
+     - 4
+     - 5
+     - not responsive on mobile :( courses go brrrrr
+     - 4
+     - 5
+     - fix manage course page. also, add filters on manage course page other than search bar. otherwise its tooooooo good
+   * - jzkanju@gmail.com
+     - Laptop
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - 5
+     - There were no errors or bugs.
+     - 5
+     - 5
+     - You should have a dashboard so I can see courses I am enrolled in or to just manage my courses there.
+   * - banzile.nhlebela74@gmail.com
+     - Phone
+     - No
+     - 4
+     - 4
+     - 5
+     - 5
+     - 3
+     - 3
+     - 4
+     - The site is not responsive.
+     - 3
+     - 3
+     - Add video controls. I dont want to just play/pause it. there should be a dashboard to see a summary of everything rather than going to explore courses.
 
-Conclusion & Outcomes
---------------------
+Sprint 3
+~~~~~~~~
 
-The testing revealed strong positive reception for the multi-format learning content and community features. Key improvements were made to:
+.. list-table::
+   :header-rows: 1
+   :widths: auto
 
-1. **Mobile Experience**: Completely overhauled mobile navigation for the learning interface
-2. **Progress Tracking**: Enhanced real-time synchronization and visual feedback
-3. **Content Moderation**: Strengthened profanity filtering across community features
-4. **User Experience**: Streamlined workflows for both learners and content creators
+   * - Email address
+     - Is this your first time using the site?
+     - If not using for the first time, did you see improvements?
+     - How easy was it to get started?
+     - Our goal was a clean and minimalistic aesthetic. How visually appealing did you find the overall design of the site?
+     - How was your experience with the dashboard?
+     - What would you like to see on the dashboard that wasn't there?
+     - How useful did you find the interactive exercises?
+     - Did the interactive exercises make it fun to engage with the content?
+     - How easy was it to participate in discussion forums?
+     - How easy was it to collaborate with other users?
+     - How intuitive was it to accept/reject other user's edit that wanted to collaborate with your course?
+     - Did the video/audio players work smoothly?
+     - We strive for a seamless experience. Were there any bugs or errors? If so, please provide details on what happened and where.
+     - How would you rate the user-friendliness of the site?
+     - How would you rate the site overall?
+     - Is there anything we're missing? Share your ideas for improvements or new features.
+   * - 2699183@students.wits.ac.za
+     - Yes
+     - 
+     - 5
+     - 5
+     - 5
+     - Some cool graphs and stats
+     - 4
+     - Yes
+     - 5
+     - 5
+     - 4
+     - 5
+     - the cards look weird, but not a bug just ui issue
+     - 4
+     - 4
+     - I want to see the correct ans when I get it wrong in the exercise. also additional stats on dashboard would be cool.
+   * - 2582526@students.wits.ac.za
+     - Yes
+     - 
+     - 4
+     - 4
+     - 5
+     - I want to see finished lessons at the end of the dashboard, not in alphabetical order
+     - 4
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - nothing
+     - 4
+     - 5
+     - The cards are all not the same size, but it look a bit out of place. Also, when I click anywhere on a card, it should let me view that course instead of clicking on a button.
+   * - 2547684@students.wits.ac.za
+     - Yes
+     - 
+     - 5
+     - 5
+     - 5
+     - everything is there
+     - 5
+     - Yes
+     - 5
+     - 5
+     - 4
+     - 5
+     - nope
+     - 5
+     - 5
+     - I want to reply to other peoples comments and like and dislike their comments
+   * - banzile.nhlebela74@gmail.com
+     - No
+     - No
+     - 4
+     - 5
+     - 5
+     - Add stats about how many courses I have completed, course that are incomplete etc.Maybe also let users add goals.
+     - 4
+     - Yes
+     - 5
+     - 4
+     - 5
+     - 5
+     - Nothing I could see
+     - 4
+     - 5
+     - Maybe add badges or certificates for completing a course. Also, I want to see the correct answer when I get a question wrong on the quiz. Manage Course UI looks a bit weird.
+   * - rajveergohil57@gmail.com
+     - No
+     - No
+     - 5
+     - 4
+     - 4
+     - nothing
+     - 4
+     - No
+     - 5
+     - 5
+     - 5
+     - 5
+     - niks again
+     - 4
+     - 4
+     - I want to @ people in the discussions
+   * - 2552002@students.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - More analytical data
+     - 5
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - No
+     - 5
+     - 5
+     - The collaboration feature is actually so good. Change the quiz to show me the right answer when I get it wrong. else everything is fine.
+   * - bangiehuzaifah43@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - blom
+     - 4
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - nah
+     - 5
+     - 5
+     - I cant see correct ans when I get it wrong on lesson thingy
+   * - 2443320@studnets.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - order the courses by what percentage I have completed it, I dont want to scroll all the way down if a course starts with z
+     - 5
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - 
+     - 5
+     - 5
+     - I want to dislike comments in the discussion forum and reply to other people by tagging them.
+   * - jzkanju@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - stats on courses I have completed
+     - 5
+     - Yes
+     - 5
+     - 4
+     - 5
+     - 5
+     - Not a bug, but the cards all have different sizes depending on the course description and doesn't look good. Also, it would be good idea to take away the button on course card and make the whole card clickable.
+     - 5
+     - 5
+     - Show me the correct answer when I get it wrong instead of telling me its incorrect when learning.
+   * - mokoenadimphonyana@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 
+     - 5
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - 
+     - 5
+     - 5
+     - 
+   * - bhavandomun25@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - Everything is there
+     - 5
+     - Yes
+     - 5
+     - 5
+     - 5
+     - 5
+     - Your courses description looks a bit unaligned.
+     - 5
+     - 5
+     - Provide feedback when a learner gets an answer incorrect in the practise quiz
 
-The collaborative course editing system received particular praise, though users requested better visual differentiation between versions, which has been prioritized for future development.
+Sprint 4
+~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Email address
+     - Is this your first time using the site?
+     - If not using for the first time, did you see improvements?
+     - How easy was it to get started?
+     - Our goal was a clean and minimalistic aesthetic. How visually appealing did you find the overall design of the site?
+     - How would you rate the website's loading speed?
+     - Do you need to re-login if you re-open or close the tab?
+     - Do you understand the purpose of the website from the landing page?
+     - How consistent is the styling of the website?
+     - Please rate how easy it was to use the flashcards?
+     - Do you have any additional feedback regarding the use of flashcards?
+     - We strive for a seamless experience. Were there any bugs or errors? If so, please provide details on what happened and where.
+     - How would you rate the user-friendliness of the site?
+     - How would you rate the site overall?
+     - Do you have any additional feedback?
+   * - 2443320@students.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - No
+     - Yes
+     - 5
+     - 5
+     - Add a search function for my sets of flashcards
+     - nope
+     - 4
+     - 4
+     - The landing page needs a bit of polish
+   * - 2582526@students.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - No
+     - Yes
+     - 5
+     - 5
+     - Make flashcards public to other users
+     - 
+     - 5
+     - 5
+     - I want to be able to receive notifications if someone replies to me in the discussion forum
+   * - bhavandomun25@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 5
+     - No
+     - No
+     - 4
+     - 5
+     - 
+     - 
+     - 5
+     - 5
+     - 
+   * - rajveergohil57@gmail.com
+     - No
+     - Yes
+     - 4
+     - 5
+     - 3
+     - No
+     - No
+     - 5
+     - 5
+     - make them bigger
+     - 
+     - 5
+     - 5
+     - looks amazing
+   * - bangiehuzaifah43@gmail.com
+     - Yes
+     - Yes
+     - 5
+     - 5
+     - 5
+     - No
+     - Yes
+     - 5
+     - 5
+     - cool feature
+     - I didn't come across any
+     - 5
+     - 5
+     - The discussion forum is nice, well implemented
+   * - banzile.nhlebela74@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - No
+     - Yes
+     - 5
+     - 5
+     - make flashcards available to other users like quizlet
+     - No
+     - 5
+     - 4
+     - no
+   * - 2547682@students.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - No
+     - Yes
+     - 5
+     - 5
+     - 
+     - 
+     - 5
+     - 5
+     - 
+   * - mokoenadimphonyana@gmail.com
+     - No
+     - Yes
+     - 5
+     - 5
+     - 4
+     - Yes
+     - Yes
+     - 5
+     - 5
+     - 
+     - 
+     - 4
+     - 5
+     - some pages take a bit long to load
+   * - 2552005@students.wits.ac.za
+     - No
+     - Yes
+     - 5
+     - 5
+     - 3
+     - No
+     - Yes
+     - 5
+     - 5
+     - I want to discover other people's flashcards
+     - Nope
+     - 5
+     - 4
+     - Website looks clean overall!
+
+Screenshots
+-----------
+.. image:: _static/screenshot1.png
+   :alt: screenshot
+   :width: 600px
+
+.. image:: _static/screenshot2.png
+   :alt: _static/screenshot1.png
+   :width: 600px
+
+.. image:: _static/screenshot3.png
+   :alt: _static/screenshot1.png
+   :width: 600px

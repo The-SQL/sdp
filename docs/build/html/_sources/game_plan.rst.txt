@@ -1,105 +1,130 @@
-Game Plan
-=========
+Project Planning
+===============
 
-**Team Members:** Priyanka, Wilfred, Kamogelo, Emmanuel
+Artifacts
+---------
 
-**Guiding Principle:** Work is distributed based on a mix of initial skill sets and desired learning outcomes to ensure fairness, balance, and contribution to the professional growth of all team members. Roles are focused but not siloed; collaboration and peer review are required.
+The project team utilized several key tools to manage the planning and execution of the project effectively. Each tool played a distinct role in organizing tasks, facilitating collaboration, and maintaining version control.
 
-Primary Role Responsibilities
-----------------------------
+- **Notion**: Used for comprehensive work planning, sprint tracking, backlog management, and maintaining Kanban boards for workflow visualization.
+- **GitHub**: Served as the central repository for version control, code collaboration, and maintaining project history.
+- **Google Docs**: Used to record meeting minutes, document decisions, and store all written artifacts related to planning and review.
+- **Google Meet**: Primary platform for virtual meetings, including sprint planning, stakeholder consultations, and daily stand-ups.
+- **ReadTheDocs**: Hosted the team’s technical and management documentation for accessibility and versioned record-keeping.
 
-.. list-table::
-   :header-rows: 1
-   :widths: auto
+Development Plan
+---------------
 
-   * - Name
-     - Primary Role
-     - Key Responsibilities
-   * - Priyanka
-     - Frontend Lead
-     - - Architecting the main React application structure and components.
-       - Implementing complex UI logic and state management (e.g., lesson player).
-       - Establishing testing protocols (Jest, React Testing Library).
-       - Ensuring UI consistency and responsiveness.
-   * - Emmanuel
-     - UI/UX Designer & Frontend Developer
-     - - Creating and maintaining all Figma wireframes and prototypes.
-       - Translating designs into functional React components.
-       - Implementing CSS/styling (e.g., using Styled-Components or Tailwind).
-       - Ensuring a seamless and intuitive user experience.
-   * - Wilfred
-     - Backend Lead & DevOps
-     - - Designing and implementing the Node.js/Express API architecture.
-       - Managing the MongoDB database: schema design, queries, and optimization.
-       - Setting up the deployment pipeline and managing environments (Dev, Prod).
-       - Integrating third-party APIs and ensuring backend security.
-   * - Kamogelo
-     - Full-Stack Developer & Product Owner Proxy
-     - - Implementing key features that bridge frontend and backend (e.g., form handlers, API calls).
-       - Managing the product backlog in Notion and facilitating sprint planning.
-       - Being the main point of contact for client communications and requirement clarification.
-       - Assisting both frontend and backend where needed to balance workload.
+The planning phase began by identifying key requirements and core functionalities of the **Course Management and Course Learning System**. Both the project team and the stakeholder were actively consulted to ensure that the system addressed diverse user needs. It was agreed that the system’s core features would include: **Learning Courses**, **Course Creation**, and **Course Management**. The planning phase also included selecting appropriate technologies and frameworks to guarantee scalability, security, and user-friendliness.
 
-Sprint-by-Sprint Workload Distribution
--------------------------------------
+The following milestones were established as deliverables at the end of each sprint.
 
-This table outlines how feature development is distributed to ensure clear focus and balanced workload each sprint.
+Sprint One: Foundational Setup & User System
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. list-table::
-   :header-rows: 1
-   :widths: auto
+**Milestone:** A secure and functional user system is in place.
 
-   * - Sprint
-     - Priyanka (Frontend)
-     - Emmanuel (UI/UX & Frontend)
-     - Wilfred (Backend & DB)
-     - Kamogelo (Full-Stack & PM)
-   * - 1: Auth
-     - Auth context & protected routes logic
-     - Login/Sign-up page UI components
-     - Auth API routes (JWT, OAuth) & User schema
-     - Project setup coordination & client meeting notes
-   * - 2: Core Flow
-     - Lesson Player component, Progress tracking UI
-     - Course Explorer page, Dashboard layout
-     - Course & Lesson APIs, Progress tracking API
-     - Enrollment logic, connecting frontend to new APIs
-   * - 3: Rich Content
-     - Interactive quiz & flashcard components
-     - Designer for new lesson component UIs
-     - API endpoints for new lesson types (quiz, flashcard)
-     - Implementing SRS logic, Review/rating system
-   * - 4: Polish
-     - Writing E2E tests, Code optimization
-     - Final UI polish, responsive fixes
-     - Deployment scripting, database indexing
-     - "Suggested courses" logic, admin moderation features
+- Users can sign in and log in via Google OAuth.
+- User roles (Learner, Author) are defined in the database schema.
+- Core database schemas for Users and Courses are designed and implemented.
+- Development workflows and repositories (Notion, GitHub) are established.
 
-How This Distribution is Fair
-----------------------------
+Requirements Gathering & Initial Planning
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. **Balance of "Heads-Down" vs. "Collaborative" Work:**
-   - Wilfred focuses on deep backend work.
-   - Priyanka and Emmanuel focus on frontend work.
-   - Kamogelo's role is collaborative, interacting with all team members and the client, ensuring no isolation.
+The team collaboratively defined the system’s core functionalities through detailed discussions with the stakeholder (tutor). This phase ensured that all functional requirements were clear, well-documented, and agreed upon by all parties.
 
-2. **Mix of Creation and Maintenance:**
-   - Emmanuel creates designs, and Priyanka implements their complex logic, splitting creative and technical UI work.
-   - Wilfred builds backend infrastructure, and Kamogelo writes code that consumes it, ensuring shared investment in quality.
+Architecture Design & Technology Selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-3. **Skill Development for All:**
-   - **Priyanka**: Strengthens advanced React and testing skills.
-   - **Emmanuel**: Practices translating design theory into practice.
-   - **Wilfred**: Gains deep experience in API architecture and deployment.
-   - **Kamogelo**: Develops full-stack and project management skills.
+The overall architecture of the system was finalized. Core components such as the course creation flow, interactive course viewer, and learning progress tracker were mapped out. The chosen **tech stack** supported scalability, security, and maintainability.
 
-4. **Shared Ownership of Critical Path:**
-   - No single person owns a "critical path" feature alone. For example, a lesson requires Emmanuel's design, Priyanka's component, Wilfred's API, and Kamogelo's integration, fostering mutual dependency and teamwork.
+Stakeholder Consultation & Requirements Documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-5. **Rotating "Unglamorous" Tasks:**
-   - Tasks like documentation, meeting setup, and testing are distributed. Defined roles ensure coverage (e.g., Kamogelo on notes, Priyanka on test protocols, Wilfred on deployment docs).
+Informal consultation meetings were held with the stakeholder to capture their expectations, ensuring that the application design met their pedagogical and usability goals.
+
+UI Designs
+~~~~~~~~~~
+
+User interface design was prioritized in this sprint, focusing on defining user flow, color schemes, typography, and iconography. Wireframes were created to visualize the experience for learners and authors.
+
+Deployment of a Basic Application
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A basic version of the application was deployed according to the defined infrastructure. This involved configuring the GitHub repository, database, and deployment environment to ensure accessibility and functionality.
+
+Sprint Two: Core Learning Flow & Course Creation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Milestone:** Users can create and manage courses; learners can enroll and start learning.
+
+- **Course Explorer Page:** Users can browse and search all published courses.
+- **Course Enrollment:** Learners can enroll in available courses.
+- **Course Builder:** Authors can create new courses with text-based lessons.
+- **Lesson Player UI:** Interface for viewing and navigating lesson content.
+- **Progress Tracking:** Learners’ progress recorded per lesson.
+- **User Dashboard:** Displays enrolled courses and progress metrics.
+
+Sprint Three: Enhanced Content & Community Features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Milestone:** The platform supports interactive content and basic community engagement.
+
+- **Rich Lesson Builder:** Authors create lessons with multimedia and interactive quizzes.
+- **Ratings & Reviews:** Learners rate and review courses.
+- **Public Dashboard:** Displays user profiles, created courses, and learning stats.
+- Collaboration: Users can collaborate with other users on their courses to make changes
+- **Discussion Forum:** Integration with an external moderation API for safe user interactions.
+- **User Profile Management:** Users can update personal information and achievements.
+- **Notifications:** Real-time updates for forum interactions and course activities.
+
+Sprint Four: Final Polish, Personalization & Launch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Milestone:** The application is optimized, documented, and ready for deployment.
+
+- **Bug Fixing & UI Enhancements:** Refine the interface for a seamless user experience.
+- **Recommended Courses Section:** Personalized course suggestions based on tags and enrolled languages.
+- **Landing Page:** Finalized marketing and introductory page for the platform.
+- **Flashcards Tool:** Enables learners to create personalized study flashcards.
+- **Final Documentation & Launch Preparation:** Ensured completeness and accuracy across all project documentation before launch.
+
+Work Distribution
+----------------
+
+Work was distributed based on **features** rather than technical layers. Each team member was responsible for specific application features from design through testing and documentation. This structure promoted accountability and ownership. For complex features, multiple members collaborated, ensuring timely delivery. The approach encouraged team members to engage with both frontend and backend aspects, supporting skill development and system-wide understanding.
+
+Bug Tracker
+-----------
+
+A detailed **bug tracking system** was implemented using Notion. Any member could report a bug, which was then assigned to the relevant developer. Bugs were categorized and tracked through the statuses: **Open**, **In Progress**, and **Fixed**.
+
+Each bug report included:
+
+- Bug name
+- Description
+- Steps to reproduce
+- Priority (High, Medium, Low)
+- Severity (Critical, Major, Minor)
+
+Severity Levels
+~~~~~~~~~~~~~~~
+
+- **Critical**: System crash, data loss, or security breach. **Impact**: System unusable. **Examples**: Crashes, DB corruption, login bypass.
+- **Major**: Core functionality broken but app runs. **Impact**: Severe feature impairment. **Examples**: Course not saving, progress not tracked.
+- **Minor**: Cosmetic or partial issues. **Impact**: Minimal impact. **Examples**: UI glitches, image load delays.
+
+Priority Levels
+~~~~~~~~~~~~~~~
+
+- **High**: Blocks major functionality. **Response Time**: < 24 hours. **Examples**: Login failure, data corruption.
+- **Medium**: Affects functionality but workaround exists. **Response Time**: < 5 days. **Examples**: Progress not updating, API lag.
+- **Low**: Minor or cosmetic issues. **Response Time**: < 2 weeks. **Examples**: Typos, alignment issues.
+
+This structure ensured clarity in debugging efforts and helped prioritize critical fixes before release.
 
 API Integration
 ---------------
 
-We have established an integration with the team '202 Not Okay' to utilize their Moderation API. This collaboration will automatically scan and filter user-generated text content across our platform to ensure community guidelines are upheld.
+The team collaborated with **Team “202 Not Okay”** to integrate their **Moderation API** into the discussion forum feature. The API automatically scans user-generated posts before submission. If the system detects offensive or harmful content, the post is blocked, maintaining a safe and respectful learning environment. This integration added a crucial layer of content moderation and enhanced community trust within the platform.

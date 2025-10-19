@@ -1,336 +1,91 @@
 Features
 ========
 
-Introduction
-------------
+User Authentication & Profile Management
+---------------------------------------
 
-A comprehensive language learning platform built with Next.js, featuring course creation, collaborative learning, community forums, and progress tracking.
+The application uses Clerk for user authentication, providing a secure sign-in/sign-up system. Each user has a comprehensive profile system that tracks their learning journey. The profile displays personal information, learning statistics including completed courses, lessons finished, current and longest learning streaks, and total points earned. Users can edit their profile information including name and bio directly within the application. The system also tracks which languages the user is learning and displays them in the profile.
 
-Core Features
--------------
-
-User Management & Authentication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Authentication System
-^^^^^^^^^^^^^^^^^^^^^
-
-- **Clerk Integration**: Secure user authentication and management
-- **Profile Management**: User profiles with avatars, bios, and personal information
-- **Session Management**: Persistent login states across the application
-
-User Profiles
-^^^^^^^^^^^^^
-
-- **Personal Information**: Name, email, bio, location, native language
-- **Learning Statistics**: Progress tracking, streaks, achievements
-- **Course Management**: Enrolled courses, completion status
-- **Settings**: Profile editing, notification preferences, privacy controls
-
-Course Management
------------------
+Course Management System
+-----------------------
 
 Course Creation & Editing
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Course Builder Interface
-^^^^^^^^^^^^^^^^^^^^^^^^
+The platform provides a sophisticated course creation interface with a tab-based workflow. The process is divided into four main sections: Course Setup, Content Builder, Collaboration, and Publishing. In the setup phase, creators define basic course information including title, description, difficulty level, estimated duration, language, and learning objectives. The system includes a live preview feature that shows how the course will appear to students.
 
-- **Setup Tab**: Basic course information (title, description, difficulty, language, duration)
-- **Content Builder**: Structured unit and lesson creation
-- **Media Support**: Video, audio, text, and exercise content types
-- **Rich Content Editor**: Text formatting and media embedding
+The Content Builder allows creators to structure their course into units and lessons. Each lesson can be one of four content types: video lessons, text content, audio lessons, or interactive exercises. For video and audio content, the system supports file uploads and provides storage through Supabase. The exercise system includes multiple-choice quizzes and fill-in-the-blank activities with configurable correct answers.
 
-Content Types
-^^^^^^^^^^^^^
+Course Publishing Options
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Video Lessons**: Upload or record video content with notes
-- **Audio Lessons**: Audio recordings with transcripts
-- **Text Content**: Written lessons with rich formatting
-- **Interactive Exercises**: Multiple choice and fill-in-the-blank exercises
+Creators have flexible publishing options. They can save courses as drafts for private development, publish as unlisted (accessible only via direct link), or publish publicly to make them discoverable to all users. The system handles all media uploads and database operations automatically during the publishing process.
 
-Course Publishing
-^^^^^^^^^^^^^^^^^
+Learning Interface
+-----------------
 
-- **Draft Mode**: Save courses as private drafts
-- **Unlisted Publishing**: Share via direct links
-- **Public Publishing**: Make courses discoverable to all users
-- **Version Control**: Track changes and suggested edits
+Course Overview & Enrollment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Learning Experience
--------------------
+The course overview page provides detailed information about each course including title, description, difficulty level, duration, student count, ratings, and reviews. Students can enroll in courses, add them to favorites, or share them with others. The page displays comprehensive author information and a detailed curriculum breakdown.
 
-Course Learning Interface
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Interactive Learning Experience
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lesson Navigation
-^^^^^^^^^^^^^^^^^
+Once enrolled, students access a dedicated learning interface that presents course content in an organized manner. The interface features a collapsible sidebar showing course curriculum with progress tracking. Each lesson is displayed in a main content area with specialized players for different content types: video players with controls, audio players with playback functionality, text content readers, and interactive exercise components.
 
-- **Structured Curriculum**: Units and lessons with progress tracking
-- **Sidebar Navigation**: Collapsible unit view with lesson status
-- **Progress Indicators**: Visual completion status for each lesson
-- **Sequential Learning**: Previous/next lesson navigation
-
-Media Players
-^^^^^^^^^^^^^
-
-- **Video Player**: Full-featured video playback with controls
-- **Audio Player**: Custom audio interface with play/pause functionality
-- **Transcript Support**: Text transcripts for audio/video content
-
-Interactive Exercises
-^^^^^^^^^^^^^^^^^^^^^
-
-- **Multiple Choice Questions**: Single and multiple correct answers
-- **Fill-in-the-Blank**: Text input exercises with validation
-- **Instant Feedback**: Immediate correctness feedback
-- **Answer Validation**: Case-insensitive and trimmed answer checking
-
-Progress Tracking
-~~~~~~~~~~~~~~~~~
-
-- **Completion Status**: Track lesson completion (not_started, completed)
-- **Progress Percentage**: Overall course completion calculation
-- **Learning Analytics**: Time spent, lessons completed, current streaks
-- **Achievement System**: Badges and rewards for learning milestones
+The system includes progress tracking that marks lessons as complete automatically when media content finishes playing or manually when students click completion buttons. Navigation controls allow moving between lessons while maintaining progress state. Users can also create flashcards to help them solidify their understanding of a language.
 
 Collaboration Features
-----------------------
+---------------------
 
-Course Collaboration
-~~~~~~~~~~~~~~~~~~~~
+Course Collaboration System
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Collaborator Management
-^^^^^^^^^^^^^^^^^^^^^^^
+The platform includes a robust collaboration system that allows course creators to invite other users to contribute to their courses. Creators can enable or disable collaboration requests through a toggle setting. The system manages collaboration invitations and tracks pending, accepted, and rejected requests.
 
-- **Invitation System**: Email-based collaborator invitations
-- **Role Management**: Course owner vs. collaborator permissions
-- **Request System**: Pending, accepted, and rejected collaboration requests
-- **Status Tracking**: Active, pending, and cancelled collaborator states
+Collaborators can propose changes to courses through a suggested edits system. When collaborators make changes, these are stored as separate versions that the original course author can review and approve or reject. The system highlights differences between the original course and suggested changes, making it easy for authors to review modifications.
 
-Suggested Edits
-^^^^^^^^^^^^^^^
-
-- **Change Proposals**: Non-owners can suggest course modifications
-- **Version Comparison**: Side-by-side comparison of original vs. suggested changes
-- **Approval Workflow**: Course owners can accept or reject changes
-- **Change History**: Track all proposed modifications
-
-Community & Social Features
----------------------------
+Community Features
+-----------------
 
 Discussion Forums
 ~~~~~~~~~~~~~~~~~
 
-Forum Structure
-^^^^^^^^^^^^^^^
+The application includes a comprehensive forum system where users can discuss language learning topics. The forums are organized into categories including General Discussion, Language Exchange, Study Groups, Course Help, Cultural Exchange, and Success Stories. Users can create posts with titles, categories, language tags, and content. The system includes search and filtering capabilities to help users find relevant discussions.
 
-- **Categories**: Organized discussion topics (General, Language Exchange, Study Groups, etc.)
-- **Post Creation**: Rich text posts with categories and tags
-- **Reply System**: Nested replies with threading support
-- **Voting System**: Like posts and replies
+Post Interactions & Moderation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Content Moderation
-^^^^^^^^^^^^^^^^^^
-
-- **Profanity Filter**: Automatic inappropriate language detection
-- **Spam Prevention**: Rate limiting and content validation
-- **User Reporting**: Flag inappropriate content
-- **Moderation Tools**: Admin and moderator controls
+The forum supports rich interactions including replies, likes, and viewing counts. A content moderation system checks all posts and replies for inappropriate language using a profanity filter, preventing submissions that contain offensive content. The interface shows post metrics like reply counts, view counts, and like counts, along with timestamps for all activities.
 
 Notifications System
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~
 
-- **Real-time Alerts**: New replies, likes, and mentions
-- **Read Status**: Track which notifications have been viewed
-- **Bulk Actions**: Mark all as read functionality
-- **Pagination**: Handle large notification lists
+Users receive notifications when others interact with their content, such as when someone replies to their forum posts. The notification system marks items as read when viewed and provides options to mark all notifications as read at once. Notifications include excerpts of the relevant content and direct links to the discussions.
 
-Course Discovery & Enrollment
------------------------------
+Progress Tracking & Analytics
+----------------------------
 
-Course Catalog
-~~~~~~~~~~~~~~
+Learning Analytics
+~~~~~~~~~~~~~~~~~
 
-Search & Filtering
-^^^^^^^^^^^^^^^^^^
+The platform tracks extensive learning metrics including course completion percentages, lesson progress, and time-based streaks. The dashboard displays weekly activity visualizations showing which days the user was active. Quick stats provide at-a-glance information about completed courses, lessons finished, current streaks, and total learning points.
 
-- **Text Search**: Search by course title, description, and tags
-- **Level Filtering**: Beginner, Intermediate, Advanced levels
-- **Language Filtering**: Filter by target language
-- **Sorting Options**: Rating, student count, duration
-
-Course Cards
-^^^^^^^^^^^^
-
-- **Rich Previews**: Course images, ratings, and statistics
-- **Favorite System**: Bookmark courses for quick access
-- **Enrollment Status**: Display enrollment state and progress
-- **Recommendation System**: Personalized course suggestions
-
-Enrollment System
-^^^^^^^^^^^^^^^^^
-
-- **Free Enrollment**: One-click course enrollment
-- **Progress Persistence**: Save learning progress across sessions
-- **Continue Learning**: Quick access to in-progress courses
-- **Completion Tracking**: Mark courses as completed
-
-Dashboard & Analytics
----------------------
-
-Learning Dashboard
+Goal Setting System
 ~~~~~~~~~~~~~~~~~~
 
-Progress Overview
-^^^^^^^^^^^^^^^^^
+Users can set learning goals with specific target dates. The system tracks goal completion and provides visual progress indicators. Goals can be marked as complete manually, helping users stay motivated and organized in their learning journey.
 
-- **Current Courses**: Active enrollments with progress indicators
-- **Weekly Activity**: Visual study calendar with daily progress
-- **Learning Goals**: Set and track personal learning objectives
-- **Quick Stats**: Key metrics at a glance
+Content Management & Administration
+-----------------------------------
 
-Achievement System
-^^^^^^^^^^^^^^^^^^
+Course Management Dashboard
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Milestone Badges**: Reward course completion and consistency
-- **Progress Tracking**: Track achievement progress
-- **Point System**: Gamification with achievement points
-- **Recognition**: Display earned achievements prominently
+Content creators have access to a management dashboard where they can view all their courses, see basic statistics, and access editing interfaces. The system supports version management for courses, allowing creators to view and manage both main course content and suggested edits from collaborators.
 
-Statistics & Analytics
-^^^^^^^^^^^^^^^^^^^^^^
-
-- **Study Time Tracking**: Total time spent learning
-- **Streak Counter**: Consecutive days of learning
-- **Lesson Completion**: Total lessons completed
-- **Language Diversity**: Number of languages being learned
-
-Technical Features
-------------------
-
-Responsive Design
-~~~~~~~~~~~~~~~~~
-
-Mobile Optimization
-^^^^^^^^^^^^^^^^^^^
-
-- **Responsive Layouts**: Adapt to desktop, tablet, and mobile screens
-- **Touch Interactions**: Mobile-friendly buttons and controls
-- **Progressive Enhancement**: Core functionality on all devices
-
-Performance Features
-^^^^^^^^^^^^^^^^^^^^
-
-- **Loading States**: Skeleton screens and progress indicators
-- **Optimized Media**: Efficient video and audio streaming
-- **Pagination**: Handle large datasets efficiently
-- **Caching Strategies**: Optimized data fetching
-
-Accessibility
-~~~~~~~~~~~~~
-
-- **Keyboard Navigation**: Full keyboard support
-- **Screen Reader Compatibility**: ARIA labels and semantic HTML
-- **Color Contrast**: Accessible color schemes
-- **Focus Management**: Logical focus order
-
-Data Management
-~~~~~~~~~~~~~~~
-
-State Management
-^^^^^^^^^^^^^^^^
-
-- **React Hooks**: useState, useEffect, useCallback for local state
-- **Form Handling**: Controlled components with validation
-- **Real-time Updates**: Immediate UI updates after actions
-- **Error Handling**: Graceful error states and user feedback
-
-Data Persistence
-^^^^^^^^^^^^^^^^
-
-- **Supabase Integration**: PostgreSQL database with real-time capabilities
-- **File Storage**: Supabase storage for media files
-- **User Data**: Persistent user preferences and progress
-- **Backup & Recovery**: Data integrity and recovery mechanisms
-
-Administrative Features
------------------------
-
-Course Management
-~~~~~~~~~~~~~~~~~
-
-Author Tools
-^^^^^^^^^^^^
-
-- **Course Analytics**: View enrollment and completion statistics
-- **Content Management**: Edit course structure and content
-- **Collaborator Management**: Add/remove course collaborators
-- **Publication Control**: Control course visibility and access
-
-Moderation Tools
-^^^^^^^^^^^^^^^^
-
-- **User Management**: View and manage platform users
-- **Content Review**: Moderate forum posts and course content
-- **Analytics Dashboard**: Platform-wide usage statistics
-- **System Health**: Monitor platform performance and issues
-
-Integration Features
---------------------
-
-Third-Party Integrations
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Media Processing
-^^^^^^^^^^^^^^^^
-
-- **File Upload**: Support for multiple file formats
-- **Media Conversion**: Automatic format optimization
-- **Storage Management**: Efficient media file organization
-- **CDN Integration**: Fast content delivery
-
-Email System
-^^^^^^^^^^^^
-
-- **Notification Emails**: Course invitations and updates
-- **Transactional Emails**: Enrollment confirmations and reminders
-- **Marketing Communications**: Platform announcements and features
-
-Security Features
------------------
-
-Data Protection
-~~~~~~~~~~~~~~~
-
-- **Authentication Security**: Secure login and session management
-- **Data Encryption**: Encrypted data transmission and storage
-- **Access Control**: Role-based permissions and authorization
-- **Input Validation**: Sanitized user inputs and file uploads
-
-Privacy Features
-^^^^^^^^^^^^^^^^
-
-- **User Privacy**: Control over personal information
-- **Data Export**: Download personal data
-- **Account Deletion**: Complete account removal
-- **Privacy Settings**: Granular control over visibility
-
-Future Enhancements
--------------------
-
-Planned Features
+Media Management
 ~~~~~~~~~~~~~~~~
 
-- **Live Classes**: Real-time virtual classroom functionality
-- **AI Tutoring**: Personalized learning assistance
-- **Mobile App**: Native iOS and Android applications
-- **Advanced Analytics**: Detailed learning insights and recommendations
-- **Social Features**: User profiles, following, and direct messaging
-- **Certification**: Official completion certificates
-- **Marketplace**: Course monetization and instructor payments
-
-Conclusion
-----------
-
-This platform provides a comprehensive solution for language learning with robust course creation tools, collaborative features, and engaging learning experiences. The modular architecture allows for continuous enhancement and scalability to meet evolving user needs.
+The application handles various media types including images for course covers, video files for lessons, and audio files for listening exercises. All media is stored and served through Supabase storage with organized bucket structures for different content types.
