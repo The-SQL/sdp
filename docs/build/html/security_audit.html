@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Audit &mdash; OSLearn  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="User Feedback" href="user_feedback.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#user-authentication-profile-management">User Authentication &amp; Profile Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#course-management-system">Course Management System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#learning-interface">Learning Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#collaboration-features">Collaboration Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#community-features">Community Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#progress-tracking-analytics">Progress Tracking &amp; Analytics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#content-management-administration">Content Management &amp; Administration</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methodology and Planning</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="management_methodology.html">Management Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#choice-of-development-methodology">Choice of Development Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#following-of-development-methodology">Following of Development Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#scrum-process">Scrum Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#tools-supporting-our-scrum-process">Tools Supporting Our Scrum Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#evidence-of-work">Evidence of Work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management_methodology.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="git_methodology.html">Git Methodology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#branching-strategy">Branching Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#commit-message-conventions">Commit Message Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git_methodology.html#code-style-naming-conventions">Code Style &amp; Naming Conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="game_plan.html">Project Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#artifacts">Artifacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#development-plan">Development Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#work-distribution">Work Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#bug-tracker">Bug Tracker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_plan.html#api-integration">API Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wireframes.html">Wireframes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#overall-design-philosophy">Overall Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#pages-overview">Pages Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#key-user-flows-to-prototype">Key User Flows to Prototype</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wireframes.html#id1">Wireframes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mockups.html">Mockups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#layout">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#our-chosen-design-philosophy-clean-sleek">Our Chosen Design Philosophy: “Clean &amp; Sleek”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mockups.html#id1">Mockups</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#quiz-engine-endpoint">Quiz Engine Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#content-moderation-endpoint">Content Moderation Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#email-collaboration-invitation-endpoint">Email Collaboration Invitation Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#user-registration-endpoint">User Registration Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#cors-information">CORS Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database_documentation.html">Database Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#overview">1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#core-design-philosophy">2. Core Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#entity-overview-and-relationships">3. Entity Overview and Relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#referential-integrity-and-constraints">4. Referential Integrity and Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#use-of-uuids-and-timestamps">5. Use of UUIDs and Timestamps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#jsonb-and-flexible-schema-design">6. JSONB and Flexible Schema Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#scalability-and-indexing">7. Scalability and Indexing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#security-and-compliance">8. Security and Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#best-practice-compliance-summary">9. Best Practice Compliance Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database_documentation.html#summary">10. Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guides.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#developer-guides">Developer Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#architecture-overview-high-level">Architecture Overview (high level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#feature-summary">Feature Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#database-seeding-guide">Database Seeding Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#interaction-flow-high-level">Interaction flow (high level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#environment-variables-keys-explained">Environment Variables (keys explained)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#development-standards">Development Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#deployment">Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#testing-practices">Testing Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#contribution-workflow">Contribution Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#adding-a-feature-recommended-small-steps">Adding a feature (recommended small steps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guides.html#running-and-building">Running and Building</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tech_stack.html">Tech Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tech_stack.html#tech-stack-motivation">Tech Stack Motivation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="third_party_docs.html">Third-Party Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#next-js">1. Next.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#react">2. React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#clerk">3. Clerk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#lucide-react">4. Lucide React</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#shadcn-ui">5. Shadcn UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#jest">6. Jest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#eslint">7. ESLint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#postcss">8. PostCSS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#typescript">9. TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#supabase">10. Supabase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#other-notable-libraries">11. Other Notable Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#openai">12. OpenAI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="third_party_docs.html#justification-summary">Justification Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guides.html">User Guides</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#finding-and-taking-courses">Finding and Taking Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#creating-your-own-courses">Creating Your Own Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#using-community-features">Using Community Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#managing-your-learning">Managing Your Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#collaborating-on-courses">Collaborating on Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guides.html#tips-for-effective-learning">Tips for Effective Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams.html">Diagrams</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Testing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="automated_testing_procedure.html">Testing Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#check-middleware-test-ts">1. check-middleware.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#client-test-ts">2. client.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#cn-test-ts">3. cn.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#collab-test-ts">4. collab.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#courses-test-ts">5. courses.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#create-client-test-ts">6. create-client.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#flashcards-test-ts">7. flashcards.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#forum-db-test-ts">8. forum-db.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#forums-id-test-tsx-forums-test-tsx">9. forums-id.test.tsx &amp; forums.test.tsx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#languages-test-ts">10. languages.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#learn-test-ts">11. learn.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#lessons-test-ts">12. lessons.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#profile-endpoints-test-ts-profile-test-tsx">13. profile-endpoints.test.ts &amp; profile.test.tsx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#prompts-test-ts">14. prompts.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#reviews-test-ts">15. reviews.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#server-test-ts">16. server.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#sug-edit-test-ts">17. sug-edit.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#tags-test-ts">18. tags.test.ts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automated_testing_procedure.html#overall-testing-strategy">Overall Testing Strategy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_feedback.html">User Feedback</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#testing-script-tasks">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#summary-of-feedback-evidence-of-integration">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#conclusion-outcomes">Conclusion &amp; Outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#user-feedback-sprint-2">User Feedback Sprint 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id1">Testing Script &amp; Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id2">Summary of Feedback &amp; Evidence of Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_feedback.html#id3">Conclusion &amp; Outcomes</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Security Audit</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Security Audit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#npm-supply-chain-attack-compromised-debug-and-chalk-packages">NPM Supply Chain Attack - Compromised <cite>debug</cite> and <cite>chalk</cite> Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attack-overview">Attack Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compromised-packages-and-versions">Compromised Packages and Versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#malware-analysis">Malware Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-vulnerability-assessment">Package Vulnerability Assessment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#protective-measures-against-supply-chain-attacks">Protective Measures Against Supply Chain Attacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#incident-response-plan">Incident Response Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-security-tools">Recommended Security Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-monitoring">Continuous Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#report">Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#direct-dependency-analysis">Direct Dependency Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transitive-dependency-analysis">Transitive Dependency Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-posture-assessment">Security Posture Assessment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#immediate-actions-recommended">Immediate Actions Recommended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compromised-packages-exclusion-report">Compromised Packages Exclusion Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#risk-mitigation-recommendations">Risk Mitigation Recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#emergency-response-plan">Emergency Response Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-audit-addendum-tinycolor-supply-chain-attack">Security Audit Addendum: TinyColor Supply Chain Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">OSLearn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Security Audit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/security_audit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="security-audit">
+<h1>Security Audit<a class="headerlink" href="#security-audit" title="Link to this heading"></a></h1>
+<section id="npm-supply-chain-attack-compromised-debug-and-chalk-packages">
+<h2>NPM Supply Chain Attack - Compromised <cite>debug</cite> and <cite>chalk</cite> Packages<a class="headerlink" href="#npm-supply-chain-attack-compromised-debug-and-chalk-packages" title="Link to this heading"></a></h2>
+</section>
+<section id="attack-overview">
+<h2>Attack Overview<a class="headerlink" href="#attack-overview" title="Link to this heading"></a></h2>
+<section id="what-caused-the-supply-chain-attack">
+<h3>What Caused the Supply Chain Attack?<a class="headerlink" href="#what-caused-the-supply-chain-attack" title="Link to this heading"></a></h3>
+<p><strong>Point of Failure</strong>: Maintainer account compromise via phishing attack</p>
+<p><strong>How It Occurred</strong>:</p>
+<ul class="simple">
+<li><p>Attackers registered the domain <cite>npmjs.help</cite> on September 5, 2025</p></li>
+<li><p>Sent phishing emails to package maintainers from <cite>support&#64;npmjs.help</cite></p></li>
+<li><p>Maintainer credentials were stolen through the phishing campaign</p></li>
+<li><p>Attackers gained access to maintainer accounts and published malicious versions of popular packages</p></li>
+<li><p>The attack specifically targeted packages with high weekly download counts to maximize impact</p></li>
+</ul>
+</section>
+</section>
+<section id="compromised-packages-and-versions">
+<h2>Compromised Packages and Versions<a class="headerlink" href="#compromised-packages-and-versions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>backslash: 0.2.1 (0.26M weekly downloads)</p></li>
+<li><p>chalk-template: 1.1.1 (3.9M weekly downloads)</p></li>
+<li><p>supports-hyperlinks: 4.1.1 (19.2M weekly downloads)</p></li>
+<li><p>has-ansi: 6.0.1 (12.1M weekly downloads)</p></li>
+<li><p>simple-swizzle: 0.2.3 (26.26M weekly downloads)</p></li>
+<li><p>color-string: 2.1.1 (27.48M weekly downloads)</p></li>
+<li><p>error-ex: 1.3.3 (47.17M weekly downloads)</p></li>
+<li><p>color-name: 2.0.1 (191.71M weekly downloads)</p></li>
+<li><p>is-arrayish: 0.3.3 (73.8M weekly downloads)</p></li>
+<li><p>slice-ansi: 7.1.1 (59.8M weekly downloads)</p></li>
+<li><p>color-convert: 3.1.1 (193.5M weekly downloads)</p></li>
+<li><p>wrap-ansi: 9.0.1 (197.99M weekly downloads)</p></li>
+<li><p>ansi-regex: 6.2.1 (243.64M weekly downloads)</p></li>
+<li><p>supports-color: 10.2.1 (287.1M weekly downloads)</p></li>
+<li><p>strip-ansi: 7.1.1 (261.17M weekly downloads)</p></li>
+<li><p>chalk: 5.6.1 (299.99M weekly downloads)</p></li>
+<li><p>debug: 4.4.2 (357.6M weekly downloads)</p></li>
+<li><p>ansi-styles: 6.2.2 (371.41M weekly downloads)</p></li>
+</ul>
+<p><strong>Total Impact</strong>: Over 2 billion weekly downloads across all compromised packages</p>
+</section>
+<section id="malware-analysis">
+<h2>Malware Analysis<a class="headerlink" href="#malware-analysis" title="Link to this heading"></a></h2>
+<p><strong>Malware Functionality</strong>:</p>
+<p>The malicious code operates as a sophisticated browser-based cryptocurrency stealer that:</p>
+<ol class="arabic">
+<li><p><strong>Injects into browser environment</strong>
+- Hooks <cite>fetch</cite> API and <cite>XMLHttpRequest</cite> prototypes
+- Intercepts wallet APIs (Ethereum, Solana, etc.)
+- Modifies network requests and responses in real-time</p></li>
+<li><p><strong>Address replacement logic</strong>
+- Uses Levenshtein distance algorithm to find similar-looking addresses
+- Replaces legitimate cryptocurrency addresses with attacker-controlled ones
+- Supports multiple blockchain networks:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Ethereum (0x… addresses)</p></li>
+<li><p>Bitcoin (Legacy and Segwit)</p></li>
+<li><p>Solana</p></li>
+<li><p>Tron</p></li>
+<li><p>Litecoin</p></li>
+<li><p>Bitcoin Cash</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Transaction manipulation</strong>
+- Alters transaction parameters before signing
+- Modifies approval functions (ERC20 approve)
+- Changes recipient addresses in transfer functions</p></li>
+</ol>
+<p><strong>Attack Vectors</strong>:</p>
+<ul class="simple">
+<li><p>Browser-based execution when packages are used in web applications</p></li>
+<li><p>Silent interception of cryptocurrency transactions</p></li>
+<li><p>UI remains unchanged while underlying transactions are hijacked</p></li>
+</ul>
+</section>
+<section id="package-vulnerability-assessment">
+<h2>Package Vulnerability Assessment<a class="headerlink" href="#package-vulnerability-assessment" title="Link to this heading"></a></h2>
+<p><strong>Immediate Actions Required</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Check Dependencies</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check for compromised versions</span>
+npm<span class="w"> </span>list<span class="w"> </span>debug<span class="w"> </span>chalk<span class="w"> </span>ansi-styles<span class="w"> </span>ansi-regex<span class="w"> </span>supports-color<span class="w"> </span>strip-ansi<span class="w"> </span>wrap-ansi<span class="w"> </span>color-convert<span class="w"> </span>color-name<span class="w"> </span>is-arrayish<span class="w"> </span>error-ex<span class="w"> </span>slice-ansi<span class="w"> </span>simple-swizzle<span class="w"> </span>has-ansi<span class="w"> </span>supports-hyperlinks<span class="w"> </span>chalk-template<span class="w"> </span>backslash<span class="w"> </span>color-string
+
+<span class="c1"># Review package-lock.json for compromised versions</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Clean Installation</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Remove node_modules and clear cache</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>node_modules
+npm<span class="w"> </span>cache<span class="w"> </span>clean<span class="w"> </span>--force
+
+<span class="c1"># Reinstall with clean dependencies</span>
+npm<span class="w"> </span>install
+</pre></div>
+</div>
+</li>
+</ol>
+<p><strong>Assessment Report Template</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SECURITY AUDIT REPORT - [YOUR PROJECT NAME]
+Date: [CURRENT DATE]
+Audit Status: [COMPROMISED/CLEAN]
+
+Dependencies Checked:
+✓ debug: [VERSION] - [STATUS]
+✓ chalk: [VERSION] - [STATUS]
+✓ ansi-styles: [VERSION] - [STATUS]
+[... other packages ...]
+
+Vulnerable Packages Found: [COUNT]
+Immediate Action Required: [YES/NO]
+</pre></div>
+</div>
+</section>
+<section id="protective-measures-against-supply-chain-attacks">
+<h2>Protective Measures Against Supply Chain Attacks<a class="headerlink" href="#protective-measures-against-supply-chain-attacks" title="Link to this heading"></a></h2>
+<section id="preventing-infection-by-upstream-packages">
+<h3>Preventing Infection by Upstream Packages<a class="headerlink" href="#preventing-infection-by-upstream-packages" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Dependency Management</strong>:
+- Use package lock files (<cite>package-lock.json</cite>, <cite>yarn.lock</cite>)
+- Implement dependency pinning with exact versions
+- Regular dependency updates with security scanning
+- Use <cite>npm audit</cite> and <cite>npm audit fix</cite> regularly</p></li>
+<li><p><strong>Security Tooling</strong>:
+- Implement Software Composition Analysis (SCA) tools
+- Use automated vulnerability scanners in CI/CD
+- Enable dependency scanning in package registries</p></li>
+<li><p><strong>Verification Processes</strong>:
+- Verify package integrity with checksums
+- Use signed packages when available
+- Implement allow-listing for trusted packages</p></li>
+</ol>
+</section>
+<section id="protecting-against-initial-infection-vectors">
+<h3>Protecting Against Initial Infection Vectors<a class="headerlink" href="#protecting-against-initial-infection-vectors" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Phishing Protection</strong>:
+- Multi-factor authentication for all maintainer accounts
+- Security awareness training for developers
+- Email security measures (DMARC, DKIM, SPF)
+- Verified publisher programs</p></li>
+<li><p><strong>Account Security</strong>:
+- Strong, unique passwords for registry accounts
+- Regular credential rotation
+- Monitor for suspicious account activity
+- Use dedicated service accounts for publishing</p></li>
+<li><p><strong>Infrastructure Security</strong>:
+- Secure build pipelines
+- Isolated publishing environments
+- Code signing for packages
+- Regular security audits of development infrastructure</p></li>
+</ol>
+</section>
+</section>
+<section id="incident-response-plan">
+<h2>Incident Response Plan<a class="headerlink" href="#incident-response-plan" title="Link to this heading"></a></h2>
+<p><strong>Immediate Response</strong>:</p>
+<ol class="arabic simple">
+<li><p>Identify and remove compromised packages</p></li>
+<li><p>Notify affected users and downstream dependencies</p></li>
+<li><p>Revoke maintainer access tokens</p></li>
+<li><p>Conduct security audit of all maintained packages</p></li>
+</ol>
+<p><strong>Long-term Prevention</strong>:</p>
+<ol class="arabic simple">
+<li><p>Implement automated security monitoring</p></li>
+<li><p>Establish package signing infrastructure</p></li>
+<li><p>Create incident response playbook</p></li>
+<li><p>Regular security training for maintainers</p></li>
+</ol>
+</section>
+<section id="recommended-security-tools">
+<h2>Recommended Security Tools<a class="headerlink" href="#recommended-security-tools" title="Link to this heading"></a></h2>
+<p><strong>Free Solutions</strong>:</p>
+<ul class="simple">
+<li><p><strong>Aikido SafeChain</strong>: Secure wrapper for npm commands</p></li>
+<li><p><strong>npm audit</strong>: Built-in vulnerability scanning</p></li>
+<li><p><strong>GitHub Security Advisories</strong>: Automated security alerts</p></li>
+<li><p><strong>Snyk Open Source</strong>: Free tier for vulnerability scanning</p></li>
+</ul>
+<p><strong>Enterprise Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Software Composition Analysis (SCA) tools</p></li>
+<li><p>Software Bill of Materials (SBOM) generation</p></li>
+<li><p>Automated security scanning in CI/CD</p></li>
+<li><p>Runtime application security monitoring</p></li>
+</ul>
+</section>
+<section id="continuous-monitoring">
+<h2>Continuous Monitoring<a class="headerlink" href="#continuous-monitoring" title="Link to this heading"></a></h2>
+<p><strong>Recommended Practices</strong>:</p>
+<ul class="simple">
+<li><p>Subscribe to security advisories for critical dependencies</p></li>
+<li><p>Implement automated dependency update tools</p></li>
+<li><p>Regular security scanning in development pipeline</p></li>
+<li><p>Monitor package registries for suspicious activity</p></li>
+<li><p>Establish vulnerability disclosure program</p></li>
+</ul>
+<p>This audit document should be regularly updated as new information becomes available and should be integrated into your organization’s security governance framework.</p>
+</section>
+</section>
+<section id="report">
+<h1>Report<a class="headerlink" href="#report" title="Link to this heading"></a></h1>
+<section id="direct-dependency-analysis">
+<h2>Direct Dependency Analysis<a class="headerlink" href="#direct-dependency-analysis" title="Link to this heading"></a></h2>
+<p><strong>Compromised Packages Check</strong></p>
+<p>Based on <cite>package.json</cite>, the project does <strong>NOT</strong> contain any of the compromised packages directly.</p>
+</section>
+<section id="transitive-dependency-analysis">
+<h2>Transitive Dependency Analysis<a class="headerlink" href="#transitive-dependency-analysis" title="Link to this heading"></a></h2>
+<p><strong>Potential Risk Assessment</strong></p>
+<p>While direct dependencies are clean, some popular packages have potential transitive dependencies that could be affected:</p>
+<p><strong>Packages with Broad Dependency Trees</strong>:</p>
+<ul class="simple">
+<li><p><cite>next</cite> - Large dependency tree, includes <cite>chalk</cite> and <cite>debug</cite></p></li>
+<li><p><cite>react</cite> &amp; <cite>react-dom</cite> - Core Facebook packages, highly secure</p></li>
+<li><p><cite>&#64;clerk/nextjs</cite> - Authentication provider with robust security</p></li>
+<li><p><cite>openai</cite> - Official SDK, minimal dependencies</p></li>
+</ul>
+<p><strong>Low-Risk Packages</strong>:</p>
+<ul class="simple">
+<li><p>Radix UI components - Self-contained, minimal dependencies</p></li>
+<li><p>Utility libraries (clsx, tailwind-merge, zod) - Small footprint</p></li>
+<li><p>Date-fns, lucide-react - Well-maintained, focused functionality</p></li>
+</ul>
+<p><strong>Tinycolor Attack</strong>:</p>
+<p>No direct or transitive dependency references to:</p>
+<ul class="simple">
+<li><p><cite>tinycolor</cite></p></li>
+<li><p><cite>&#64;ctrl/tinycolor</cite></p></li>
+<li><p><cite>color</cite></p></li>
+<li><p>or any packages that import <cite>tinycolor</cite> for color manipulation.</p></li>
+</ul>
+</section>
+<section id="security-posture-assessment">
+<h2>Security Posture Assessment<a class="headerlink" href="#security-posture-assessment" title="Link to this heading"></a></h2>
+<p><strong>Strengths</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Modern Stack</strong>: Using recent versions of Next.js 15.4.6, React 19.1.0</p></li>
+<li><p><strong>Reputable Dependencies</strong>: All major dependencies from established organizations</p></li>
+<li><p><strong>Minimal Attack Surface</strong>: Limited CLI exposure in production</p></li>
+<li><p><strong>TypeScript</strong>: Full TypeScript implementation for better code safety</p></li>
+</ol>
+<p><strong>Areas for Monitoring</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Transitive Dependencies</strong>: Regular auditing required for <cite>next</cite></p></li>
+<li><p><strong>Build Toolchain</strong>: Ensure dev dependencies remain secure</p></li>
+</ol>
+</section>
+<section id="immediate-actions-recommended">
+<h2>Immediate Actions Recommended<a class="headerlink" href="#immediate-actions-recommended" title="Link to this heading"></a></h2>
+<section id="dependency-verification">
+<h3>Dependency Verification<a class="headerlink" href="#dependency-verification" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run comprehensive security audit</span>
+npm<span class="w"> </span>audit
+
+<span class="c1"># Check for known vulnerabilities</span>
+npx<span class="w"> </span>npm-audit-html
+
+<span class="c1"># Verify installed versions match package.json</span>
+npm<span class="w"> </span>ls<span class="w"> </span>--depth<span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;chalk|debug|ansi-styles|ansi-regex|supports-color|strip-ansi|wrap-ansi|color-convert|color-name|is-arrayish|error-ex|slice-ansi|simple-swizzle|has-ansi|supports-hyperlinks|chalk-template|backslash|color-string|tinycolor&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="security-hardening">
+<h3>Security Hardening<a class="headerlink" href="#security-hardening" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Remove node_modules and clear cache</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>node_modules
+npm<span class="w"> </span>cache<span class="w"> </span>clean<span class="w"> </span>--force
+
+<span class="c1"># Reinstall with clean dependencies</span>
+npm<span class="w"> </span>install
+
+<span class="c1"># Update to patched versions if available</span>
+npm<span class="w"> </span>update<span class="w"> </span>next
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3>Continuous Monitoring<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Enable GitHub Security Advisories</p></li>
+<li><p>Set up Dependabot for automated security updates</p></li>
+<li><p>Implement CI/CD security scanning</p></li>
+</ul>
+</section>
+</section>
+<section id="compromised-packages-exclusion-report">
+<h2>Compromised Packages Exclusion Report<a class="headerlink" href="#compromised-packages-exclusion-report" title="Link to this heading"></a></h2>
+<p><strong>Confirmed Presence/Absence</strong>:</p>
+<ul class="simple">
+<li><p>debug: Present (transitive via next)</p></li>
+<li><p>chalk: Present (transitive via next)</p></li>
+<li><p>ansi-styles: Present (transitive)</p></li>
+<li><p>ansi-regex: Present (transitive)</p></li>
+<li><p>supports-color: Present (transitive)</p></li>
+<li><p>strip-ansi: Present (transitive)</p></li>
+<li><p>wrap-ansi: Present (transitive)</p></li>
+<li><p>color-convert: Present (transitive)</p></li>
+<li><p>color-name: Present (transitive)</p></li>
+<li><p>is-arrayish: Present (transitive)</p></li>
+<li><p>error-ex: Not Present</p></li>
+<li><p>slice-ansi: Present (transitive)</p></li>
+<li><p>simple-swizzle: Not Present</p></li>
+<li><p>has-ansi: Present (transitive)</p></li>
+<li><p>supports-hyperlinks: Not Present</p></li>
+<li><p>chalk-template: Not Present</p></li>
+<li><p>backslash: Not Present</p></li>
+<li><p>color-string: Present (transitive)</p></li>
+<li><p>tinycolor: Not Present</p></li>
+</ul>
+</section>
+<section id="risk-mitigation-recommendations">
+<h2>Risk Mitigation Recommendations<a class="headerlink" href="#risk-mitigation-recommendations" title="Link to this heading"></a></h2>
+<p><strong>Short-term (Immediate)</strong>:</p>
+<ol class="arabic simple">
+<li><p>Lock File Integrity: Ensure <cite>package-lock.json</cite> is committed and unchanged</p></li>
+<li><p>CI/CD Scanning: Add security scanning to your build pipeline</p></li>
+<li><p>Dependency Alerts: Subscribe to security bulletins for your key dependencies</p></li>
+</ol>
+<p><strong>Medium-term (30 days)</strong>:</p>
+<ol class="arabic simple">
+<li><p>Automated Updates: Implement Dependabot or similar</p></li>
+<li><p>SBOM Generation: Create Software Bill of Materials</p></li>
+<li><p>Security Testing: Add security tests to your test suite</p></li>
+</ol>
+<p><strong>Long-term (90 days)</strong>:</p>
+<ol class="arabic simple">
+<li><p>Supply Chain Security: Implement sigstore/cosign for verification</p></li>
+<li><p>Runtime Protection: Consider RASP solutions</p></li>
+<li><p>Security Training: Team training on supply chain risks</p></li>
+</ol>
+</section>
+<section id="emergency-response-plan">
+<h2>Emergency Response Plan<a class="headerlink" href="#emergency-response-plan" title="Link to this heading"></a></h2>
+<p><strong>If Compromise is Detected</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Immediate</strong>:
+- Freeze deployments
+- Revoke all secrets/API keys
+- Notify security team</p></li>
+<li><p><strong>Containment</strong>:
+- Revert to known safe dependencies
+- Security audit of recent changes
+- User notification if data compromised</p></li>
+<li><p><strong>Recovery</strong>:
+- Clean environment rebuild
+- Dependency verification
+- Security review before redeployment</p></li>
+</ol>
+</section>
+<section id="security-audit-addendum-tinycolor-supply-chain-attack">
+<h2>Security Audit Addendum: TinyColor Supply Chain Attack<a class="headerlink" href="#security-audit-addendum-tinycolor-supply-chain-attack" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>What Caused the Supply Chain Attack<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><strong>Point of Failure</strong>:</p>
+<p>The compromise originated from a malicious update in the <cite>tinycolor</cite> package, a widely used color manipulation library. The attack occurred when the package maintainer’s npm account was compromised — likely due to credential theft or social engineering — allowing the attacker to publish a malicious version without detection.</p>
+<p><strong>How It Occurred</strong>:</p>
+<ul class="simple">
+<li><p>The attacker gained unauthorized access to the maintainer’s npm account.</p></li>
+<li><p>They published a malicious version of <cite>tinycolor</cite> (version 1.6.0) containing obfuscated JavaScript designed to steal developer authentication tokens.</p></li>
+<li><p>The injected code exfiltrated environment variables and npm tokens during installation or usage of affected packages.</p></li>
+<li><p>The compromise spread downstream to over 40 dependent npm packages that used <cite>tinycolor</cite> directly or indirectly.</p></li>
+</ul>
+</section>
+<section id="list-of-compromised-packages-and-versions">
+<h3>List of Compromised Packages and Versions<a class="headerlink" href="#list-of-compromised-packages-and-versions" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>tinycolor: 1.6.0 (Primary infection, malicious release)</p></li>
+<li><p>&#64;adobe/react-spectrum: various (Dependency on tinycolor)</p></li>
+<li><p>color: 4.3.0 (Used tinycolor internally)</p></li>
+<li><p>&#64;ctrl/tinycolor: 3.6.1 (Fork variant affected)</p></li>
+<li><p>vue-color: 2.9.1 (Dependent on tinycolor)</p></li>
+<li><p>react-colorful: 5.6.1 (Dependent indirectly via color-utils)</p></li>
+<li><p>react-color: 2.19.3 (Downstream dependency)</p></li>
+<li><p>tinycolor2: (fake imposter) 1.4.3 (Impersonating original library)</p></li>
+<li><p>&#64;ctrl/tinycolor-experimental: 0.1.1 (Contained injected code)</p></li>
+<li><p>color-string-utils: 1.1.0 (Depended on compromised tinycolor)</p></li>
+</ul>
+<p><strong>Malicious Behavior</strong>:</p>
+<p>These packages attempted to exfiltrate environment variables (including npm tokens and API keys) to remote attacker-controlled servers when installed or built in developer environments.</p>
+</section>
+<section id="project-package-integrity-report">
+<h3>Project Package Integrity Report<a class="headerlink" href="#project-package-integrity-report" title="Link to this heading"></a></h3>
+<p><strong>Audit Target</strong>:</p>
+<p>SDP Web App &amp; API</p>
+<p><strong>Audit Tools Used</strong>:</p>
+<ul class="simple">
+<li><p><cite>npm audit</cite></p></li>
+<li><p><cite>socket.dev package inspector</cite></p></li>
+<li><p><cite>npm ls tinycolor &#64;ctrl/tinycolor color react-color react-colorful</cite></p></li>
+</ul>
+<p><strong>Result Summary</strong>:</p>
+<ul class="simple">
+<li><p>tinycolor: Not Installed (Clean)</p></li>
+<li><p>&#64;ctrl/tinycolor: Not Installed (Clean)</p></li>
+<li><p>color: Not Installed (Clean)</p></li>
+<li><p>react-color: Not Installed (Clean)</p></li>
+<li><p>vue-color: Not Installed (Clean)</p></li>
+<li><p>react-colorful: Not Installed (Clean)</p></li>
+</ul>
+<p><strong>Conclusion</strong>:</p>
+<p>The SDP platform (both web application and API) does not contain any of the compromised packages or their downstream dependencies related to the <cite>tinycolor</cite> attack.</p>
+</section>
+<section id="analysis-of-dependency-tree">
+<h3>Analysis of Dependency Tree<a class="headerlink" href="#analysis-of-dependency-tree" title="Link to this heading"></a></h3>
+<p>No direct or transitive dependency references to:</p>
+<ul class="simple">
+<li><p><cite>tinycolor</cite></p></li>
+<li><p><cite>&#64;ctrl/tinycolor</cite></p></li>
+<li><p><cite>color</cite></p></li>
+<li><p>or any packages that import <cite>tinycolor</cite> for color manipulation.</p></li>
+</ul>
+<p><strong>Result</strong>:</p>
+<ul class="simple">
+<li><p><strong>Direct Dependencies</strong>: All from trusted vendors (Next.js, React, Supabase, Clerk).</p></li>
+<li><p><strong>Transitive Dependencies</strong>: Verified through recursive depth check (<cite>npm ls –depth=20</cite>), no compromised versions found.</p></li>
+</ul>
+</section>
+<section id="measures-to-prevent-upstream-package-infection">
+<h3>Measures to Prevent Upstream Package Infection<a class="headerlink" href="#measures-to-prevent-upstream-package-infection" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Dependency Hygiene</strong>:
+- Use exact version pinning in <cite>package-lock.json</cite> or <cite>yarn.lock</cite>.
+- Avoid <cite>latest</cite> or <cite>^</cite> version operators in production environments.
+- Regularly run <cite>npm audit</cite>, <cite>socket scan</cite>, and <cite>snyk test</cite>.</p></li>
+<li><p><strong>Automated Verification</strong>:
+- Integrate Software Composition Analysis (SCA) tools in CI/CD pipelines.
+- Generate and review Software Bill of Materials (SBOM) for all deployments.
+- Use checksum or signature verification (<cite>sigstore</cite>, <cite>cosign</cite>) for external packages.</p></li>
+<li><p><strong>Registry Security</strong>:
+- Download only from official npm registries.
+- Use internal mirrors for verified dependencies.
+- Enable <cite>npm provenance</cite> to verify build origins.</p></li>
+</ol>
+</section>
+<section id="measures-to-prevent-infection-from-the-source">
+<h3>Measures to Prevent Infection from the Source<a class="headerlink" href="#measures-to-prevent-infection-from-the-source" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Account Protection for Maintainers</strong>:
+- Enforce multi-factor authentication (MFA) on npm accounts.
+- Rotate credentials and access tokens regularly.
+- Use scoped automation tokens with limited privileges.</p></li>
+<li><p><strong>Developer Environment Security</strong>:
+- Restrict access to environment variables in CI/CD.
+- Use secret managers (e.g., Vault, AWS Secrets Manager) instead of plain text env files.
+- Sandbox or containerize dependency installation (e.g., <cite>npm ci</cite> inside Docker).</p></li>
+<li><p><strong>Continuous Monitoring</strong>:
+- Subscribe to security advisories (Socket, npm, GitHub Security).
+- Implement real-time alerts for dependency changes in production environments.
+- Conduct scheduled security audits of all code repositories.</p></li>
+</ol>
+</section>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Source of Compromise</strong>: Maintainer account hijack (tinycolor)</p></li>
+<li><p><strong>Type of Attack</strong>: Malicious npm package injection</p></li>
+<li><p><strong>Packages Impacted</strong>: ~40 downstream libraries</p></li>
+<li><p><strong>Your Project’s Risk</strong>: None detected for tinycolor; compromised for debug/chalk via next</p></li>
+<li><p><strong>Audit Status</strong>: COMPROMISED (transitive dependencies via next)</p></li>
+<li><p><strong>Recommended Next Steps</strong>: Maintain dependency scanning &amp; enforce registry provenance</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_feedback.html" class="btn btn-neutral float-left" title="User Feedback" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Priyanka Gohil.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

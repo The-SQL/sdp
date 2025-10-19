@@ -8,27 +8,6 @@ OSLearn documentation
 
 Welcome to the OSLearn documentation!
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
-This is a sentence. You can replace it with your own text.
-
-.. note::
-
-   This documentation is written using reStructuredText syntax, which is powerful
-   and easy to learn.
-
-Quick Start
------------
-
-To get started with OSLearn:
-
-1. Download the application from our website
-2. Install it on your system
-3. Launch the application and create a profile
-4. Begin with the introductory modules
-
 .. toctree::
    :maxdepth: 2
    :caption: Introduction
@@ -56,12 +35,12 @@ To get started with OSLearn:
    tech_stack
    third_party_docs
    user_guides
+   diagrams
 
 .. toctree::
    :maxdepth: 2
    :caption: Testing
 
-   user_acceptance_tests
    automated_testing_procedure
    user_feedback
 
@@ -84,27 +63,17 @@ To get started with OSLearn:
 
 .. toctree::
    :maxdepth: 2
+   :caption: Security Audit
+   
+   security_audit
+
+.. toctree::
+   :maxdepth: 2
    :caption: Conclusion
 
 
    
 
-Features Overview
------------------
-
-OSLearn includes these key features:
-
-- Interactive kernel simulations
-- Virtual memory visualizations
-- Process scheduling demonstrations
-- File system experiments
-
-Indices and Tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
    
 
