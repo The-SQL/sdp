@@ -198,22 +198,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      {/* Courses */}
-      <section id="courses" className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              A Preview of Available Courses
-            </h2>
-            <p className="text-xl mb-8 opacity-90">
-              Explore courses of all types. Learn at your own pace, for free.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <span>***Course explorer preview will go here</span>
-            </div>
-          </div>
-        </div>
-      </section>
       {/* Call to Action */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
