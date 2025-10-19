@@ -531,7 +531,7 @@ export async function getCourseById(id: string) {
  * Fetches a limited number of recommended courses (public and published)
  * @returns Array of recommended courses with transformed data
  */
-export async function getRecommendedCourses() {
+export async function getRecommendedCourses(userId?: string) {
   const supabase = createClient();
 
   // Support test helper: allow tests to set a mocked resolved value by calling
@@ -576,15 +576,124 @@ export async function getRecommendedCourses() {
     return [];
   }
 
-  // Filter published courses then sort by created_at desc and take top 3
-  const courses = (coursesRaw as any[])
-    .filter((c) => c.is_published === true)
-    .sort((a, b) => {
-      const ta = a?.created_at ? new Date(a.created_at).getTime() : 0;
-      const tb = b?.created_at ? new Date(b.created_at).getTime() : 0;
-      return tb - ta;
-    })
-    .slice(0, 3);
+  // Filter published courses
+  const published = (coursesRaw as any[]).filter((c) => c.is_published === true);
+
+  // If a userId is provided, fetch their favorites/enrollments and the tags
+  // associated with those courses to compute affinity.
+  let userFavoriteIds: string[] = [];
+  let userEnrolledIds: string[] = [];
+  let userTagCounts: Record<string, number> = {};
+  let userUniqueTagCount = 0;
+
+  if (userId) {
+    try {
+      const favRes = await normalizeResponse(
+        supabase
+          .from("user_favorite_courses")
+          .select("course_id")
+          .eq("user_id", userId)
+      );
+      userFavoriteIds = (favRes.data as any[] | null)?.map((r) => r.course_id) || [];
+
+      const enrolledRes = await normalizeResponse(
+        supabase
+          .from("user_courses")
+          .select("course_id")
+          .eq("user_id", userId)
+      );
+      userEnrolledIds = (enrolledRes.data as any[] | null)?.map((r) => r.course_id) || [];
+
+      const combinedIds = Array.from(new Set([...userFavoriteIds, ...userEnrolledIds]));
+
+      if (combinedIds.length > 0) {
+        const tagsRes = await normalizeResponse(
+          supabase
+            .from("courses")
+            .select("course_tags(tags(name))")
+            .in("id", combinedIds)
+        );
+
+        const coursesWithTags = tagsRes.data as any[] | null;
+        const tagSet = new Set<string>();
+
+        (coursesWithTags || []).forEach((c) => {
+          (c.course_tags || []).forEach((ct: any) => {
+            const name = ct?.tags?.name;
+            if (name) {
+              tagSet.add(name);
+              userTagCounts[name] = (userTagCounts[name] || 0) + 1;
+            }
+          });
+        });
+
+        userUniqueTagCount = tagSet.size;
+      }
+    } catch (err) {
+      // Non-fatal: if user-specific lookups fail, continue with global scoring.
+      console.warn("Failed to fetch user preferences for recommendations:", err);
+    }
+  }
+
+  // Compute some statistics for normalization
+  const studentCounts = published.map((c) => (c.user_courses?.length) || 0);
+  const maxStudents = Math.max(...studentCounts, 0);
+
+  // Helper to compute recency score: newer -> closer to 1. Older -> closer to 0.
+  const recencyScore = (createdAt?: string | null) => {
+    if (!createdAt) return 0;
+    const days = Math.max(0, (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24));
+    // half-life of 30 days: score ~ 1/(1 + days/30)
+    return 1 / (1 + days / 30);
+  };
+
+  // Compute a combined score for each course using rating, popularity, recency,
+  // tag affinity (if userId provided) and a small boost if the user has favorited
+  // or enrolled in the course.
+  const scored = published.map((c) => {
+    const ratings = c.course_feedback?.map((fb: any) => fb.rating) || [];
+    const avgRating = ratings.length > 0 ? ratings.reduce((s: number, r: number) => s + r, 0) / ratings.length : 4.5;
+    const students = c.user_courses?.length || 0;
+
+    const normalizedRating = Math.max(0, Math.min(1, avgRating / 5));
+    const popularity = maxStudents > 0 ? Math.log(1 + students) / Math.log(1 + maxStudents) : 0;
+    const recency = recencyScore(c.created_at);
+
+    // Tag affinity: fraction of user's unique tags that appear on this course
+    let tagAffinity = 0;
+    if (userUniqueTagCount > 0) {
+      const courseTags = (c.course_tags || []).map((ct: any) => ct?.tags?.name).filter(Boolean) as string[];
+      const common = courseTags.filter((t) => userTagCounts[t]).length;
+      tagAffinity = common / userUniqueTagCount;
+    }
+
+    const isFavorited = userFavoriteIds.length > 0 ? userFavoriteIds.includes(c.id) : false;
+    const isEnrolled = userEnrolledIds.length > 0 ? userEnrolledIds.includes(c.id) : false;
+
+    // Weights: rating most important, then popularity, then tag affinity, recency, then user boost
+    const ratingWeight = 0.45;
+    const popularityWeight = 0.25;
+    const tagWeight = 0.15;
+    const recencyWeight = 0.1;
+    const userBoostWeight = 0.05; // small bump for favorites/enrolled
+
+    const userBoost = isFavorited || isEnrolled ? 1 : 0;
+
+    const score =
+      normalizedRating * ratingWeight +
+      popularity * popularityWeight +
+      tagAffinity * tagWeight +
+      recency * recencyWeight +
+      userBoost * userBoostWeight;
+
+    return { course: c, score, avgRating };
+  });
+
+  // Sort by score desc and take top 3
+  const courses = scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((s) => s.course);
 
   const transformedCourses = (courses as SupabaseCourseList[]).map((course) => {
     const ratings = course.course_feedback?.map((fb) => fb.rating) || [];

@@ -622,28 +622,6 @@ export default function Forums() {
                 </div>
               )}
             </div>
-
-            {/* Forum Categories (Sidebar version) */}
-            <Card className="border border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-lg">Forum Categories</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {forumCategories.map((category, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="text-xl">{category.icon}</div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">
-                        {category.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {category.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
           </div>
 
           {/* Sidebar */}

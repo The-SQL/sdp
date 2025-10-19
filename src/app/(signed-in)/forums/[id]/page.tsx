@@ -59,14 +59,14 @@ export default function DiscussionPage() {
 
   const handleStartReply = (replyId: string, username: string) => {
     setReplyingTo({ id: replyId, username });
-    
+
     // Scroll to the reply form
     setTimeout(() => {
-      const formElement = document.getElementById('reply-form');
+      const formElement = document.getElementById("reply-form");
       if (formElement) {
-        formElement.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'nearest'
+        formElement.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
         });
       }
     }, 100);
@@ -123,11 +123,12 @@ export default function DiscussionPage() {
 
       // Check for profanity
       const result = await checkProfanity(content);
-      
+
       if (result.contains_profanity) {
         toast({
           title: "Profanity Detected",
-          description: "Your reply contains inappropriate language. Please revise it before posting.",
+          description:
+            "Your reply contains inappropriate language. Please revise it before posting.",
           duration: 5000,
         });
         return; // Stop submission
@@ -147,7 +148,7 @@ export default function DiscussionPage() {
       // Refresh replies
       const updatedReplies = await getPostReplies(postId, 1, 50);
       setReplies(updatedReplies.replies || []);
-      
+
       // Show success toast
       toast({
         title: "Reply Posted",
@@ -340,14 +341,6 @@ export default function DiscussionPage() {
                       {replies.length} Replies
                     </Button>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Bookmark className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -367,11 +360,7 @@ export default function DiscussionPage() {
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage
-                            src={
-                              reply.author?.profile_url || "/placeholder.svg"
-                            }
-                          />
+                          <AvatarImage src={reply.author?.profile_url} />
                           <AvatarFallback>
                             {reply.author?.name?.charAt(0) || "U"}
                           </AvatarFallback>

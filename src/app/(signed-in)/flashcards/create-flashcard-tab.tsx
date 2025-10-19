@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import SearchableInput from "@/components/ui/searchable-input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/toast";
 import { insertFlashcardSet } from "@/utils/db/flashcards";
 import { createLanguage } from "@/utils/db/languages";
 import { createClient } from "@/utils/supabase/client";
@@ -32,6 +33,8 @@ function CreateFlashcardTab() {
     visibility: "private",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
+
   async function handleCreateSet() {
     if (!user) return;
 
@@ -40,11 +43,21 @@ function CreateFlashcardTab() {
       author_id: user.id,
     };
 
-    console.log("Creating flashcard set:", flashcardToCreate);
-
     try {
       setIsLoading(true);
       await insertFlashcardSet(flashcardToCreate);
+      setFlashcardSet({
+        title: "",
+        language_id: "",
+        language_name: "",
+        description: "",
+        visibility: "private",
+      });
+      toast({
+        title: "Flashcard Set Created",
+        description: "Your flashcard set has been created successfully.",
+        duration: 5000,
+      });
     } catch (err) {
       console.error("Error creating flashcard set:", err);
     } finally {
@@ -76,6 +89,7 @@ function CreateFlashcardTab() {
             </label>
             <Input
               placeholder="e.g., Spanish Travel Phrases"
+              value={flashcardSet.title}
               onChange={(e) =>
                 setFlashcardSet({ ...flashcardSet, title: e.target.value })
               }
@@ -138,6 +152,7 @@ function CreateFlashcardTab() {
           </label>
           <Textarea
             placeholder="Describe what this flashcard set covers..."
+            value={flashcardSet.description}
             onChange={(e) =>
               setFlashcardSet({ ...flashcardSet, description: e.target.value })
             }

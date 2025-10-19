@@ -7,14 +7,18 @@ import { createClient } from "@/utils/supabase/client";
 import { Lesson } from "@/utils/types";
 import { makeSupabaseMock } from "../__mocks__/supabase";
 import {
+    addLearningGoal,
     addToFavorites,
     checkIfEnrolled,
     checkIfFavorited,
     checkUserExists,
+    completeLearningGoal,
     enrollInCourse,
     getAllCourses,
     getCourseById,
     getCoursesByAuthor,
+    getFavorites,
+    getLearningGoals,
     getPersonalizedRecommendedCourses,
     getRecommendedCourses,
     getUserAchievements,
@@ -25,10 +29,6 @@ import {
     getUserStats,
     removeFromFavorites,
     uploadImageToSupabase,
-    getFavorites,
-    addLearningGoal,
-    getLearningGoals,
-    completeLearningGoal,
 } from "../utils/db/client";
 
 jest.mock("@/utils/supabase/client", () => ({

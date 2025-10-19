@@ -1,16 +1,16 @@
 // __tests__/forums.test.tsx
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { ToastProvider } from "@/components/ui/toast";
+import { useUser } from "@clerk/nextjs";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Forums from "../app/(signed-in)/forums/page";
-import { useUser } from "@clerk/nextjs";
-import { ToastProvider } from "@/components/ui/toast";
 
 // --- CHANGE: Import the functions that will be mocked ---
 import {
-  fetchPosts,
-  getTrendingTopics,
-  getUserActivity,
-  createPost,
+    createPost,
+    fetchPosts,
+    getTrendingTopics,
+    getUserActivity,
 } from "@/utils/db/forum";
 import { checkProfanity } from "@/utils/moderation";
 

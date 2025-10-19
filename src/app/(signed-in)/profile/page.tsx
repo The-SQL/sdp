@@ -118,18 +118,6 @@ export default function Profile() {
     setActiveTab("settings")
   }
 
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (loading) {
-        console.error("Data loading timed out")
-        setLoading(false)
-      }
-    }, 10000) // 5 second timeout
-
-    return () => clearTimeout(timer)
-  }, [loading])
-
   if (loading) {
     return <Loading />
   }
@@ -450,58 +438,6 @@ export default function Profile() {
                       />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5" />
-                    Notifications
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Daily Reminders</p>
-                      <p className="text-sm text-gray-600">Get reminded to practice daily</p>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Enable
-                    </Button>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Course Updates</p>
-                      <p className="text-sm text-gray-600">New lessons and course announcements</p>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Enable
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Privacy & Security
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
-                    Change Password
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start bg-transparent">
-                    Download My Data
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-red-600 hover:text-red-700 bg-transparent"
-                  >
-                    Delete Account
-                  </Button>
                 </CardContent>
               </Card>
             </div>
