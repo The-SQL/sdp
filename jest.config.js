@@ -18,11 +18,11 @@ const customJestConfig = {
   // Tell Jest where to collect coverage from
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/utils/db/client.ts",
     "src/app/\\(signed-in\\)/forums/page.tsx",
     "src/app/\\(signed-in\\)/forums/\\[id\\]/page.tsx",
-    "!src/utils/db/forum.ts",
-    "!src/utils/db/server.ts",
+    "src/app/\\(signed-in\\)/profile/page.tsx",
+     "src/utils/db/**/*.ts",
+    "!src/utils/db/profile.ts",
     "!src/utils/types/**",
     "!src/utils/supabase/**",
     "!src/utils/**/__mocks__/**",
